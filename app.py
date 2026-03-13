@@ -76,3 +76,10 @@ elif menu == "Alarmas":
 
 elif menu == "Fallas":
     fallas()
+from modulos.tendencias import tendencias
+from modulos.corte_agua import corte_agua
+from modulos.choke_control import choke
+from modulos.presiones_pozo import presiones
+from modulos.alarmas_scada import alarmas
+from modulos.simulacion_produccion import simulacion
+from modulos.dashboard import dashboard
