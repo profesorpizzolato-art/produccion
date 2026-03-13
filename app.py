@@ -83,3 +83,9 @@ from modulos.presiones_pozo import presiones
 from modulos.alarmas_scada import alarmas
 from modulos.simulacion_produccion import simulacion
 from modulos.dashboard import dashboard
+from modulos.modelo_reservorio import reservorio
+from modulos.flujo_multifasico import flujo
+from modulos.manifold_avanzado import manifold
+from modulos.eficiencia_separador import separador
+from modulos.eventos_operativos import eventos
+from modulos.scada_avanzado import scada
