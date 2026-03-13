@@ -45,3 +45,15 @@ assets
 logo_menfa.png
 planta.png
 equipos.png
+menu = st.sidebar.selectbox(
+"Menú",
+[
+"Dashboard",
+"Tendencias",
+"Corte Agua",
+"Control Choke",
+"Presiones Pozo",
+"Alarmas",
+"Simulación Producción"
+]
+)
