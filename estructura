@@ -57,3 +57,14 @@ menu = st.sidebar.selectbox(
 "Simulación Producción"
 ]
 )
+menu = st.sidebar.selectbox(
+"Simulador MENFA",
+[
+"SCADA",
+"Reservorio",
+"Flujo Multifásico",
+"Manifold",
+"Separador",
+"Eventos Operativos"
+]
+)
