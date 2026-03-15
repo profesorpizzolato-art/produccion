@@ -1,37 +1,12 @@
-│SIMULADOR OPERATIVO MENFA
+simulador-menfa
 
-[Pozo Productor]   [Diagrama Planta]   [IPR-VLP]
-
-[SCADA Planta]     [Fórmulas]          [Evaluación]
 app.py
-requirements.txt
-│
+
 modulos
 │
-dashboard.py
-panel_operador.py
-campo_petrolero.py
-scada_planta.py
-scada_avanzado.py
+dashboard_principal.py
 pozo_productor.py
-modelo_reservorio.py
-flujo_multifasico.py
-manifold_avanzado.py
-eficiencia_separador.py
-tendencias.py
-corte_agua.py
-choke_control.py
-presiones_pozo.py
-simulacion_produccion.py
-alarmas_scada.py
-eventos_operativos.py
-│
-mapa_campo.py
-bomba_mecanica.py
-dinamometro.py
-evaluacion.py
-formulas_produccion.py
-certificado.py
+planta_produccion.py
 diagrama_planta.py
-assets
-logo_menfa.png
+formulas_produccion.py
+ipr_vlp.py
