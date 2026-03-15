@@ -23,6 +23,7 @@ from modulos.mapa_campo import mapa_campo
 from modulos.bomba_mecanica import bomba_mecanica
 from modulos.dinamometro import dinamometro
 from modulos.evaluacion import evaluacion
+from modulos.formulas_produccion import formulas_produccion
 from modulos.certificado import certificado
 
 # CONFIGURACION
