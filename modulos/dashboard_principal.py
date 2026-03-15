@@ -18,6 +18,9 @@ def dashboard_principal():
 
         if st.button("🏭 SCADA Planta"):
             st.session_state.modulo = "planta"
+            
+        if st.button("🗺 Mapa del Campo"):
+            st.session_state.modulo = "mapa"    
 
     with col2:
 
@@ -26,17 +29,20 @@ def dashboard_principal():
 
         if st.button("📈 Fórmulas Producción"):
             st.session_state.modulo = "formulas"
+            
+        if st.button("📉 IPR - VLP"):
+            st.session_state.modulo = "ipr"    
 
     with col3:
 
-        if st.button("📉 IPR - VLP"):
-            st.session_state.modulo = "ipr"
-
-        if st.button("🎓 Evaluación"):
+           if st.button("🎓 Evaluación"):
             st.session_state.modulo = "evaluacion"
+            
         if st.button("📘 Instrucciones"):
             st.session_state.modulo = "manual"
+            
         if st.button("⚠ Entrenamiento"):
             st.session_state.modulo = "entrenamiento"
+            
         if st.button("🛢 Campo Petrolero"):
             st.session_state.modulo = "campo"
