@@ -6,7 +6,7 @@ from modulos.planta_produccion import planta_produccion
 from modulos.diagrama_planta import diagrama_planta
 from modulos.formulas_produccion import formulas_produccion
 from modulos.ipr_vlp import ipr_vlp
-
+from modulos.instrucciones_simulador import instrucciones_simulador
 st.set_page_config(
     page_title="Simulador MENFA",
     layout="wide"
@@ -53,3 +53,11 @@ elif st.session_state.modulo == "ipr":
         st.session_state.modulo = "dashboard"
 
     ipr_vlp()
+elif st.session_state.modulo == "manual":
+
+    if st.button("⬅ Volver"):
+        st.session_state.modulo = "dashboard"
+
+    instrucciones_simulador()
+    if st.button("📘 Instrucciones"):
+    st.session_state.modulo = "manual"
