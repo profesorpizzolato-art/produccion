@@ -19,7 +19,11 @@ from modulos.presiones_pozo import presiones
 from modulos.simulacion_produccion import simulacion
 from modulos.alarmas_scada import alarmas
 from modulos.eventos_operativos import eventos
-
+from modulos.mapa_campo import mapa_campo
+from modulos.bomba_mecanica import bomba_mecanica
+from modulos.dinamometro import dinamometro
+from modulos.evaluacion import evaluacion
+from modulos.certificado import certificado
 
 # CONFIGURACION
 
