@@ -5,3 +5,6 @@ ls /mount/src
 pwd
 /mount/src/simulador-menfa
 ls -R
+git add .
+git commit -m "nuevo modulo diagrama planta MENFA"
+git push
