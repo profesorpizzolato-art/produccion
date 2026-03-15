@@ -1,6 +1,5 @@
 import streamlit as st
 def dashboard_principal():
-
     st.title("SIMULADOR OPERATIVO MENFA")
     st.subheader("Centro de Entrenamiento en Producción Petrolera")
 
