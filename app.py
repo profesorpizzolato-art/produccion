@@ -7,6 +7,7 @@ from modulos.diagrama_planta import diagrama_planta
 from modulos.formulas_produccion import formulas_produccion
 from modulos.ipr_vlp import ipr_vlp
 from modulos.instrucciones_simulador import instrucciones_simulador
+from modulos.entrenamiento_operativo import entrenamiento_operativo
 st.set_page_config(
     page_title="Simulador MENFA",
     layout="wide"
@@ -57,5 +58,9 @@ elif st.session_state.modulo == "manual":
 
     if st.button("⬅ Volver"):
         st.session_state.modulo = "dashboard"
+elif st.session_state.modulo == "entrenamiento":
 
-  
+    if st.button("⬅ Volver"):
+        st.session_state.modulo = "dashboard"
+
+    entrenamiento_operativo()  
