@@ -34,3 +34,5 @@ def dashboard_principal():
 
         if st.button("🎓 Evaluación"):
             st.session_state.modulo = "evaluacion"
+        if st.button("📘 Instrucciones"):
+            st.session_state.modulo = "manual"
