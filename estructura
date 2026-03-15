@@ -30,5 +30,6 @@ evaluacion.py
 formulas_produccion.py
 certificado.py
 │
+Pozo → Flowline → Manifold → Separador → Tanque → Compresor
 assets
 logo_menfa.png
