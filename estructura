@@ -1,12 +1,22 @@
 simulador-menfa
-
+│
 app.py
-
+requirements.txt
+README.md
+│
+assets
+│   logo_menfa.png
+│
 modulos
 │
-dashboard_principal.py
-pozo_productor.py
-planta_produccion.py
-diagrama_planta.py
-formulas_produccion.py
-ipr_vlp.py
+│   dashboard_principal.py
+│   pozo_productor.py
+│   planta_produccion.py
+│   diagrama_planta.py
+│   formulas_produccion.py
+│   ipr_vlp.py
+│   bomba_mecanica.py
+│   dinamometro.py
+│   evaluacion.py
+│   certificado.py
+│
