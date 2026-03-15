@@ -27,6 +27,7 @@ mapa_campo.py
 bomba_mecanica.py
 dinamometro.py
 evaluacion.py
+formulas_produccion.py
 certificado.py
 │
 assets
