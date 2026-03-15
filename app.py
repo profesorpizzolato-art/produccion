@@ -58,6 +58,4 @@ elif st.session_state.modulo == "manual":
     if st.button("⬅ Volver"):
         st.session_state.modulo = "dashboard"
 
-    instrucciones_simulador()
-    if st.button("📘 Instrucciones"):
-    st.session_state.modulo = "manual"
+  
