@@ -1,4 +1,27 @@
 import streamlit as st
+import base64
+
+def fondo_app():
+
+    with open("assets/logo_menfa.png", "rb") as img:
+        encoded = base64.b64encode(img.read()).decode()
+
+    fondo = f"""
+    <style>
+
+    .stApp {{
+        background-image: url("data:image/png;base64,{encoded}");
+        background-size: 40%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+
+    </style>
+    """
+
+    st.markdown(fondo, unsafe_allow_html=True)
+import streamlit as st
 
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
