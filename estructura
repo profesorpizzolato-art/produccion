@@ -1,5 +1,8 @@
-simulador-menfa
-│
+│SIMULADOR OPERATIVO MENFA
+
+[Pozo Productor]   [Diagrama Planta]   [IPR-VLP]
+
+[SCADA Planta]     [Fórmulas]          [Evaluación]
 app.py
 requirements.txt
 │
