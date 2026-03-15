@@ -8,3 +8,4 @@ ls -R
 git add .
 git commit -m "nuevo modulo diagrama planta MENFA"
 git push
+git status
