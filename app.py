@@ -8,6 +8,30 @@ from modulos.diagrama_planta import diagrama_planta
 from modulos.formulas_produccion import formulas_produccion
 from modulos.ipr_vlp import ipr_vlp
 from modulos.evaluacion import evaluacion
+if "modulo" not in st.session_state:
+    st.session_state.modulo = "dashboard"
+if st.session_state.modulo == "dashboard":
+    dashboard_principal()
+
+elif st.session_state.modulo == "pozo":
+    pozo_productor()
+
+elif st.session_state.modulo == "planta":
+    planta_produccion()
+
+elif st.session_state.modulo == "diagrama":
+    diagrama_planta()
+
+elif st.session_state.modulo == "formulas":
+    formulas_produccion()
+
+elif st.session_state.modulo == "ipr":
+    ipr_vlp()
+
+elif st.session_state.modulo == "evaluacion":
+    evaluacion()
+if st.button("⬅ Volver al menú"):
+    st.session_state.modulo = "dashboard"
 # IMPORTAR MODULOS
 
 from modulos.dashboard import dashboard
