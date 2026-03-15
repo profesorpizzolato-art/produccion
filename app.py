@@ -26,6 +26,7 @@ from modulos.evaluacion import evaluacion
 from modulos.formulas_produccion import formulas_produccion
 from modulos.certificado import certificado
 from modulos.ipr_vlp import ipr_vlp
+from modulos.planta_produccion import planta_produccion
 # CONFIGURACION
 
 st.set_page_config(
@@ -121,3 +122,5 @@ elif menu == "Fórmulas Producción":
     formulas_produccion()
 elif menu == "IPR - VLP":
     ipr_vlp()
+elif menu == "SCADA Planta":
+    planta_produccion() 
