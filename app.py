@@ -9,6 +9,7 @@ from modulos.ipr_vlp import ipr_vlp
 from modulos.instrucciones_simulador import instrucciones_simulador
 from modulos.entrenamiento_operativo import entrenamiento_operativo
 from modulos.campo_petrolero import campo_petrolero
+from modulos.mapa_campo import mapa_campo
 st.set_page_config(
     page_title="Simulador MENFA",
     layout="wide"
@@ -71,3 +72,4 @@ elif st.session_state.modulo == "campo":
         st.session_state.modulo = "dashboard"
 
     campo_petrolero()    
+from modulos.mapa_campo import mapa_campo
