@@ -1,70 +1,52 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
 
-def campo():
+def campo_petrolero():
 
-    st.title("Campo Petrolero - Visualización")
+    st.title("Simulador de Campo Petrolero")
+    st.subheader("Simulador MENFA - Producción de Campo")
 
-    st.subheader("Infraestructura del campo")
+    st.markdown("---")
+
+    st.write("Ajuste la producción de cada pozo")
 
     col1, col2, col3 = st.columns(3)
 
-    with col1:
-        pozo1 = st.checkbox("Pozo 1")
-        pozo2 = st.checkbox("Pozo 2")
-        pozo3 = st.checkbox("Pozo 3")
+    pozo1 = col1.slider("Pozo A1 (BPD)", 0, 1000, 400)
+    pozo2 = col1.slider("Pozo A2 (BPD)", 0, 1000, 350)
 
-    with col2:
-        pozo4 = st.checkbox("Pozo 4")
-        pozo5 = st.checkbox("Pozo 5")
-        pozo6 = st.checkbox("Pozo 6")
+    pozo3 = col2.slider("Pozo B1 (BPD)", 0, 1000, 300)
+    pozo4 = col2.slider("Pozo B2 (BPD)", 0, 1000, 250)
 
-    with col3:
-        pozo7 = st.checkbox("Pozo 7")
-        pozo8 = st.checkbox("Pozo 8")
-        pozo9 = st.checkbox("Pozo 9")
-
-    produccion = 0
-
-    if pozo1:
-        produccion += 120
-    if pozo2:
-        produccion += 150
-    if pozo3:
-        produccion += 130
-    if pozo4:
-        produccion += 140
-    if pozo5:
-        produccion += 110
-    if pozo6:
-        produccion += 160
-    if pozo7:
-        produccion += 100
-    if pozo8:
-        produccion += 170
-    if pozo9:
-        produccion += 125
+    pozo5 = col3.slider("Pozo C1 (BPD)", 0, 1000, 200)
+    pozo6 = col3.slider("Pozo C2 (BPD)", 0, 1000, 150)
 
     st.markdown("---")
 
-    st.subheader("Instalaciones")
+    produccion_total = pozo1 + pozo2 + pozo3 + pozo4 + pozo5 + pozo6
 
-    colA, colB, colC = st.columns(3)
-
-    colA.metric("Manifold", "Activo")
-    colB.metric("Separador", "Operativo")
-    colC.metric("Tanque", "Disponible")
+    st.metric("Producción total del campo", f"{produccion_total} BPD")
 
     st.markdown("---")
 
-    st.subheader("Producción del campo")
+    datos = pd.DataFrame({
+        "Pozo": ["A1","A2","B1","B2","C1","C2"],
+        "Producción": [pozo1,pozo2,pozo3,pozo4,pozo5,pozo6]
+    })
 
-    st.metric("Producción total (BPD)", produccion)
+    st.bar_chart(datos.set_index("Pozo"))
 
-    if produccion > 900:
-        st.success("Campo produciendo a alta capacidad")
+    st.markdown("---")
 
-    elif produccion > 400:
-        st.warning("Producción media")
+    if produccion_total > 3500:
+
+        st.warning("Producción muy alta para capacidad de planta")
+
+    elif produccion_total < 1000:
+
+        st.error("Producción de campo muy baja")
 
     else:
-        st.error("Producción baja")
+
+        st.success("Producción dentro del rango operativo")
