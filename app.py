@@ -25,7 +25,7 @@ from modulos.dinamometro import dinamometro
 from modulos.evaluacion import evaluacion
 from modulos.formulas_produccion import formulas_produccion
 from modulos.certificado import certificado
-
+from modulos.ipr_vlp import ipr_vlp
 # CONFIGURACION
 
 st.set_page_config(
@@ -60,6 +60,7 @@ menu = st.sidebar.selectbox(
         "Simulación Producción",
         "Alarmas",
         "Fórmulas Producción",
+        "IPR - VLP",
         "Eventos Operativos"
     ]
 )
@@ -118,3 +119,5 @@ elif menu == "Eventos Operativos":
     eventos()
 elif menu == "Fórmulas Producción":
     formulas_produccion()
+elif menu == "IPR - VLP":
+    ipr_vlp()
