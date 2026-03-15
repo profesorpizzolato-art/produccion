@@ -29,7 +29,6 @@ dinamometro.py
 evaluacion.py
 formulas_produccion.py
 certificado.py
-│
-Pozo → Flowline → Manifold → Separador → Tanque → Compresor
+diagrama_planta.py
 assets
 logo_menfa.png
