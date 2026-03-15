@@ -27,6 +27,7 @@ from modulos.formulas_produccion import formulas_produccion
 from modulos.certificado import certificado
 from modulos.ipr_vlp import ipr_vlp
 from modulos.planta_produccion import planta_produccion
+from modulos.diagrama_planta import diagrama_planta
 # CONFIGURACION
 
 st.set_page_config(
@@ -49,6 +50,7 @@ menu = st.sidebar.selectbox(
         "Campo Petrolero",
         "SCADA Planta",
         "SCADA Avanzado",
+        "Diagrama Planta"
         "Pozo Productor",
         "Modelo Reservorio",
         "Flujo Multifásico",
@@ -124,3 +126,5 @@ elif menu == "IPR - VLP":
     ipr_vlp()
 elif menu == "SCADA Planta":
     planta_produccion() 
+elif menu == "Diagrama Planta":
+    diagrama_planta()
