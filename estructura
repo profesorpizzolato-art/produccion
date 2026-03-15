@@ -1,70 +1,24 @@
-simulador_menfa_5000
-
+simulador-menfa
+│
 app.py
-
-core
-config.py
-utils.py
-logger.py
-
-motor
-motor_simulacion.py
-modelo_pozo.py
-modelo_reservorio.py
-flujo_multifasico.py
-calculos_presion.py
-
+requirements.txt
+README.md
+│
 modulos
-panel_operador.py
-scada.py
-campo_pozos.py
-manifold.py
-separador.py
-bomba_superficie.py
-bomba_sumergible.py
-linea_flujo.py
-tanques.py
-compresor_gas.py
-control_presion.py
-tendencias.py
-balance_produccion.py
-alarmas.py
-simulador_fallas.py
-
-ui
-dashboard.py
-graficos.py
-indicadores.py
-
-evaluacion
-banco_preguntas.py
-examen.py
-certificado.py
-
+│   panel_operador.py
+│   scada_avanzado.py
+│   modelo_reservorio.py
+│   flujo_multifasico.py
+│   manifold_avanzado.py
+│   eficiencia_separador.py
+│   tendencias.py
+│   corte_agua.py
+│   choke_control.py
+│   presiones_pozo.py
+│   alarmas_scada.py
+│   simulacion_produccion.py
+│   dashboard.py
+│   eventos_operativos.py
+│
 assets
-logo_menfa.png
-planta.png
-equipos.png
-menu = st.sidebar.selectbox(
-"Menú",
-[
-"Dashboard",
-"Tendencias",
-"Corte Agua",
-"Control Choke",
-"Presiones Pozo",
-"Alarmas",
-"Simulación Producción"
-]
-)
-menu = st.sidebar.selectbox(
-"Simulador MENFA",
-[
-"SCADA",
-"Reservorio",
-"Flujo Multifásico",
-"Manifold",
-"Separador",
-"Eventos Operativos"
-]
-)
+│   logo_menfa.png
