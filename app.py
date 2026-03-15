@@ -59,6 +59,7 @@ menu = st.sidebar.selectbox(
         "Presiones Pozo",
         "Simulación Producción",
         "Alarmas",
+        "Fórmulas Producción",
         "Eventos Operativos"
     ]
 )
@@ -115,3 +116,5 @@ elif menu == "Alarmas":
 
 elif menu == "Eventos Operativos":
     eventos()
+elif menu == "Fórmulas Producción":
+    formulas_produccion()
