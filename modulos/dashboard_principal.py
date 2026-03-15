@@ -33,7 +33,7 @@ def dashboard_principal():
 
     with col3:
 
-           if st.button("🎓 Evaluación"):
+        if st.button("🎓 Evaluación"):
             st.session_state.modulo = "evaluacion"
             
         if st.button("📘 Instrucciones"):
