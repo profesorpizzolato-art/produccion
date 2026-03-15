@@ -5,20 +5,25 @@ requirements.txt
 README.md
 │
 modulos
-│   panel_operador.py
-│   scada_avanzado.py
-│   modelo_reservorio.py
-│   flujo_multifasico.py
-│   manifold_avanzado.py
-│   eficiencia_separador.py
-│   tendencias.py
-│   corte_agua.py
-│   choke_control.py
-│   presiones_pozo.py
-│   alarmas_scada.py
-│   simulacion_produccion.py
-│   dashboard.py
-│   eventos_operativos.py
+│
+panel_operador.py
+dashboard.py
+scada_avanzado.py
+scada_planta.py
+campo_petrolero.py
+pozo_productor.py
+modelo_reservorio.py
+flujo_multifasico.py
+manifold_avanzado.py
+eficiencia_separador.py
+tendencias.py
+corte_agua.py
+choke_control.py
+presiones_pozo.py
+alarmas_scada.py
+simulacion_produccion.py
+eventos_operativos.py
 │
 assets
-│   logo_menfa.png
+│
+logo_menfa.png
