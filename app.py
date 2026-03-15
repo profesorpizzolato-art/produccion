@@ -33,6 +33,7 @@ from modulos.instrucciones_simulador import instrucciones_simulador
 from modulos.entrenamiento_operativo import entrenamiento_operativo
 from modulos.campo_petrolero import campo_petrolero
 from modulos.mapa_campo import mapa_campo
+from modulos.dashboard_principal import dashboard_principal
 st.set_page_config(
     page_title="Simulador MENFA",
     layout="wide"
@@ -96,3 +97,8 @@ elif st.session_state.modulo == "campo":
 
     campo_petrolero()    
 from modulos.mapa_campo import mapa_campo
+    if "modulo" not in st.session_state:
+        st.session_state.modulo = "dashboard"
+    if st.session_state.modulo == "dashboard":
+
+    dashboard_principal()        
