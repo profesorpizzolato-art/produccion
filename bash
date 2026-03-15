@@ -9,3 +9,6 @@ git add .
 git commit -m "nuevo modulo diagrama planta MENFA"
 git push
 git status
+git add .
+git commit -m "fondo menfa"
+git push
