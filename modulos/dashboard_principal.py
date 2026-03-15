@@ -36,3 +36,5 @@ def dashboard_principal():
             st.session_state.modulo = "evaluacion"
         if st.button("📘 Instrucciones"):
             st.session_state.modulo = "manual"
+        if st.button("⚠ Entrenamiento"):
+            st.session_state.modulo = "entrenamiento"
