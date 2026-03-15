@@ -44,3 +44,57 @@ def dashboard_principal():
             
         if st.button("🛢 Campo Petrolero"):
             st.session_state.modulo = "campo"
+import streamlit as st
+
+def dashboard_principal():
+
+    st.title("Centro de Control MENFA")
+
+    st.markdown("### Simulador de Producción Petrolera")
+
+    st.markdown("---")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+
+        if st.button("🛢 Pozo Productor", use_container_width=True):
+            st.session_state.modulo = "pozo"
+
+        if st.button("🗺 Mapa del Campo", use_container_width=True):
+            st.session_state.modulo = "mapa"
+
+        if st.button("📊 Campo Petrolero", use_container_width=True):
+            st.session_state.modulo = "campo"
+
+    with col2:
+
+        if st.button("🏭 Planta de Proceso", use_container_width=True):
+            st.session_state.modulo = "planta"
+
+        if st.button("📈 Ingeniería Producción", use_container_width=True):
+            st.session_state.modulo = "ingenieria"
+
+        if st.button("🧮 Fórmulas Petroleras", use_container_width=True):
+            st.session_state.modulo = "formulas"
+
+    with col3:
+
+        if st.button("⚠ Entrenamiento", use_container_width=True):
+            st.session_state.modulo = "entrenamiento"
+
+        if st.button("📘 Manual Simulador", use_container_width=True):
+            st.session_state.modulo = "manual"
+
+        if st.button("📊 Reporte Producción", use_container_width=True):
+            st.session_state.modulo = "reporte"
+
+    st.markdown("---")
+
+    st.subheader("Estado General del Campo")
+
+    colA, colB, colC = st.columns(3)
+
+    colA.metric("Producción Total", "1850 BPD")
+    colB.metric("Presión Separador", "120 psi")
+    colC.metric("Pozos Activos", "6")
