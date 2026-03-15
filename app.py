@@ -1,5 +1,13 @@
 import streamlit as st
+import streamlit as st
 
+from modulos.dashboard_principal import dashboard_principal
+from modulos.pozo_productor import pozo_productor
+from modulos.planta_produccion import planta_produccion
+from modulos.diagrama_planta import diagrama_planta
+from modulos.formulas_produccion import formulas_produccion
+from modulos.ipr_vlp import ipr_vlp
+from modulos.evaluacion import evaluacion
 # IMPORTAR MODULOS
 
 from modulos.dashboard import dashboard
