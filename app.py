@@ -1,50 +1,84 @@
 import streamlit as st
 import base64
 
-def fondo_app():
-
-    with open("assets/logo_menfa.png", "rb") as img:
-        encoded = base64.b64encode(img.read()).decode()
-
-    fondo = f"""
-    <style>
-
-    .stApp {{
-        background-image: url("data:image/png;base64,{encoded}");
-        background-size: 40%;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }}
-
-    </style>
-    """
-
-    st.markdown(fondo, unsafe_allow_html=True)
-import streamlit as st
+# IMPORTAR MODULOS
 
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
-from modulos.planta_produccion import planta_produccion
-from modulos.diagrama_planta import diagrama_planta
-from modulos.formulas_produccion import formulas_produccion
-from modulos.ipr_vlp import ipr_vlp
-from modulos.instrucciones_simulador import instrucciones_simulador
-from modulos.entrenamiento_operativo import entrenamiento_operativo
-from modulos.campo_petrolero import campo_petrolero
+from modulos.planta_proceso import planta_proceso
 from modulos.mapa_campo import mapa_campo
-from modulos.dashboard_principal import dashboard_principal
+from modulos.campo_petrolero import campo_petrolero
+from modulos.formulas_produccion import formulas_produccion
+from modulos.entrenamiento_operativo import entrenamiento_operativo
+from modulos.instrucciones_simulador import instrucciones_simulador
+
+
+# CONFIGURACION DE PAGINA
+
 st.set_page_config(
-    page_title="Simulador MENFA",
+    page_title="Simulador MENFA Producción",
     layout="wide"
 )
+
+
+# FONDO MENFA
+
+def fondo_app():
+
+    try:
+        with open("assets/logo_menfa.png", "rb") as img:
+            encoded = base64.b64encode(img.read()).decode()
+
+        fondo = f"""
+        <style>
+
+        .stApp {{
+        background-image: url("data:image/png;base64,{encoded}");
+        background-size: 35%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        }}
+
+        </style>
+        """
+
+        st.markdown(fondo, unsafe_allow_html=True)
+
+    except:
+        pass
+
+
+fondo_app()
+
+
+# ESTADO DE NAVEGACION
 
 if "modulo" not in st.session_state:
     st.session_state.modulo = "dashboard"
 
+
+# BARRA SUPERIOR
+
+col1, col2 = st.columns([8,2])
+
+with col1:
+    st.title("IPCL MENFA - Simulador de Producción")
+
+with col2:
+    if st.button("🏠 Inicio"):
+        st.session_state.modulo = "dashboard"
+
+
+st.markdown("---")
+
+
+# CONTROL DE MODULOS
+
 if st.session_state.modulo == "dashboard":
 
     dashboard_principal()
+
 
 elif st.session_state.modulo == "pozo":
 
@@ -53,19 +87,30 @@ elif st.session_state.modulo == "pozo":
 
     pozo_productor()
 
+
 elif st.session_state.modulo == "planta":
 
     if st.button("⬅ Volver"):
         st.session_state.modulo = "dashboard"
 
-    planta_produccion()
+    planta_proceso()
 
-elif st.session_state.modulo == "diagrama":
+
+elif st.session_state.modulo == "mapa":
 
     if st.button("⬅ Volver"):
         st.session_state.modulo = "dashboard"
 
-    diagrama_planta()
+    mapa_campo()
+
+
+elif st.session_state.modulo == "campo":
+
+    if st.button("⬅ Volver"):
+        st.session_state.modulo = "dashboard"
+
+    campo_petrolero()
+
 
 elif st.session_state.modulo == "formulas":
 
@@ -74,30 +119,25 @@ elif st.session_state.modulo == "formulas":
 
     formulas_produccion()
 
-elif st.session_state.modulo == "ipr":
 
-    if st.button("⬅ Volver"):
-        st.session_state.modulo = "dashboard"
-
-    ipr_vlp()
-elif st.session_state.modulo == "manual":
-
-    if st.button("⬅ Volver"):
-        st.session_state.modulo = "dashboard"
 elif st.session_state.modulo == "entrenamiento":
 
     if st.button("⬅ Volver"):
         st.session_state.modulo = "dashboard"
 
-    entrenamiento_operativo()  
-elif st.session_state.modulo == "campo":
+    entrenamiento_operativo()
+
+
+elif st.session_state.modulo == "manual":
 
     if st.button("⬅ Volver"):
         st.session_state.modulo = "dashboard"
 
-    campo_petrolero()    
-from modulos.mapa_campo import mapa_campo
-    if "modulo" not in st.session_state:
-      st.session_state.modulo = "dashboard"
-    if "modulo" not in st.session_state:
-      st.session_state.modulo = "dashboard" 
+    instrucciones_simulador()
+
+
+# PIE DE PAGINA
+
+st.markdown("---")
+
+st.caption("MENFA | Simulador de Producción Petrolera | Plataforma de Entrenamiento Operativo")
