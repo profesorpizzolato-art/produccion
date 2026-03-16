@@ -97,7 +97,7 @@ elif st.session_state.modulo == "campo":
 
     campo_petrolero()    
 from modulos.mapa_campo import mapa_campo
-    if st. "modulo" not in st.session_state:
+    if "modulo" not in st.session_state:
         st.session_state.modulo = "dashboard"
     if st.session_state.modulo == "dashboard":
 
