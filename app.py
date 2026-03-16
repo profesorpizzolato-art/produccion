@@ -23,7 +23,84 @@ st.set_page_config(
 # FONDO MENFA
 
 def fondo_app():
+    def estilo_menfa():
 
+    st.markdown("""
+    <style>
+
+    h1 {
+        color: #0E4C92;
+        font-weight: 700;
+    }
+
+    h2 {
+        color: #0E4C92;
+    }
+
+    h3 {
+        color: #1A1A1A;
+    }
+
+    .stMetric {
+        background-color: white;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    div.stButton > button {
+        background-color: #0E4C92;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        height: 55px;
+    }
+
+    div.stButton > button:hover {
+        background-color: #1565C0;
+        color: white;
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
+def estilo_menfa():
+
+    st.markdown("""
+    <style>
+
+    h1 {
+        color: #0E4C92;
+        font-weight: 700;
+    }
+
+    h2 {
+        color: #0E4C92;
+    }
+
+    h3 {
+        color: #1A1A1A;
+    }
+
+    .stMetric {
+        background-color: white;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    div.stButton > button {
+        background-color: #0E4C92;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        height: 55px;
+    }
+
+    div.stButton > button:hover {
+        background-color: #1565C0;
+        color: white;
+    }
+
+    </style>
+    """, unsafe_allow_html=True)
     try:
         with open("assets/logo_menfa.png", "rb") as img:
             encoded = base64.b64encode(img.read()).decode()
