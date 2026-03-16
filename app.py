@@ -32,11 +32,16 @@ def fondo_app():
         <style>
 
         .stApp {{
-        background-image: url("data:image/png;base64,{encoded}");
-        background-size: 35%;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+            background-image: linear-gradient(
+                rgba(255,255,255,0.90),
+                rgba(255,255,255,0.90)
+            ),
+            url("data:image/png;base64,{encoded}");
+            
+            background-size: 45%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }}
 
         </style>
@@ -46,11 +51,6 @@ def fondo_app():
 
     except:
         pass
-
-
-fondo_app()
-
-
 # ESTADO DE MODULOS
 
 if "modulo" not in st.session_state:
