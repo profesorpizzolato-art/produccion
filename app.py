@@ -1,11 +1,10 @@
 import streamlit as st
 import base64
 
-# IMPORTAR MODULOS
+# IMPORTAR MODULOS EXISTENTES
 
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
-from modulos.planta_preceso import planta_proceso
 from modulos.mapa_campo import mapa_campo
 from modulos.campo_petrolero import campo_petrolero
 from modulos.formulas_produccion import formulas_produccion
@@ -16,7 +15,7 @@ from modulos.instrucciones_simulador import instrucciones_simulador
 # CONFIGURACION DE PAGINA
 
 st.set_page_config(
-    page_title="Simulador MENFA Producción",
+    page_title="IPCL MENFA - Producción",
     layout="wide"
 )
 
@@ -52,13 +51,13 @@ def fondo_app():
 fondo_app()
 
 
-# ESTADO DE NAVEGACION
+# ESTADO DE MODULOS
 
 if "modulo" not in st.session_state:
     st.session_state.modulo = "dashboard"
 
 
-# BARRA SUPERIOR
+# CABECERA
 
 col1, col2 = st.columns([8,2])
 
@@ -86,14 +85,6 @@ elif st.session_state.modulo == "pozo":
         st.session_state.modulo = "dashboard"
 
     pozo_productor()
-
-
-elif st.session_state.modulo == "planta":
-
-    if st.button("⬅ Volver"):
-        st.session_state.modulo = "dashboard"
-
-    planta_proceso()
 
 
 elif st.session_state.modulo == "mapa":
@@ -140,4 +131,4 @@ elif st.session_state.modulo == "manual":
 
 st.markdown("---")
 
-st.caption("MENFA | Simulador de Producción Petrolera | Plataforma de Entrenamiento Operativo")
+st.caption("MENFA | Simulador de Producción Petrolera | Plataforma de entrenamiento")
