@@ -5,7 +5,7 @@ import base64
 
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
-from modulos.planta_proceso import planta_proceso
+from modulos.planta_preceso import planta_proceso
 from modulos.mapa_campo import mapa_campo
 from modulos.campo_petrolero import campo_petrolero
 from modulos.formulas_produccion import formulas_produccion
