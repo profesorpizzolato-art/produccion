@@ -23,7 +23,7 @@ st.set_page_config(
 # FONDO MENFA
 
 def fondo_app():
-    def estilo_menfa():
+def estilo_menfa():
 
     st.markdown("""
     <style>
