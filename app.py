@@ -18,7 +18,15 @@ from modulos.evaluacion import evaluacion
 from modulos.choke_control import choke_control
 
 # CONFIGURACION DE PAGINA
-
+with st.sidebar:
+    st.image("assets/logo_menfa.png")
+    st.title("Navegación")
+    seleccion = st.radio("Seleccione Área:", 
+                         ["Dashboard", "Pozo", "Planta", "SCADA", "Análisis IPR", "Simulador de Fallas"])
+    
+    if seleccion == "Dashboard": st.session_state.modulo = "dashboard"
+    if seleccion == "Planta": st.session_state.modulo = "planta"
+    
 st.set_page_config(
     page_title="IPCL MENFA - Producción",
     layout="wide"
