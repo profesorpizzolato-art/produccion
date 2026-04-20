@@ -1,5 +1,7 @@
 import streamlit as st
 import base64
+
+# --- IMPORTACIONES ---
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
 from modulos.mapa_campo import mapa_campo
@@ -8,17 +10,16 @@ from modulos.formulas_produccion import formulas_produccion
 from modulos.entrenamiento_operativo import entrenamiento_operativo
 from modulos.instrucciones_simulador import instrucciones_simulador
 
-# --- NUEVOS MODULOS A INTEGRAR ---
+# Intentar importar módulos avanzados
 try:
     from modulos.planta_produccion import planta_produccion
     from modulos.scada_planta import scada_planta
     from modulos.ipr_vlp import ipr_vlp
-    from modulos.choke_control import choke_control
-    from modulos.simulador_fallas import simulador_fallas
-    from modulos.evaluacion import evaluacion
-except ImportErrors:
-    st.warning("Algunos módulos técnicos no se encontraron en la carpeta 'modulos'.")
-
+except ImportError:
+    st.warning("Aviso: Algunos módulos de planta no se encontraron.")
+    
+def fondo_app():
+   def estilo_menfa(): # <--- Esto está indentado dentro de otra función
 # CONFIGURACION DE PAGINA
 st.set_page_config(
     page_title="IPCL MENFA - Producción Petrolera",
