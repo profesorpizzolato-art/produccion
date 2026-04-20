@@ -1,7 +1,13 @@
 import streamlit as st
 import base64
+import sys
+import os
 
-# --- IMPORTACIONES DINÁMICAS (ORDENADAS POR CATEGORÍA) ---
+# AGREGAR CARPETA MODULOS AL CAMINO DE PYTHON
+# Esto permite que Python vea tus archivos como si estuvieran en la raíz
+sys.path.append(os.path.join(os.path.dirname(__file__), "modulos"))
+
+# IMPORTACIONES (Tal cual tus nombres de archivo)
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
 from modulos.mapa_campo import mapa_campo
