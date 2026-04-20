@@ -1,8 +1,5 @@
 import streamlit as st
 import base64
-
-# IMPORTAR MODULOS EXISTENTES
-
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
 from modulos.mapa_campo import mapa_campo
@@ -10,252 +7,102 @@ from modulos.campo_petrolero import campo_petrolero
 from modulos.formulas_produccion import formulas_produccion
 from modulos.entrenamiento_operativo import entrenamiento_operativo
 from modulos.instrucciones_simulador import instrucciones_simulador
-from modulos.planta_produccion import planta_produccion
-from modulos.scada_planta import scada_planta
-from modulos.ipr_vlp import ipr_vlp
-from modulos.simulador_fallas import simulador_fallas
-from modulos.evaluacion import evaluacion
-from modulos.choke_control import choke_control
+
+# --- NUEVOS MODULOS A INTEGRAR ---
+try:
+    from modulos.planta_produccion import planta_produccion
+    from modulos.scada_planta import scada_planta
+    from modulos.ipr_vlp import ipr_vlp
+    from modulos.choke_control import choke_control
+    from modulos.simulador_fallas import simulador_fallas
+    from modulos.evaluacion import evaluacion
+except ImportErrors:
+    st.warning("Algunos módulos técnicos no se encontraron en la carpeta 'modulos'.")
 
 # CONFIGURACION DE PAGINA
-with st.sidebar:
-    st.image("assets/logo_menfa.png")
-    st.title("Navegación")
-    seleccion = st.radio("Seleccione Área:", 
-                         ["Dashboard", "Pozo", "Planta", "SCADA", "Análisis IPR", "Simulador de Fallas"])
-    
-    if seleccion == "Dashboard": st.session_state.modulo = "dashboard"
-    if seleccion == "Planta": st.session_state.modulo = "planta"
-    
 st.set_page_config(
-    page_title="IPCL MENFA - Producción",
-    layout="wide"
+    page_title="IPCL MENFA - Producción Petrolera",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-
-# FONDO MENFA
-
-def fondo_app():
-   def estilo_menfa():
-
-    st.markdown("""
-    <style>
-
-    h1 {
-        color: #0E4C92;
-        font-weight: 700;
-    }
-
-    h2 {
-        color: #0E4C92;
-    }
-
-    h3 {
-        color: #1A1A1A;
-    }
-
-    .stMetric {
-        background-color: white;
-        padding: 10px;
-        border-radius: 10px;
-    }
-
-    div.stButton > button {
-        background-color: #0E4C92;
-        color: white;
-        font-weight: bold;
-        border-radius: 8px;
-        height: 55px;
-    }
-
-    div.stButton > button:hover {
-        background-color: #1565C0;
-        color: white;
-    }
-
-    </style>
-    """, unsafe_allow_html=True)
-def estilo_menfa():
-
-    st.markdown("""
-    <style>
-
-    h1 {
-        color: #0E4C92;
-        font-weight: 700;
-    }
-
-    h2 {
-        color: #0E4C92;
-    }
-
-    h3 {
-        color: #1A1A1A;
-    }
-
-    .stMetric {
-        background-color: white;
-        padding: 10px;
-        border-radius: 10px;
-    }
-
-    div.stButton > button {
-        background-color: #0E4C92;
-        color: white;
-        font-weight: bold;
-        border-radius: 8px;
-        height: 55px;
-    }
-
-    div.stButton > button:hover {
-        background-color: #1565C0;
-        color: white;
-    }
-
-    </style>
-    """, unsafe_allow_html=True)
+# --- NAVEGACIÓN POR SIDEBAR ---
+with st.sidebar:
+    # Espacio para el logo
     try:
-        with open("assets/logo_menfa.png", "rb") as img:
-            encoded = base64.b64encode(img.read()).decode()
-
-        fondo = f"""
-        <style>
-
-        .stApp {{
-            background-image: linear-gradient(
-                rgba(255,255,255,0.90),
-                rgba(255,255,255,0.90)
-            ),
-            url("data:image/png;base64,{encoded}");
-            
-            background-size: 45%;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }}
-
-        </style>
-        """
-
-        st.markdown(fondo, unsafe_allow_html=True)
-
+        st.image("assets/logo_menfa.png", use_column_width=True)
     except:
-        pass
-# ESTADO DE MODULOS
+        st.title("IPCL MENFA")
+    
+    st.markdown("### 🛠️ Panel de Simulación")
+    
+    # Agrupamos los módulos por categorías para que sea más ordenado
+    categoria = st.radio(
+        "Ir a sección:",
+        ["🏠 Inicio", "📍 Campo y Pozos", "🏢 Planta y SCADA", "📊 Ingeniería y Fórmulas", "🧠 Entrenamiento y Test"]
+    )
 
-if "modulo" not in st.session_state:
-    st.session_state.modulo = "dashboard"
+    st.markdown("---")
+    
+    # Sub-navegación según la categoría seleccionada
+    if categoria == "🏠 Inicio":
+        menu = "Dashboard"
+    
+    elif categoria == "📍 Campo y Pozos":
+        menu = st.selectbox("Módulo:", ["Mapa del Campo", "Estado del Pozo", "Control de Choke", "Campo Petrolero"])
+    
+    elif categoria == "🏢 Planta y SCADA":
+        menu = st.selectbox("Módulo:", ["Planta de Producción", "Sistema SCADA", "Diagrama de Planta"])
+        
+    elif categoria == "📊 Ingeniería y Fórmulas":
+        menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Fórmulas de Producción", "Flujo Multifásico"])
+        
+    elif categoria == "🧠 Entrenamiento y Test":
+        menu = st.selectbox("Módulo:", ["Instrucciones", "Entrenamiento Operativo", "Simulador de Fallas", "Examen de Evaluación"])
 
+    st.sidebar.info("Usuario: Operador de Planta")
 
-# CABECERA
+# --- LÓGICA DE VISUALIZACIÓN ---
 
-col1, col2 = st.columns([8,2])
-
-with col1:
-    st.title("IPCL MENFA - Simulador de Producción")
-
-with col2:
-    if st.button("🏠 Inicio"):
-        st.session_state.modulo = "dashboard"
-
-
-st.markdown("---")
-
-
-# CONTROL DE MODULOS
-
-if st.session_state.modulo == "dashboard":
-
+if menu == "Dashboard":
     dashboard_principal()
 
-
-elif st.session_state.modulo == "pozo":
-
-    if st.button("⬅ Volver"):
-        st.session_state.modulo = "dashboard"
-
-    pozo_productor()
-
-
-elif st.session_state.modulo == "mapa":
-
-    if st.button("⬅ Volver"):
-        st.session_state.modulo = "dashboard"
-
+# Pozos
+elif menu == "Mapa del Campo":
     mapa_campo()
-
-
-elif st.session_state.modulo == "campo":
-
-    if st.button("⬅ Volver"):
-        st.session_state.modulo = "dashboard"
-
+elif menu == "Estado del Pozo":
+    pozo_productor()
+elif menu == "Control de Choke":
+    choke_control()
+elif menu == "Campo Petrolero":
     campo_petrolero()
 
+# Planta y SCADA
+elif menu == "Planta de Producción":
+    st.header("🏢 Planta de Tratamiento de Crudo")
+    planta_produccion()
+elif menu == "Sistema SCADA":
+    st.header("🖥️ Monitor SCADA Avanzado")
+    scada_planta()
+elif menu == "Diagrama de Planta":
+    # Aquí puedes llamar a diagrama_planta.py si es una visualización estática
+    st.subheader("Esquema de Proceso")
 
-elif st.session_state.modulo == "formulas":
-
-    if st.button("⬅ Volver"):
-        st.session_state.modulo = "dashboard"
-
+# Ingeniería
+elif menu == "Análisis IPR/VLP":
+    ipr_vlp()
+elif menu == "Fórmulas de Producción":
     formulas_produccion()
 
-
-elif st.session_state.modulo == "entrenamiento":
-
-    if st.button("⬅ Volver"):
-        st.session_state.modulo = "dashboard"
-
-    entrenamiento_operativo()
-
-
-elif st.session_state.modulo == "manual":
-
-    if st.button("⬅ Volver"):
-        st.session_state.modulo = "dashboard"
-
+# Entrenamiento
+elif menu == "Instrucciones":
     instrucciones_simulador()
-
-# CONTROL DE MODULOS
-
-# --- VISTA PRINCIPAL (DASHBOARD) ---
-if st.session_state.modulo == "dashboard":
-    dashboard_principal()
-
-# --- MÓDULOS DE CAMPO Y POZO ---
-elif st.session_state.modulo == "pozo":
-    if st.button("⬅ Volver"): st.session_state.modulo = "dashboard"
-    pozo_productor()
-
-elif st.session_state.modulo == "ipr_vlp":
-    if st.button("⬅ Volver"): st.session_state.modulo = "dashboard"
-    ipr_vlp() # Análisis de rendimiento de pozo
-
-# --- MÓDULOS DE PLANTA Y PROCESOS (Lo que pediste) ---
-elif st.session_state.modulo == "planta":
-    if st.button("⬅ Volver"): st.session_state.modulo = "dashboard"
-    st.header("🏢 Planta de Facilidades de Producción")
-    planta_produccion()
-
-elif st.session_state.modulo == "scada":
-    if st.button("⬅ Volver"): st.session_state.modulo = "dashboard"
-    st.header("🖥️ Centro de Control SCADA")
-    scada_planta()
-
-elif st.session_state.modulo == "choke":
-    if st.button("⬅ Volver"): st.session_state.modulo = "dashboard"
-    choke_control() # Control de contrapresión y manifold
-
-# --- MÓDULOS DE EVALUACIÓN Y FALLAS ---
-elif st.session_state.modulo == "fallas":
-    if st.button("⬅ Volver"): st.session_state.modulo = "dashboard"
+elif menu == "Simulador de Fallas":
     simulador_fallas()
-
-elif st.session_state.modulo == "evaluacion":
-    if st.button("⬅ Volver"): st.session_state.modulo = "dashboard"
+elif menu == "Examen de Evaluación":
     evaluacion()
-# PIE DE PAGINA
+    
 
-st.markdown("---")
-
-st.caption("MENFA | Simulador de Producción Petrolera | Plataforma de entrenamiento")
+# PIE DE PAGINA (Se mantiene siempre visible)
+st.sidebar.markdown("---")
+st.sidebar.caption("MENFA | Software de Simulación Industrial v2.0")
