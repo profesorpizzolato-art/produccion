@@ -18,8 +18,6 @@ try:
 except ImportError:
     st.warning("Aviso: Algunos módulos de planta no se encontraron.")
     
-def fondo_app():
-   def estilo_menfa(): # <--- Esto está indentado dentro de otra función
 # CONFIGURACION DE PAGINA
 st.set_page_config(
     page_title="IPCL MENFA - Producción Petrolera",
