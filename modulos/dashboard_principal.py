@@ -50,7 +50,7 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
   # Ejemplo de lo que debe ir dentro de dashboard_principal.py
-col1, col2, col3 = st.columns(3)
+     col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.button("🏗️ Ir a Planta"):
