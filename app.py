@@ -1,7 +1,7 @@
 import streamlit as st
 import base64
 
-# --- IMPORTACIONES ---
+# --- IMPORTACIONES DINÁMICAS (ORDENADAS POR CATEGORÍA) ---
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
 from modulos.mapa_campo import mapa_campo
@@ -9,15 +9,16 @@ from modulos.campo_petrolero import campo_petrolero
 from modulos.formulas_produccion import formulas_produccion
 from modulos.entrenamiento_operativo import entrenamiento_operativo
 from modulos.instrucciones_simulador import instrucciones_simulador
+from modulos.planta_produccion import planta_produccion
+from modulos.scada_planta import scada_planta
+from modulos.diagrama_planta import diagrama_planta
+from modulos.ipr_vlp import ipr_vlp
+from modulos.choke_control import choke_control
+from modulos.simulador_fallas import simulador_fallas
+from modulos.evaluacion import evaluacion
+from modulos.alarmas_scada import alarmas_scada
+from modulos.tendencias import tendencias
 
-# Intentar importar módulos avanzados
-try:
-    from modulos.planta_produccion import planta_produccion
-    from modulos.scada_planta import scada_planta
-    from modulos.ipr_vlp import ipr_vlp
-except ImportError:
-    st.warning("Aviso: Algunos módulos de planta no se encontraron.")
-    
 # CONFIGURACION DE PAGINA
 st.set_page_config(
     page_title="IPCL MENFA - Producción Petrolera",
@@ -25,43 +26,37 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- NAVEGACIÓN POR SIDEBAR ---
+# --- SIDEBAR COMPLETO ---
 with st.sidebar:
-    # Espacio para el logo
-    try:
-        st.image("assets/logo_menfa.png", use_column_width=True)
-    except:
-        st.title("IPCL MENFA")
+    st.title("MENFA Simulator")
     
-    st.markdown("### 🛠️ Panel de Simulación")
-    
-    # Agrupamos los módulos por categorías para que sea más ordenado
     categoria = st.radio(
-        "Ir a sección:",
-        ["🏠 Inicio", "📍 Campo y Pozos", "🏢 Planta y SCADA", "📊 Ingeniería y Fórmulas", "🧠 Entrenamiento y Test"]
+        "Seleccione Área de Trabajo:",
+        ["🏠 Inicio", "📍 Campo y Pozos", "🏢 Planta de Proceso", "🖥️ Sistema SCADA", "📊 Ingeniería", "🧠 Evaluación"]
     )
-
+    
     st.markdown("---")
     
-    # Sub-navegación según la categoría seleccionada
+    # Lógica de selección de módulo
     if categoria == "🏠 Inicio":
         menu = "Dashboard"
     
     elif categoria == "📍 Campo y Pozos":
         menu = st.selectbox("Módulo:", ["Mapa del Campo", "Estado del Pozo", "Control de Choke", "Campo Petrolero"])
     
-    elif categoria == "🏢 Planta y SCADA":
-        menu = st.selectbox("Módulo:", ["Planta de Producción", "Sistema SCADA", "Diagrama de Planta"])
+    elif categoria == "🏢 Planta de Proceso":
+        menu = st.selectbox("Módulo:", ["Operación de Planta", "Diagrama de Proceso (P&ID)"])
         
-    elif categoria == "📊 Ingeniería y Fórmulas":
-        menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Fórmulas de Producción", "Flujo Multifásico"])
+    elif categoria == "🖥️ Sistema SCADA":
+        menu = st.selectbox("Módulo:", ["Monitor Principal", "Gestión de Alarmas", "Tendencias Históricas"])
         
-    elif categoria == "🧠 Entrenamiento y Test":
-        menu = st.selectbox("Módulo:", ["Instrucciones", "Entrenamiento Operativo", "Simulador de Fallas", "Examen de Evaluación"])
+    elif categoria == "📊 Ingeniería":
+        menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Cálculos de Producción"])
+        
+    elif categoria == "🧠 Evaluación":
+        menu = st.selectbox("Módulo:", ["Manual de Instrucciones", "Entrenamiento", "Simulador de Fallas", "Examen Final"])
 
-    st.sidebar.info("Usuario: Operador de Planta")
-
-# --- LÓGICA DE VISUALIZACIÓN ---
+# --- RENDERIZADO DE MÓDULOS ---
 
 if menu == "Dashboard":
     dashboard_principal()
@@ -76,32 +71,36 @@ elif menu == "Control de Choke":
 elif menu == "Campo Petrolero":
     campo_petrolero()
 
-# Planta y SCADA
-elif menu == "Planta de Producción":
-    st.header("🏢 Planta de Tratamiento de Crudo")
+# Planta
+elif menu == "Operación de Planta":
     planta_produccion()
-elif menu == "Sistema SCADA":
-    st.header("🖥️ Monitor SCADA Avanzado")
+elif menu == "Diagrama de Proceso (P&ID)":
+    diagrama_planta()
+
+# SCADA
+elif menu == "Monitor Principal":
     scada_planta()
-elif menu == "Diagrama de Planta":
-    # Aquí puedes llamar a diagrama_planta.py si es una visualización estática
-    st.subheader("Esquema de Proceso")
+elif menu == "Gestión de Alarmas":
+    alarmas_scada()
+elif menu == "Tendencias Históricas":
+    tendencias()
 
 # Ingeniería
 elif menu == "Análisis IPR/VLP":
     ipr_vlp()
-elif menu == "Fórmulas de Producción":
+elif menu == "Cálculos de Producción":
     formulas_produccion()
 
-# Entrenamiento
-elif menu == "Instrucciones":
+# Entrenamiento y Evaluación
+elif menu == "Manual de Instrucciones":
     instrucciones_simulador()
+elif menu == "Entrenamiento":
+    entrenamiento_operativo()
 elif menu == "Simulador de Fallas":
     simulador_fallas()
-elif menu == "Examen de Evaluación":
+elif menu == "Examen Final":
     evaluacion()
-    
 
-# PIE DE PAGINA (Se mantiene siempre visible)
+# Pie de página en Sidebar
 st.sidebar.markdown("---")
-st.sidebar.caption("MENFA | Software de Simulación Industrial v2.0")
+st.sidebar.caption("Software de Simulación | Mendoza, Argentina")
