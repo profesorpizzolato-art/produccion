@@ -1,18 +1,9 @@
 import streamlit as st
 
-def choke():
-
-    st.header("Control de Choke")
-
-    apertura = st.slider("Apertura Choke (%)",0,100,40)
-
-    presion = 2000 - (apertura*10)
-
-    produccion = apertura*20
-
-    st.metric("Presión Tubing",presion)
-    st.metric("Producción estimada",produccion)
-
-    if apertura > 80:
-
-        st.warning("Apertura alta")
+def choke_control():
+    st.header("🎮 Control de Choke (Orificio de Restricción)")
+    st.write("Módulo de control de contrapresión del pozo.")
+    
+    # Ejemplo de control
+    apertura = st.slider("Apertura del Choke (%)", 0, 100, 50)
+    st.metric("Presión de Cabezal (whp)", f"{2000 * (1 - apertura/100)} psi")
