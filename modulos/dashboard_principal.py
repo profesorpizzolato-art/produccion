@@ -15,7 +15,7 @@ def dashboard_principal():
             st.session_state.modulo = "pozo"
 
         if st.button("🏭 SCADA Planta"):
-            st.session_state.modulo = "planta"
+            st.session_state.modulo = "planta"   
             
         if st.button("🗺 Mapa del Campo"):
             st.session_state.modulo = "mapa"    
@@ -44,6 +44,33 @@ def dashboard_principal():
             
         if st.button("🛢 Campo Petrolero"):
             st.session_state.modulo = "campo"
+
+        # Ejemplo de lo que debe ir dentro de dashboard_principal.py
+col1, col2, col3 = st.columns(3)
+
+with col1:
+  # Ejemplo de lo que debe ir dentro de dashboard_principal.py
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button("🏗️ Ir a Planta"):
+        st.session_state.modulo = "planta"
+
+with col2:
+    if st.button("📡 Monitor SCADA"):
+        st.session_state.modulo = "scada"
+
+with col3:
+    if st.button("⚙️ Simular Fallas"):
+        st.session_state.modulo = "fallas"
+
+with col2:
+    if st.button("📡 Monitor SCADA"):
+        st.session_state.modulo = "scada"
+
+with col3:
+    if st.button("⚙️ Simular Fallas"):
+        st.session_state.modulo = "fallas"
 import streamlit as st
 
 def dashboard_principal():
