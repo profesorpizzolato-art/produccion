@@ -106,7 +106,11 @@ elif menu == "Simulador de Fallas":
     simulador_fallas()
 elif menu == "Examen Final":
     evaluacion()
-
+# En app.py, dentro de tu lista de módulos:
+modulos_simulador = [
+    # ... tus otros módulos ...,
+    "acciones_supervisor" 
+]
 # Pie de página en Sidebar
 st.sidebar.markdown("---")
 st.sidebar.caption("Software de Simulación | Mendoza, Argentina")
