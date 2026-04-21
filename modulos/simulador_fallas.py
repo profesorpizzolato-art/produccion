@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 
-def fallas():
+def simulador_fallas():
 
     eventos = [
 
