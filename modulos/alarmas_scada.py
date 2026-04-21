@@ -1,6 +1,6 @@
 import streamlit as st
 
-def alarmas():
+def alarmas_scada():
 
     st.header("Sistema de Alarmas")
 
