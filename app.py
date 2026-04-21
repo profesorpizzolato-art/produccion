@@ -24,7 +24,8 @@ from modulos.evaluacion import evaluacion
 from modulos.alarmas_scada import alarmas_scada
 from modulos.tendencias import tendencias
 from modulos.acciones_supervisor import acciones_supervisor # Nuevo módulo
-
+from modulos.reporte_novedades import reporte_novedades
+from modulos.control_perdidas import control_perdidas
 # CONFIGURACION DE PAGINA
 st.set_page_config(
     page_title="IPCL MENFA - Producción Petrolera",
@@ -64,7 +65,11 @@ with st.sidebar:
         
     elif categoria == "🧠 Evaluación":
         menu = st.selectbox("Módulo:", ["Manual de Instrucciones", "Entrenamiento", "Simulador de Fallas", "Examen Final"])
+    elif menu == "Reporte de Novedades":
+    reporte_novedades()
 
+    elif menu == "Control de Pérdidas":
+    control_perdidas() 
 # Sincronización: Si se presiona un botón en el Dashboard, actualizamos el menú
 if "modulo" in st.session_state and st.session_state.modulo != "dashboard":
     # Mapeo de botones de dashboard a nombres del menú del sidebar
