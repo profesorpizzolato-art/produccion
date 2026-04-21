@@ -66,10 +66,10 @@ with st.sidebar:
     elif categoria == "🧠 Evaluación":
         menu = st.selectbox("Módulo:", ["Manual de Instrucciones", "Entrenamiento", "Simulador de Fallas", "Examen Final"])
     elif menu == "Reporte de Novedades":
-    reporte_novedades()
+        reporte_novedades()
 
     elif menu == "Control de Pérdidas":
-    control_perdidas() 
+        control_perdidas() 
 # Sincronización: Si se presiona un botón en el Dashboard, actualizamos el menú
 if "modulo" in st.session_state and st.session_state.modulo != "dashboard":
     # Mapeo de botones de dashboard a nombres del menú del sidebar
