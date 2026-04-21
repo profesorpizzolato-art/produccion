@@ -31,7 +31,7 @@ def dashboard_principal():
         if st.button("🧮 Fórmulas Petroleras", use_container_width=True, key="btn_form"):
             st.session_state.modulo = "formulas"
 
-    # Fila 3: Entrenamiento y Otros
+    # Fila 3: Entrenamiento y Soporte
     st.subheader("🧠 Entrenamiento y Soporte")
     col7, col8, col9 = st.columns(3)
     with col7:
@@ -44,17 +44,23 @@ def dashboard_principal():
         if st.button("⚙️ Simular Fallas", use_container_width=True, key="btn_fallas"):
             st.session_state.modulo = "fallas"
 
-    # Fila 4: GESTIÓN DE SUPERVISOR (Nueva Sección Clase 8)
+    # Fila 4: GESTIÓN DE SUPERVISOR (Basado en Clase 8)
     st.subheader("📋 Liderazgo y Supervisión")
     col10, col11, col12 = st.columns(3)
+    
     with col10:
         if st.button("🔍 Acciones Supervisor", use_container_width=True, key="btn_super"):
             st.session_state.modulo = "supervisor"
-    # Espacios para futuros módulos de gestión (ej: Reportes, Costos)
+    
     with col11:
-        st.button("📝 Reporte de Novedades", use_container_width=True, key="btn_novedades", disabled=True)
+        # Habilitado: Reporte de variaciones diarias y novedades de campo
+        if st.button("📝 Reporte de Novedades", use_container_width=True, key="btn_novedades"):
+            st.session_state.modulo = "reporte_novedades"
+            
     with col12:
-        st.button("💵 Control de Pérdidas", use_container_width=True, key="btn_perdidas", disabled=True)
+        # Habilitado: Seguimiento de performance y prevención de declinación
+        if st.button("💵 Control de Pérdidas", use_container_width=True, key="btn_perdidas"):
+            st.session_state.modulo = "control_perdidas"
 
     st.markdown("---")
 
