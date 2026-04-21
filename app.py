@@ -4,10 +4,9 @@ import sys
 import os
 
 # AGREGAR CARPETA MODULOS AL CAMINO DE PYTHON
-# Esto permite que Python vea tus archivos como si estuvieran en la raíz
 sys.path.append(os.path.join(os.path.dirname(__file__), "modulos"))
 
-# IMPORTACIONES (Tal cual tus nombres de archivo)
+# IMPORTACIONES (Asegúrate de que el archivo acciones_supervisor.py exista en /modulos)
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
 from modulos.mapa_campo import mapa_campo
@@ -24,6 +23,7 @@ from modulos.simulador_fallas import simulador_fallas
 from modulos.evaluacion import evaluacion
 from modulos.alarmas_scada import alarmas_scada
 from modulos.tendencias import tendencias
+from modulos.acciones_supervisor import acciones_supervisor # Nuevo módulo
 
 # CONFIGURACION DE PAGINA
 st.set_page_config(
@@ -38,7 +38,7 @@ with st.sidebar:
     
     categoria = st.radio(
         "Seleccione Área de Trabajo:",
-        ["🏠 Inicio", "📍 Campo y Pozos", "🏢 Planta de Proceso", "🖥️ Sistema SCADA", "📊 Ingeniería", "🧠 Evaluación"]
+        ["🏠 Inicio", "📍 Campo y Pozos", "🏢 Planta de Proceso", "🖥️ Sistema SCADA", "📊 Ingeniería", "📋 Gestión", "🧠 Evaluación"]
     )
     
     st.markdown("---")
@@ -58,10 +58,31 @@ with st.sidebar:
         
     elif categoria == "📊 Ingeniería":
         menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Cálculos de Producción"])
+
+    elif categoria == "📋 Gestión":
+        menu = "Acciones del Supervisor"
         
     elif categoria == "🧠 Evaluación":
         menu = st.selectbox("Módulo:", ["Manual de Instrucciones", "Entrenamiento", "Simulador de Fallas", "Examen Final"])
-    elif modulos_simulador = ["acciones_supervisor"]
+
+# Sincronización: Si se presiona un botón en el Dashboard, actualizamos el menú
+if "modulo" in st.session_state and st.session_state.modulo != "dashboard":
+    # Mapeo de botones de dashboard a nombres del menú del sidebar
+    mapeo = {
+        "pozo": "Estado del Pozo",
+        "mapa": "Mapa del Campo",
+        "campo": "Campo Petrolero",
+        "planta": "Operación de Planta",
+        "formulas": "Cálculos de Producción",
+        "entrenamiento": "Entrenamiento",
+        "manual": "Manual de Instrucciones",
+        "supervisor": "Acciones del Supervisor"
+    }
+    if st.session_state.modulo in mapeo:
+        menu = mapeo[st.session_state.modulo]
+        # Reset para que el sidebar mande de nuevo después de usar el dashboard
+        st.session_state.modulo = "dashboard" 
+
 # --- RENDERIZADO DE MÓDULOS ---
 
 if menu == "Dashboard":
@@ -97,6 +118,10 @@ elif menu == "Análisis IPR/VLP":
 elif menu == "Cálculos de Producción":
     formulas_produccion()
 
+# Gestión (Info de la Clase 8)
+elif menu == "Acciones del Supervisor":
+    acciones_supervisor()
+
 # Entrenamiento y Evaluación
 elif menu == "Manual de Instrucciones":
     instrucciones_simulador()
@@ -106,9 +131,6 @@ elif menu == "Simulador de Fallas":
     simulador_fallas()
 elif menu == "Examen Final":
     evaluacion()
-elif st.session_state.modulo == "supervisor":
-    if st.button("⬅ Volver"): st.session_state.modulo = "dashboard"
-    mods["acciones_supervisor"]()    
 
 # Pie de página en Sidebar
 st.sidebar.markdown("---")
