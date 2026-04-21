@@ -52,7 +52,10 @@ def dashboard_principal():
     with col9:
         if st.button("⚙️ Simular Fallas", use_container_width=True, key="btn_fallas"):
             st.session_state.modulo = "fallas"
-
+    # En modulos/dashboard_principal.py, dentro de la tercera fila:
+    with co19: # O una nueva columna
+        if st.button("📋 Acciones Supervisor", use_container_width=True, key="btn_super"):
+            st.session_state.modulo = "supervisor"
     st.markdown("---")
 
     # Métricas en tiempo real
