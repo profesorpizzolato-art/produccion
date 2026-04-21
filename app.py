@@ -61,7 +61,7 @@ with st.sidebar:
         
     elif categoria == "🧠 Evaluación":
         menu = st.selectbox("Módulo:", ["Manual de Instrucciones", "Entrenamiento", "Simulador de Fallas", "Examen Final"])
-
+    elif modulos_simulador = ["acciones_supervisor"]
 # --- RENDERIZADO DE MÓDULOS ---
 
 if menu == "Dashboard":
@@ -106,11 +106,10 @@ elif menu == "Simulador de Fallas":
     simulador_fallas()
 elif menu == "Examen Final":
     evaluacion()
-# En app.py, dentro de tu lista de módulos:
-modulos_simulador = [
-    # ... tus otros módulos ...,
-    "acciones_supervisor" 
-]
+elif st.session_state.modulo == "supervisor":
+    if st.button("⬅ Volver"): st.session_state.modulo = "dashboard"
+    mods["acciones_supervisor"]()    
+
 # Pie de página en Sidebar
 st.sidebar.markdown("---")
 st.sidebar.caption("Software de Simulación | Mendoza, Argentina")
