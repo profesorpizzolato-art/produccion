@@ -39,9 +39,11 @@ except ImportError:
 # CONFIGURACION DE PAGINA
 st.set_page_config(page_title="IPCL MENFA - Producción Petrolera 3.0", layout="wide")
 
-# --- ESTADO DE SESIÓN ---
+# --- ESTADO DE SESIÓN (Inicialización segura) ---
 if 'ingresado' not in st.session_state:
     st.session_state.ingresado = False
+if 'rol' not in st.session_state:
+    st.session_state.rol = "alumno"  # Valor por defecto para evitar el AttributeError
 
 # --- PANTALLA DE ACCESO ---
 if not st.session_state.ingresado:
