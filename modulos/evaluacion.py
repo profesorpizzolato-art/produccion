@@ -1,3 +1,4 @@
+
 import streamlit as st
 from modulos.banco_preguntas import CUESTIONARIO_PRODUCCION
 
@@ -23,3 +24,39 @@ def generar_evaluacion():
 
 # Llamada en tu app principal
 # generar_evaluacion()
+ import streamlit as st
+
+# Aquí iría tu lista de preguntas (o importada desde banco_preguntas)
+preguntas = [
+    {
+        "pregunta": "Función del separador trifásico",
+        "opciones": ["Separar petroleo gas agua", "Aumentar presión", "Reducir temperatura"],
+        "respuesta": 0 # El índice de la opción correcta
+    },
+    # Podés seguir agregando más aquí...
+]
+
+def evaluacion():
+    st.title("📝 Evaluación de Producción")
+    
+    for i, item in enumerate(preguntas):
+        st.subheader(f"Pregunta {i+1}")
+        
+        # Mostramos la pregunta
+        opcion_seleccionada = st.radio(
+            item["pregunta"], 
+            item["opciones"], 
+            key=f"preg_{i}"
+        )
+        
+        if st.button("Validar", key=f"btn_{i}"):
+            # Obtenemos el texto de la respuesta correcta usando el índice
+            indice_correcto = item["respuesta"]
+            texto_correcto = item["opciones"][indice_correcto]
+            
+            if opcion_seleccionada == texto_correcto:
+                st.success("✅ Correcto")
+            else:
+                st.error(f"❌ Incorrecto. La respuesta era: {texto_correcto}")
+        
+        st.divider()
