@@ -51,3 +51,16 @@ def planta_produccion():
         colG.warning("Producción baja")
     else:
         colG.success("Producción estable")
+import streamlit as st
+
+def planta_produccion():
+    st.title("🏭 Planta de Producción")
+
+    temp = st.slider("Temperatura separador (°C)", 20, 120, 60)
+    nivel = st.slider("Nivel tanque (%)", 0, 100, 50)
+
+    st.write(f"Temperatura: {temp} °C")
+    st.write(f"Nivel: {nivel}%")
+
+    if nivel > 80:
+        st.warning("Nivel alto en tanque")
