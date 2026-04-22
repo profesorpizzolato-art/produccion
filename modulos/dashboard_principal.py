@@ -2,7 +2,7 @@ import streamlit as st
 
 def dashboard_principal():
     st.title("Centro de Control MENFA")
-    st.markdown("### Simulador de Producción Petrolera")
+    st.markdown("### Simulador de Producción Petrolera 3.0")
     st.markdown("---")
 
     # Fila 1: Operaciones de Pozo y Campo
@@ -32,17 +32,21 @@ def dashboard_principal():
             st.session_state.modulo = "formulas"
 
     # Fila 3: Entrenamiento y Soporte
-    st.subheader("🧠 Entrenamiento y Soporte")
+    st.subheader("🧠 Entrenamiento y Evaluación")
     col7, col8, col9 = st.columns(3)
     with col7:
-        if st.button("⚠ Entrenamiento", use_container_width=True, key="btn_entren"):
+        if st.button("⚠ Entrenamiento Operativo", use_container_width=True, key="btn_entren"):
             st.session_state.modulo = "entrenamiento"
     with col8:
-        if st.button("📘 Manual Simulador", use_container_width=True, key="btn_manual"):
+        if st.button("📘 Manual del Simulador", use_container_width=True, key="btn_manual"):
             st.session_state.modulo = "manual"
     with col9:
-        if st.button("⚙️ Simular Fallas", use_container_width=True, key="btn_fallas"):
-            st.session_state.modulo = "fallas"
+        # Lógica de Seguridad: Solo el Instructor puede ver el botón de Fallas
+        if st.session_state.rol == "instructor":
+            if st.button("⚙️ PANEL INSTRUCTOR: Fallas", use_container_width=True, key="btn_fallas"):
+                st.session_state.modulo = "fallas"
+        else:
+            st.button("⚙️ Sistema Operativo: OK", use_container_width=True, key="btn_fallas_dis", disabled=True)
 
     # Fila 4: GESTIÓN DE SUPERVISOR (Basado en Clase 8)
     st.subheader("📋 Liderazgo y Supervisión")
@@ -53,20 +57,20 @@ def dashboard_principal():
             st.session_state.modulo = "supervisor"
     
     with col11:
-        # Habilitado: Reporte de variaciones diarias y novedades de campo
         if st.button("📝 Reporte de Novedades", use_container_width=True, key="btn_novedades"):
             st.session_state.modulo = "reporte_novedades"
             
     with col12:
-        # Habilitado: Seguimiento de performance y prevención de declinación
         if st.button("💵 Control de Pérdidas", use_container_width=True, key="btn_perdidas"):
             st.session_state.modulo = "control_perdidas"
 
     st.markdown("---")
 
-    # Métricas en tiempo real
-    st.subheader("Estado General del Campo")
+    # Métricas en tiempo real (Simuladas)
+    st.subheader("Estado General del Campo (Mendoza)")
     colA, colB, colC = st.columns(3)
-    colA.metric("Producción Total", "1850 BPD")
-    colB.metric("Presión Separador", "120 psi")
-    colC.metric("Pozos Activos", "6")
+    colA.metric("Producción Total", "1850 BPD", "+12 BPD")
+    colB.metric("Presión de Separador", "120 psi", "-2 psi")
+    colC.metric("Pozos en Operación", "6", "Activos")
+
+    st.sidebar.info(f"Sesión iniciada como: {st.session_state.rol.capitalize()}")
