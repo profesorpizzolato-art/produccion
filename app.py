@@ -24,7 +24,7 @@ from modulos.evaluacion import evaluacion
 from modulos.alarmas_scada import alarmas_scada
 from modulos.tendencias import tendencias
 from modulos.acciones_supervisor import acciones_supervisor
-from modulos.reporte_novedades import report_novedades # Nota: revisa si es reporte_novedades o report_novedades
+from modulos.reporte_novedades import reporte_novedades
 from modulos.control_perdidas import control_perdidas
 
 # CONFIGURACION DE PAGINA
