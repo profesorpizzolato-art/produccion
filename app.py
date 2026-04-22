@@ -35,41 +35,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- MANUAL DE ESTILO PERSONALIZADO (CSS) ---
-st.markdown("""
-    <style>
-    /* Fondo principal y fuentes */
-    .main { background-color: #f8f9fa; }
-    
-    /* Personalización de botones */
-    .stButton>button {
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s;
-        border: none;
-    }
-    .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
-    /* Estilo del Sidebar */
-    [data-testid="stSidebar"] {
-        background-color: #1e272e;
-    }
-    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] .stRadioLabel {
-        color: #ffffff !important;
-    }
-    
-    /* Tarjetas de métricas */
-    [data-testid="stMetricValue"] {
-        color: #E67E22;
-        font-weight: bold;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# --- ESTADO DE SESIÓN (LOGIN Y ROLES) ---
+# --- ESTADO DE SESIÓN ---
 if 'ingresado' not in st.session_state:
     st.session_state.ingresado = False
 if 'rol' not in st.session_state:
@@ -77,115 +43,116 @@ if 'rol' not in st.session_state:
 if 'modulo' not in st.session_state:
     st.session_state.modulo = "dashboard"
 
-# --- PANTALLA DE INICIO / CARÁTULA ---
+# --- MANUAL DE ESTILO PERSONALIZADO ---
+st.markdown("""
+    <style>
+    .main { background-color: #f8f9fa; }
+    .stButton>button { border-radius: 8px; font-weight: 600; }
+    [data-testid="stSidebar"] { background-color: #1e272e; }
+    [data-testid="stSidebar"] .stMarkdown { color: #ffffff !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
+# --- PANTALLA DE INICIO ---
 if not st.session_state.ingresado:
     col1, col_center, col3 = st.columns([1, 2, 1])
-    
     with col_center:
         st.markdown("<h1 style='text-align: center; color: #E67E22;'>IPCL MENFA</h1>", unsafe_allow_html=True)
-        st.markdown("<h2 style='text-align: center; color: #34495E;'>SIMULADOR DE PRODUCCIÓN 3.0</h2>", unsafe_allow_html=True)
-        st.image("assets/logo_menfa.png", caption="Centro de Entrenamiento Tecnológico - Mendoza")
-        
+        st.image("assets/logo_menfa.png", caption="Capacitación Técnica Profesional")
         with st.container(border=True):
-            st.markdown("#### 🔐 Acceso Profesional al Sistema")
+            st.markdown("#### 🔐 Acceso al Sistema")
             usuario = st.text_input("Usuario")
             clave = st.text_input("Contraseña", type="password")
-            
-            if st.button("INGRESAR AL SIMULADOR", use_container_width=True):
-                if usuario == "admin" and clave == "menfa2026":
+            if st.button("INGRESAR", use_container_width=True):
+                if (usuario == "admin" and clave == "menfa2026") or (usuario == "alumno" and clave == "alumno2026"):
                     st.session_state.ingresado = True
-                    st.session_state.rol = "instructor"
-                    st.rerun()
-                elif usuario == "alumno" and clave == "alumno2026":
-                    st.session_state.ingresado = True
-                    st.session_state.rol = "alumno"
+                    st.session_state.rol = "instructor" if usuario == "admin" else "alumno"
                     st.rerun()
                 else:
                     st.error("Credenciales incorrectas")
     st.stop()
 
-# --- SIDEBAR (Solo visible tras login) ---
+# --- SIDEBAR ---
 with st.sidebar:
-    # Espacio para el Logo (Asegúrate de tener el archivo o usar una URL)
     st.markdown("<h2 style='text-align: center; color: #E67E22;'>MENFA</h2>", unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align: center;'>Bienvenido, <b>{st.session_state.rol.upper()}</b></p>", unsafe_allow_html=True)
-    
     if st.button("🚪 Cerrar Sesión"):
-        st.session_state.ingresado = False
-        st.session_state.rol = None
+        st.session_state.clear()
         st.rerun()
     
     st.markdown("---")
-    categoria = st.radio(
-        "Área de Trabajo:",
-        ["🏠 Inicio", "📍 Campo y Pozos", "🏢 Planta de Proceso", "🖥️ Sistema SCADA", "📊 Ingeniería", "📋 Gestión", "🧠 Evaluación"]
-    )
+    categoria = st.radio("Área de Trabajo:", ["🏠 Inicio", "📍 Campo y Pozos", "🏢 Planta de Proceso", "🖥️ Sistema SCADA", "📊 Ingeniería", "📋 Gestión", "🧠 Evaluación"])
     
-    # Lógica de selección
-    if categoria == "🏠 Inicio":
-        menu = "Dashboard"
-    elif categoria == "📍 Campo y Pozos":
-        menu = st.selectbox("Módulo:", ["Mapa del Campo", "Estado del Pozo", "Control de Choke", "Campo Petrolero"])
-    elif categoria == "🏢 Planta de Proceso":
-        menu = st.selectbox("Módulo:", ["Operación de Planta", "Diagrama de Proceso (P&ID)"])
-    elif categoria == "🖥️ Sistema SCADA":
-        menu = st.selectbox("Módulo:", ["Monitor Principal", "Gestión de Alarmas", "Tendencias Históricas"])
-    elif categoria == "📊 Ingeniería":
-        menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Cálculos de Producción"])
-    elif categoria == "📋 Gestión":
-        menu = st.selectbox("Módulo:", ["Acciones del Supervisor", "Reporte de Novedades", "Control de Pérdidas", "Protocolos de Intervención"])
+    if categoria == "🏠 Inicio": menu = "Dashboard"
+    elif categoria == "📍 Campo y Pozos": menu = st.selectbox("Módulo:", ["Mapa del Campo", "Estado del Pozo", "Control de Choke", "Campo Petrolero"])
+    elif categoria == "🏢 Planta de Proceso": menu = st.selectbox("Módulo:", ["Operación de Planta", "Diagrama de Proceso (P&ID)"])
+    elif categoria == "🖥️ Sistema SCADA": menu = st.selectbox("Módulo:", ["Monitor Principal", "Gestión de Alarmas", "Tendencias Históricas"])
+    elif categoria == "📊 Ingeniería": menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Cálculos de Producción"])
+    elif categoria == "📋 Gestión": menu = st.selectbox("Módulo:", ["Acciones del Supervisor", "Reporte de Novedades", "Control de Pérdidas", "Protocolos de Intervención"])
     elif categoria == "🧠 Evaluación":
         opciones_eval = ["Manual de Instrucciones", "Entrenamiento", "Examen Final"]
-        if st.session_state.rol == "instructor":
-            opciones_eval.insert(2, "Simulador de Fallas")
+        if st.session_state.rol == "instructor": opciones_eval.insert(2, "Simulador de Fallas")
         menu = st.selectbox("Módulo:", opciones_eval)
 
-    # --- BOT GUÍA / ASISTENTE DE NORMATIVAS ---
+    # --- ASISTENTE TÉCNICO (Basado en Clase 12 y Documentos de Pesca) ---
     st.markdown("---")
     with st.expander("🤖 ASISTENTE TÉCNICO IPCL", expanded=True):
-        st.caption("Normativa: Res. SE 120/17 | API Standards")
-        if categoria == "📊 Ingeniería":
-            st.info("💡 **Guía:** Las curvas IPR/VLP son esenciales para determinar el punto de operación óptimo del pozo.")
-        elif categoria == "🏢 Planta de Proceso":
-            st.warning("🚨 **Protocolo:** Verifique la presión de los separadores antes de cualquier maniobra de bypass.")
-        elif categoria == "🖥️ Sistema SCADA":
-            st.success("📱 **Monitorización:** El tiempo de refresco está sincronizado con los PLC del campo.")
+        if menu == "Protocolos de Intervención":
+            st.warning("⚠️ **Ahogue de Pozo (Clase 12):** Bombear al máximo caudal sin exceder las 1.000 psi.")
+        elif menu == "Estado del Pozo":
+            st.info("💡 **Herramientas (Clase 12):** Verifique estado de llaves Stillson y mordazas antes de operar.")
         else:
-            st.write("Seleccione un módulo para recibir asistencia técnica.")
+            st.write("Seleccione un módulo operativo para recibir guías técnicas.")
 
-# --- SINCRONIZACIÓN DASHBOARD ---
-if st.session_state.modulo != "dashboard":
-    mapeo = {
-        "pozo": "Estado del Pozo", "mapa": "Mapa del Campo", "campo": "Campo Petrolero",
-        "planta": "Operación de Planta", "formulas": "Cálculos de Producción",
-        "entrenamiento": "Entrenamiento", "manual": "Manual de Instrucciones",
-        "supervisor": "Acciones del Supervisor", "reporte_novedades": "Reporte de Novedades",
-        "control_perdidas": "Control de Pérdidas", "fallas": "Simulador de Fallas"
-    }
-    if st.session_state.modulo in mapeo:
-        menu = mapeo[st.session_state.modulo]
-    st.session_state.modulo = "dashboard"
+# --- LÓGICA DE CHECKLIST CONTEXTUAL ---
+def render_modulo(nombre_menu):
+    # Definimos módulos que requieren checklist de seguridad según tus programas de pozo
+    modulos_operativos = ["Estado del Pozo", "Control de Choke", "Protocolos de Intervención"]
+    
+    if nombre_menu in modulos_operativos:
+        st.subheader(f"🛡️ Validación de Seguridad: {nombre_menu}")
+        with st.container(border=True):
+            st.caption("Referencia: Programas de Pozo 1er y 2do Caso (Vástago/Varilla)")
+            col1, col2 = st.columns(2)
+            with col1:
+                # Datos sacados de tus documentos
+                s1 = st.checkbox("Verificación de boca de pozo y descompresión")
+                s2 = st.checkbox("Charla de seguridad y medio ambiente realizada")
+            with col2:
+                s3 = st.checkbox("Checklist de equipo montado (Jefe de Equipo + CoMan)")
+                s4 = st.checkbox("EPP y Kit de derrames verificado")
+            
+            if s1 and s2 and s3 and s4:
+                st.success("✅ Protocolo verificado. Habilitando comandos técnicos.")
+                ejecutar_modulo(nombre_menu)
+            else:
+                st.error("🔒 Comandos bloqueados por seguridad.")
+    else:
+        ejecutar_modulo(nombre_menu)
 
-# --- RENDERIZADO DE MÓDULOS ---
-if menu == "Dashboard": dashboard_principal()
-elif menu == "Mapa del Campo": mapa_campo()
-elif menu == "Estado del Pozo": pozo_productor()
-elif menu == "Control de Choke": choke_control()
-elif menu == "Campo Petrolero": campo_petrolero()
-elif menu == "Operación de Planta": planta_produccion()
-elif menu == "Diagrama de Proceso (P&ID)": diagrama_planta()
-elif menu == "Monitor Principal": scada_planta()
-elif menu == "Gestión de Alarmas": alarmas_scada()
-elif menu == "Tendencias Históricas": tendencias()
-elif menu == "Análisis IPR/VLP": ipr_vlp()
-elif menu == "Cálculos de Producción": formulas_produccion()
-elif menu == "Acciones del Supervisor": acciones_supervisor()
-elif menu == "Reporte de Novedades": reporte_novedades()
-elif menu == "Control de Pérdidas": control_perdidas()
-elif menu == "Manual de Instrucciones": instrucciones_simulador()
-elif menu == "Entrenamiento": entrenamiento_operativo()
-elif menu == "Simulador de Fallas": simulador_fallas()
-elif menu == "Examen Final": evaluacion()
+def ejecutar_modulo(m):
+    if m == "Dashboard": dashboard_principal()
+    elif m == "Mapa del Campo": mapa_campo()
+    elif m == "Estado del Pozo": pozo_productor()
+    elif m == "Control de Choke": choke_control()
+    elif m == "Campo Petrolero": campo_petrolero()
+    elif m == "Operación de Planta": planta_produccion()
+    elif m == "Diagrama de Proceso (P&ID)": diagrama_planta()
+    elif m == "Monitor Principal": scada_planta()
+    elif m == "Gestión de Alarmas": alarmas_scada()
+    elif m == "Tendencias Históricas": tendencias()
+    elif m == "Análisis IPR/VLP": ipr_vlp()
+    elif m == "Cálculos de Producción": formulas_produccion()
+    elif m == "Acciones del Supervisor": acciones_supervisor()
+    elif m == "Reporte de Novedades": reporte_novedades()
+    elif m == "Control de Pérdidas": control_perdidas()
+    elif m == "Manual de Instrucciones": instrucciones_simulador()
+    elif m == "Entrenamiento": entrenamiento_operativo()
+    elif m == "Simulador de Fallas": simulador_fallas()
+    elif m == "Examen Final": evaluacion()
+    elif m == "Protocolos de Intervención": protocolos_intervencion()
+
+# Inicio del renderizado
+render_modulo(menu)
 
 st.sidebar.markdown("---")
 st.sidebar.caption("MENFA 3.0 | Mendoza, Argentina")
