@@ -26,6 +26,7 @@ from modulos.tendencias import tendencias
 from modulos.acciones_supervisor import acciones_supervisor
 from modulos.reporte_novedades import reporte_novedades
 from modulos.control_perdidas import control_perdidas
+from modulos.protocolos_intervencion import protocolos_intervencion
 
 # CONFIGURACION DE PAGINA
 st.set_page_config(
@@ -132,7 +133,7 @@ with st.sidebar:
     elif categoria == "📊 Ingeniería":
         menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Cálculos de Producción"])
     elif categoria == "📋 Gestión":
-        menu = st.selectbox("Módulo:", ["Acciones del Supervisor", "Reporte de Novedades", "Control de Pérdidas"])
+        menu = st.selectbox("Módulo:", ["Acciones del Supervisor", "Reporte de Novedades", "Control de Pérdidas", "Protocolos de Intervención"])
     elif categoria == "🧠 Evaluación":
         opciones_eval = ["Manual de Instrucciones", "Entrenamiento", "Examen Final"]
         if st.session_state.rol == "instructor":
