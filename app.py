@@ -6,7 +6,7 @@ import os
 # AGREGAR CARPETA MODULOS AL CAMINO DE PYTHON
 sys.path.append(os.path.join(os.path.dirname(__file__), "modulos"))
 
-# --- IMPORTACIONES ---
+# --- IMPORTACIONES DE MÓDULOS ---
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
 from modulos.mapa_campo import mapa_campo
@@ -28,24 +28,28 @@ from modulos.reporte_novedades import reporte_novedades
 from modulos.control_perdidas import control_perdidas
 from modulos.protocolos_intervencion import protocolos_intervencion
 
-# IMPORTACIONES DIFERENCIADAS (Con manejo de error para que la App no se caiga)
+# INTENTO DE IMPORTACIÓN DE LOS NUEVOS MÓDULOS (Con manejo de error)
 try:
     from modulos.gestion_supervisor_prod import gestion_supervisor_prod
     from modulos.gestion_company_man import gestion_company_man
 except ImportError:
-    def gestion_supervisor_prod(): st.error("Módulo de Supervisor no encontrado.")
-    def gestion_company_man(): st.error("Módulo de Company Man no encontrado.")
+    def gestion_supervisor_prod(): st.error("Módulo 'gestion_supervisor_prod.py' no encontrado.")
+    def gestion_company_man(): st.error("Módulo 'gestion_company_man.py' no encontrado.")
 
-# CONFIGURACION DE PAGINA
-st.set_page_config(page_title="IPCL MENFA - Producción Petrolera 3.0", layout="wide")
+# --- CONFIGURACIÓN DE PÁGINA ---
+st.set_page_config(
+    page_title="IPCL MENFA - Producción Petrolera 3.0",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# --- ESTADO DE SESIÓN (Inicialización segura) ---
+# --- INICIALIZACIÓN DEL ESTADO DE SESIÓN (Para evitar AttributeErrors) ---
 if 'ingresado' not in st.session_state:
     st.session_state.ingresado = False
 if 'rol' not in st.session_state:
-    st.session_state.rol = "alumno"  # Valor por defecto para evitar el AttributeError
+    st.session_state.rol = "alumno"  # Valor por defecto seguro
 
-# --- PANTALLA DE ACCESO ---
+# --- LÓGICA DE LOGIN ---
 if not st.session_state.ingresado:
     col1, col_center, col3 = st.columns([1, 2, 1])
     with col_center:
@@ -58,12 +62,13 @@ if not st.session_state.ingresado:
             if st.button("INGRESAR", use_container_width=True):
                 if (usuario == "admin" and clave == "menfa2026") or (usuario == "alumno" and clave == "alumno2026"):
                     st.session_state.ingresado = True
+                    st.session_state.rol = "instructor" if usuario == "admin" else "alumno"
                     st.rerun()
                 else:
                     st.error("Credenciales incorrectas")
     st.stop()
 
-# --- SIDEBAR: DEFINICIÓN DE MENÚ ---
+# --- DEFINICIÓN DEL MENÚ LATERAL (SIDEBAR) ---
 with st.sidebar:
     st.markdown("<h2 style='text-align: center; color: #E67E22;'>MENFA</h2>", unsafe_allow_html=True)
     if st.button("🚪 Cerrar Sesión"):
@@ -73,18 +78,19 @@ with st.sidebar:
     st.markdown("---")
     categoria = st.radio("Área de Trabajo:", ["🏠 Inicio", "📍 Campo y Pozos", "🏢 Planta de Proceso", "🖥️ Sistema SCADA", "📊 Ingeniería", "📋 Gestión", "🧠 Evaluación"])
     
+    # Mapeo de sub-menús (Asegurando coincidencia exacta para ejecutar_modulo)
     if categoria == "🏠 Inicio": 
-        menu = "Dashboard"
+        nombre_menu = "Dashboard"
     elif categoria == "📍 Campo y Pozos": 
-        menu = st.selectbox("Módulo:", ["Mapa del Campo", "Estado del Pozo", "Control de Choke", "Campo Petrolero"])
+        nombre_menu = st.selectbox("Módulo:", ["Mapa del Campo", "Estado del Pozo", "Control de Choke", "Campo Petrolero"])
     elif categoria == "🏢 Planta de Proceso": 
-        menu = st.selectbox("Módulo:", ["Operación de Planta", "Diagrama de Proceso (P&ID)"])
+        nombre_menu = st.selectbox("Módulo:", ["Operación de Planta", "Diagrama de Proceso (P&ID)"])
     elif categoria == "🖥️ Sistema SCADA": 
-        menu = st.selectbox("Módulo:", ["Monitor Principal", "Gestión de Alarmas", "Tendencias Históricas"])
+        nombre_menu = st.selectbox("Módulo:", ["Monitor Principal", "Gestión de Alarmas", "Tendencias Históricas"])
     elif categoria == "📊 Ingeniería": 
-        menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Cálculos de Producción"])
+        nombre_menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Cálculos de Producción"])
     elif categoria == "📋 Gestión": 
-        menu = st.selectbox("Módulo:", [
+        nombre_menu = st.selectbox("Módulo:", [
             "Control de Producción (Supervisor)", 
             "Operaciones de Campo (Company Man)",
             "Reporte de Novedades", 
@@ -92,68 +98,57 @@ with st.sidebar:
             "Protocolos de Intervención"
         ])
     elif categoria == "🧠 Evaluación":
-        menu = st.selectbox("Módulo:", ["Manual de Instrucciones", "Entrenamiento", "Examen Final"])
+        opciones_eval = ["Manual de Instrucciones", "Entrenamiento", "Examen Final"]
+        if st.session_state.rol == "instructor": opciones_eval.insert(2, "Simulador de Fallas")
+        nombre_menu = st.selectbox("Módulo:", opciones_eval)
 
-# --- LÓGICA DE EJECUCIÓN (RENDER) ---
+# --- MOTOR DE EJECUCIÓN ---
 def ejecutar_modulo(m):
-    # INICIO
     if m == "Dashboard": dashboard_principal()
-    
-    # CAMPO Y POZOS
     elif m == "Mapa del Campo": mapa_campo()
     elif m == "Estado del Pozo": pozo_productor()
     elif m == "Control de Choke": choke_control()
     elif m == "Campo Petrolero": campo_petrolero()
-    
-    # PLANTA DE PROCESO
     elif m == "Operación de Planta": planta_produccion()
     elif m == "Diagrama de Proceso (P&ID)": diagrama_planta()
-    
-    # SISTEMA SCADA
     elif m == "Monitor Principal": scada_planta()
     elif m == "Gestión de Alarmas": alarmas_scada()
     elif m == "Tendencias Históricas": tendencias()
-    
-    # INGENIERÍA
     elif m == "Análisis IPR/VLP": ipr_vlp()
     elif m == "Cálculos de Producción": formulas_produccion()
-    
-    # GESTIÓN (AQUÍ ESTÁ LA CLAVE)
     elif m == "Control de Producción (Supervisor)": gestion_supervisor_prod()
     elif m == "Operaciones de Campo (Company Man)": gestion_company_man()
     elif m == "Reporte de Novedades": reporte_novedades()
     elif m == "Control de Pérdidas": control_perdidas()
     elif m == "Protocolos de Intervención": protocolos_intervencion()
-    
-    # EVALUACIÓN
     elif m == "Manual de Instrucciones": instrucciones_simulador()
     elif m == "Entrenamiento": entrenamiento_operativo()
     elif m == "Simulador de Fallas": simulador_fallas()
     elif m == "Examen Final": evaluacion()
-        
-# --- CONTROL DE SEGURIDAD ---
-modulos_con_seguridad = ["Estado del Pozo", "Control de Choke", "Protocolos de Intervención", "Operaciones de Campo (Company Man)"]
 
-if menu in modulos_con_seguridad:
-    st.subheader(f"🛡️ Validación de Seguridad: {menu}")
+# --- CONTROL DE SEGURIDAD PARA MÓDULOS CRÍTICOS ---
+modulos_criticos = ["Estado del Pozo", "Control de Choke", "Protocolos de Intervención", "Operaciones de Campo (Company Man)"]
+
+if nombre_menu in modulos_criticos:
+    st.subheader(f"🛡️ Validación de Seguridad: {nombre_menu}")
     with st.container(border=True):
-        st.caption("Referencia: Programas de Pozo (Clase 12)")
+        st.caption("Protocolos según Clase 11 y 12")
         c1, c2 = st.columns(2)
         with c1:
-            s1 = st.checkbox("Boca de pozo descomprimida a pileta")
+            s1 = st.checkbox("Boca de pozo descomprimida")
             s2 = st.checkbox("Charla de seguridad realizada")
         with c2:
-            s3 = st.checkbox("Checklist de equipo verificado")
-            s4 = st.checkbox("EPP y Kit de derrames ok")
+            s3 = st.checkbox("Equipo verificado")
+            s4 = st.checkbox("Kit de derrames OK")
         
         if s1 and s2 and s3 and s4:
-            st.success("Acceso habilitado.")
-            ejecutar_modulo(menu)
+            st.success("✅ Acceso habilitado.")
+            ejecutar_modulo(nombre_menu)
         else:
-            st.error("🔒 Comandos bloqueados por seguridad.")
+            st.error("🔒 Complete los puntos de seguridad para operar.")
 else:
-    # SI NO ES CRÍTICO (PLANTA, INGENIERÍA, ETC), SE EJECUTA DIRECTO
-    ejecutar_modulo(menu)
+    # Planta, Ingeniería y Dashboard se ejecutan directamente
+    ejecutar_modulo(nombre_menu)
 
 st.sidebar.markdown("---")
 st.sidebar.caption("MENFA 3.0 | Mendoza, Argentina")
