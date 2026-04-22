@@ -8,7 +8,7 @@ assets
 │   logo_menfa.png
 │
 modulos
-│
+│   __ init__.py
 │   dashboard_principal.py
 │   pozo_productor.py
 │   planta_produccion.py
@@ -17,7 +17,48 @@ modulos
 │   ipr_vlp.py
 │   bomba_mecanica.py
 │   dinamometro.py
-│   init__.py
-    gestion_supervisor_prod.py
+│   gestion_supervisor_prod.py
+
+acciones_supervisor.py
+alarmas.py
+alarmas_scada.py
+banco_preguntas.py
+bomba_mecanica.py
+campo_petrolero.py
+certificado.py
+checklist_operativo.py
+choke_control.py
+control_perdidas.py
+corte_agua.py
+dashboard.py
+dashboard_principal.py
+diagrama_planta.py
+dinamometro.py
+eficiencia_separador.py
+entrenamiento_operativo.py
+eventos_operativos.py
+flujo_multifasico.py
+formulas_produccion.py
+gestion_company_man.py
+gestion_supervisor_prod.py
+instrucciones_simulador.py
+ipr_vlp.py
+manifold_avanzado.py
+mapa_campo.py
+modelo_pozo.py
+modelo_reservorio.py
+motor_simulacion.py
+panel_operador.py
+planta_produccion.py
+pozo_productor.py
+presiones_pozo.py
+protocolos_intervencion.py
+reporte_novedades.py
+scada.py
+scada_avanzado.py
+scada_planta.py
+simulacion_produccion.py
+simulador_fallas.py
+tendencias.py
     evaluacion.py
 │   certificado.py
