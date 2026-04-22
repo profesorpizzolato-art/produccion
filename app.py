@@ -95,7 +95,7 @@ if not st.session_state.ingresado:
                     st.session_state.ingresado = True
                     st.session_state.rol = "instructor"
                     st.rerun()
-                elif usuario == "alumno" and clave == "ypf2026":
+                elif usuario == "alumno" and clave == "alumno2026":
                     st.session_state.ingresado = True
                     st.session_state.rol = "alumno"
                     st.rerun()
