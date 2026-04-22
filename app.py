@@ -83,7 +83,7 @@ if not st.session_state.ingresado:
     with col_center:
         st.markdown("<h1 style='text-align: center; color: #E67E22;'>IPCL MENFA</h1>", unsafe_allow_html=True)
         st.markdown("<h2 style='text-align: center; color: #34495E;'>SIMULADOR DE PRODUCCIÓN 3.0</h2>", unsafe_allow_html=True)
-        st.image("https://images.unsplash.com/photo-1516195851888-6f1a981a862e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", caption="Centro de Entrenamiento Tecnológico - Mendoza")
+        st.image("assets/ logo_menfa.png", caption="Centro de Entrenamiento Tecnológico - Mendoza")
         
         with st.container(border=True):
             st.markdown("#### 🔐 Acceso Profesional al Sistema")
