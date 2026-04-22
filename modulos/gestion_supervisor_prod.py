@@ -84,5 +84,11 @@ def gestion_supervisor_prod():
             st.balloons()
             st.success("Informe de gestión enviado satisfactoriamente.")
 
+    st.title("📋 Supervisión")
+
+    st.text_area("Observaciones del instructor")
+
+    if st.button("Guardar reporte"):
+        st.success("Reporte guardado")
     st.divider()
     st.caption("Módulos actualizados con datos de: Separadores.docx, Plantas de Tratamiento.pptx y PDVSA Monagas.")
