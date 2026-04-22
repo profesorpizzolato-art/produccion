@@ -17,6 +17,7 @@ modulos
 │   ipr_vlp.py
 │   bomba_mecanica.py
 │   dinamometro.py
-│   evaluacion.py
+│   init__.py
+    gestion_supervisor_prod.py
+    evaluacion.py
 │   certificado.py
-│
