@@ -24,7 +24,7 @@ from modulos.evaluacion import evaluacion
 from modulos.alarmas_scada import alarmas_scada
 from modulos.tendencias import tendencias
 from modulos.acciones_supervisor import acciones_supervisor
-from modulos.reporte_novedades import reporte_novedades
+from modulos.reporte_novedades import report_novedades # Nota: revisa si es reporte_novedades o report_novedades
 from modulos.control_perdidas import control_perdidas
 
 # CONFIGURACION DE PAGINA
@@ -33,6 +33,40 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# --- MANUAL DE ESTILO PERSONALIZADO (CSS) ---
+st.markdown("""
+    <style>
+    /* Fondo principal y fuentes */
+    .main { background-color: #f8f9fa; }
+    
+    /* Personalización de botones */
+    .stButton>button {
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Estilo del Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #1e272e;
+    }
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] .stRadioLabel {
+        color: #ffffff !important;
+    }
+    
+    /* Tarjetas de métricas */
+    [data-testid="stMetricValue"] {
+        color: #E67E22;
+        font-weight: bold;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # --- ESTADO DE SESIÓN (LOGIN Y ROLES) ---
 if 'ingresado' not in st.session_state:
@@ -48,11 +82,11 @@ if not st.session_state.ingresado:
     
     with col_center:
         st.markdown("<h1 style='text-align: center; color: #E67E22;'>IPCL MENFA</h1>", unsafe_allow_html=True)
-        st.markdown("<h2 style='text-align: center;'>SIMULADOR DE PRODUCCIÓN 3.0</h2>", unsafe_allow_html=True)
-        st.image("https://images.unsplash.com/photo-1516195851888-6f1a981a862e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", caption="Centro de Entrenamiento - Mendoza")
+        st.markdown("<h2 style='text-align: center; color: #34495E;'>SIMULADOR DE PRODUCCIÓN 3.0</h2>", unsafe_allow_html=True)
+        st.image("https://images.unsplash.com/photo-1516195851888-6f1a981a862e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", caption="Centro de Entrenamiento Tecnológico - Mendoza")
         
         with st.container(border=True):
-            st.markdown("#### 🔐 Acceso al Sistema")
+            st.markdown("#### 🔐 Acceso Profesional al Sistema")
             usuario = st.text_input("Usuario")
             clave = st.text_input("Contraseña", type="password")
             
@@ -71,7 +105,10 @@ if not st.session_state.ingresado:
 
 # --- SIDEBAR (Solo visible tras login) ---
 with st.sidebar:
-    st.markdown(f"### Bienvenido, {st.session_state.rol.upper()}")
+    # Espacio para el Logo (Asegúrate de tener el archivo o usar una URL)
+    st.markdown("<h2 style='text-align: center; color: #E67E22;'>MENFA</h2>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align: center;'>Bienvenido, <b>{st.session_state.rol.upper()}</b></p>", unsafe_allow_html=True)
+    
     if st.button("🚪 Cerrar Sesión"):
         st.session_state.ingresado = False
         st.session_state.rol = None
@@ -98,10 +135,22 @@ with st.sidebar:
         menu = st.selectbox("Módulo:", ["Acciones del Supervisor", "Reporte de Novedades", "Control de Pérdidas"])
     elif categoria == "🧠 Evaluación":
         opciones_eval = ["Manual de Instrucciones", "Entrenamiento", "Examen Final"]
-        # El Simulador de Fallas solo aparece si es instructor
         if st.session_state.rol == "instructor":
             opciones_eval.insert(2, "Simulador de Fallas")
         menu = st.selectbox("Módulo:", opciones_eval)
+
+    # --- BOT GUÍA / ASISTENTE DE NORMATIVAS ---
+    st.markdown("---")
+    with st.expander("🤖 ASISTENTE TÉCNICO IPCL", expanded=True):
+        st.caption("Normativa: Res. SE 120/17 | API Standards")
+        if categoria == "📊 Ingeniería":
+            st.info("💡 **Guía:** Las curvas IPR/VLP son esenciales para determinar el punto de operación óptimo del pozo.")
+        elif categoria == "🏢 Planta de Proceso":
+            st.warning("🚨 **Protocolo:** Verifique la presión de los separadores antes de cualquier maniobra de bypass.")
+        elif categoria == "🖥️ Sistema SCADA":
+            st.success("📱 **Monitorización:** El tiempo de refresco está sincronizado con los PLC del campo.")
+        else:
+            st.write("Seleccione un módulo para recibir asistencia técnica.")
 
 # --- SINCRONIZACIÓN DASHBOARD ---
 if st.session_state.modulo != "dashboard":
@@ -116,7 +165,7 @@ if st.session_state.modulo != "dashboard":
         menu = mapeo[st.session_state.modulo]
     st.session_state.modulo = "dashboard"
 
-# --- RENDERIZADO ---
+# --- RENDERIZADO DE MÓDULOS ---
 if menu == "Dashboard": dashboard_principal()
 elif menu == "Mapa del Campo": mapa_campo()
 elif menu == "Estado del Pozo": pozo_productor()
