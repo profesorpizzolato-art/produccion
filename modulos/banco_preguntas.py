@@ -1,3 +1,24 @@
+CUESTIONARIO_PRODUCCION = [
+    {
+        "pregunta" : "Función del separador trifásico" ,
+        "opciones" : [
+            "Separar petroleo gas agua" ,
+            "Aumentar presión" ,
+            "Reducir temperatura"
+        ],
+        "respuesta" : 0
+    },
+    {
+        "pregunta": "¿Qué indica un golpe de fluido en la carta dinamométrica?",
+        "opciones": ["Llenado incompleto de la bomba", "Rotura de varillas", "Falla en válvula"],
+        "respuesta": 0
+    },
+    {
+        "pregunta": "Acción ante alarma LAHH en SCADA de Planta:",
+        "opciones": ["Abrir venteo", "Cierre de válvulas de entrada (SDV)", "Aumentar bombeo"],
+        "respuesta": 1
+    }
+]
 preguntas_produccion = [
     {
         "pregunta" : "Función del separador trifásico",
