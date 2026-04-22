@@ -72,3 +72,57 @@ elif area == "📋 Consola de Supervisión":
 
 elif area == "🧠 Evaluación":
     evaluacion()
+import streamlit as st
+
+# Configuración de página con estética "Cibernética/Industrial"
+st.set_page_config(page_title="Simulador de Producción MENFA", layout="wide")
+
+def main():
+    # --- SIDEBAR: Selector de Módulos ---
+    st.sidebar.title("🛠️ Panel de Control")
+    st.sidebar.write("Instructor: Fabricio Pizzolato")
+    
+    categoria = st.sidebar.selectbox(
+        "Seleccione Área",
+        ["Operaciones de Campo", "Monitoreo SCADA", "Ingeniería y Análisis", "Gestión y Reportes", "Evaluación"]
+    )
+
+    # Lógica de navegación dinámica
+    if categoria == "Operaciones de Campo":
+        modulo = st.sidebar.radio("Módulo", [
+            "Campo Petrolero", "Bomba Mecánica", "Manifold Avanzado", 
+            "Planta de Producción", "Pozo Productor", "Checklist Operativo"
+        ])
+        
+        if modulo == "Bomba Mecánica":
+            import modulos.bomba_mecanica as bm
+            bm.show()
+        elif modulo == "Manifold Avanzado":
+            import modulos.manifold_avanzado as ma
+            ma.show()
+        # ... seguir con los demás
+
+    elif categoria == "Monitoreo SCADA":
+        modulo = st.sidebar.radio("Módulo", ["SCADA Principal", "Alarmas", "Diagrama de Planta"])
+        if modulo == "SCADA Principal":
+            import modulos.scada as scada
+            scada.show()
+
+    elif categoria == "Ingeniería y Análisis":
+        modulo = st.sidebar.radio("Módulo", ["IPR/VLP", "Dinamómetro", "Flujo Multifásico", "Fórmulas"])
+        if modulo == "Dinamómetro":
+            import modulos.dinamometro as din
+            din.show()
+
+    elif categoria == "Gestión y Reportes":
+        modulo = st.sidebar.radio("Módulo", ["Company Man", "Reporte de Novedades", "Certificado"])
+        if modulo == "Reporte de Novedades":
+            import modulos.reporte_novedades as rn
+            rn.show()
+
+    elif categoria == "Evaluación":
+        import modulos.evaluacion as ev
+        ev.generar_evaluacion()
+
+if __name__ == "__main__":
+    main()
