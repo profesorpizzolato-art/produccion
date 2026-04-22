@@ -1,2 +1,3 @@
 rename módulos modulos
 mv módulos modulos
+streamlit run app.py
