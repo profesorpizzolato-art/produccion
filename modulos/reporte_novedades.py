@@ -3,35 +3,61 @@ import pandas as pd
 from datetime import datetime
 
 def reporte_novedades():
-    st.title("📝 Reporte Diario de Novedades")
-    st.subheader("Seguimiento de Campo y Operaciones")
+    st.header("📋 Reporte de Novedades Operativas")
+    st.subheader("Registro de Eventos y Novedades del Turno")
 
-    st.info("Según la Clase 8: El Líder debe visualizar variaciones por fallas en bombeo, pulling o mantenimiento.")
-
-    with st.form("form_novedades"):
+    # Formulario de entrada
+    with st.container(border=True):
         col1, col2 = st.columns(2)
+        
         with col1:
-            pozo = st.selectbox("Seleccione Pozo:", ["PZ-001", "PZ-002", "PZ-003", "PZ-004"])
-            novedad = st.selectbox("Tipo de Novedad:", ["Falla de Bombeo", "Pulling", "Mantenimiento Eléctrico", "Pozo Nuevo", "Recuperación Secundaria"])
-        
+            operador = st.text_input("Operador Responsable", value=st.session_state.rol.upper())
+            fecha_novedad = st.date_input("Fecha del Evento", datetime.now())
+            equipo = st.selectbox("Equipo/Instalación", [
+                "Pozo Productor P-01", 
+                "Separador Bifásico S-101", 
+                "Bomba de Inyección B-200", 
+                "Sistema SCADA",
+                "Planta de Tratamiento"
+            ])
+            
         with col2:
-            fecha = st.date_input("Fecha del Evento", datetime.now())
-            perdida_est = st.number_input("Pérdida Estimada (BPD):", min_value=0)
+            prioridad = st.select_slider("Prioridad del Evento", options=["Baja", "Media", "Alta", "CRÍTICA"])
+            tipo_evento = st.selectbox("Tipo de Novedad", [
+                "Operación Normal", 
+                "Falla Mecánica", 
+                "Mantenimiento Preventivo", 
+                "Parada de Emergencia",
+                "Derrame/Incidente Ambiental"
+            ])
 
-        descripcion = st.text_area("Descripción técnica de la novedad:")
+        descripcion = st.text_area("Descripción detallada de la novedad")
         
-        enviado = st.form_submit_button("Registrar Novedad en Base de Datos")
-        
-        if enviado:
-            st.success(f"Novedad registrada para el pozo {pozo}. Se ha notificado al Equipo de Producción.")
+        if st.button("💾 GUARDAR REPORTE EN BITÁCORA", use_container_width=True):
+            if descripcion:
+                # Aquí simulamos el guardado (podrías usar session_state para persistencia temporal)
+                st.success(f"Novedad registrada exitosamente para {equipo}. Folio: #MNF-{datetime.now().strftime('%M%S')}")
+                st.balloons()
+            else:
+                st.error("Por favor, describa la novedad antes de guardar.")
 
     st.markdown("---")
-    st.write("### Historial de Eventos Recientes")
-    # Simulación de tabla de historial
-    data = {
-        "Fecha": ["2026-04-18", "2026-04-19"],
-        "Pozo": ["PZ-002", "PZ-004"],
-        "Evento": ["Paro por Corte Eléctrico", "Inicio de Pulling"],
-        "Estado": ["Resuelto", "En Proceso"]
+    
+    # Tabla de Histórico Simulado
+    st.subheader("📚 Historial Reciente de Novedades")
+    data_historica = {
+        "Fecha": ["2026-04-20", "2026-04-19", "2026-04-18"],
+        "Equipo": ["Pozo P-01", "Planta de Gas", "Bomba B-200"],
+        "Novedad": ["Cambio de orificio en choke", "Limpieza de filtros", "Falla en sello mecánico"],
+        "Estado": ["Resuelto", "En Proceso", "Pendiente"]
     }
-    st.table(pd.DataFrame(data))
+    df_historico = pd.DataFrame(data_historica)
+    st.table(df_historico)
+
+    # El Bot Guía de este módulo
+    with st.expander("🤖 Asistencia Técnica"):
+        st.write("""
+        **Normativa Relacionada:** Según la gestión de integridad, toda novedad técnica debe 
+        ser reportada en un plazo máximo de 2 horas desde su detección para mantener el 
+        estándar de certificación IPCL.
+        """)
