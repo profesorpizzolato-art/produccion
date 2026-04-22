@@ -6,7 +6,7 @@ import os
 # AGREGAR CARPETA MODULOS AL CAMINO DE PYTHON
 sys.path.append(os.path.join(os.path.dirname(__file__), "modulos"))
 
-# IMPORTACIONES
+# IMPORTACIONES (Se agregan las dos nuevas gestiones diferenciadas)
 from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
 from modulos.mapa_campo import mapa_campo
@@ -27,6 +27,15 @@ from modulos.acciones_supervisor import acciones_supervisor
 from modulos.reporte_novedades import reporte_novedades
 from modulos.control_perdidas import control_perdidas
 from modulos.protocolos_intervencion import protocolos_intervencion
+
+# NUEVAS IMPORTACIONES DIFERENCIADAS
+try:
+    from modulos.gestion_supervisor_prod import gestion_supervisor_prod
+    from modulos.gestion_company_man import gestion_company_man
+except ImportError:
+    # Definición temporal por si aún no creaste los archivos para evitar que la app explote
+    def gestion_supervisor_prod(): st.error("Módulo 'gestion_supervisor_prod.py' no encontrado en la carpeta modulos.")
+    def gestion_company_man(): st.error("Módulo 'gestion_company_man.py' no encontrado en la carpeta modulos.")
 
 # CONFIGURACION DE PAGINA
 st.set_page_config(
@@ -87,26 +96,37 @@ with st.sidebar:
     elif categoria == "🏢 Planta de Proceso": menu = st.selectbox("Módulo:", ["Operación de Planta", "Diagrama de Proceso (P&ID)"])
     elif categoria == "🖥️ Sistema SCADA": menu = st.selectbox("Módulo:", ["Monitor Principal", "Gestión de Alarmas", "Tendencias Históricas"])
     elif categoria == "📊 Ingeniería": menu = st.selectbox("Módulo:", ["Análisis IPR/VLP", "Cálculos de Producción"])
-    elif categoria == "📋 Gestión": menu = st.selectbox("Módulo:", ["Acciones del Supervisor", "Reporte de Novedades", "Control de Pérdidas", "Protocolos de Intervención"])
+    
+    # SECCIÓN DE GESTIÓN ACTUALIZADA Y DIFERENCIADA
+    elif categoria == "📋 Gestión": menu = st.selectbox("Módulo:", [
+        "Control de Producción (Supervisor)", 
+        "Operaciones de Campo (Company Man)",
+        "Acciones del Supervisor", # Mantenemos el anterior para no borrar nada
+        "Reporte de Novedades", 
+        "Control de Pérdidas", 
+        "Protocolos de Intervención"
+    ])
+    
     elif categoria == "🧠 Evaluación":
         opciones_eval = ["Manual de Instrucciones", "Entrenamiento", "Examen Final"]
         if st.session_state.rol == "instructor": opciones_eval.insert(2, "Simulador de Fallas")
         menu = st.selectbox("Módulo:", opciones_eval)
 
-    # --- ASISTENTE TÉCNICO (Basado en Clase 12 y Documentos de Pesca) ---
+    # --- ASISTENTE TÉCNICO ---
     st.markdown("---")
     with st.expander("🤖 ASISTENTE TÉCNICO IPCL", expanded=True):
-        if menu == "Protocolos de Intervención":
+        if menu == "Protocolos de Intervención" or menu == "Operaciones de Campo (Company Man)":
             st.warning("⚠️ **Ahogue de Pozo (Clase 12):** Bombear al máximo caudal sin exceder las 1.000 psi.")
+        elif menu == "Control de Producción (Supervisor)":
+            st.info("📈 **Gestión (Clase 11):** El objetivo es 1 intervención cada 2 años para optimizar costos.")
         elif menu == "Estado del Pozo":
             st.info("💡 **Herramientas (Clase 12):** Verifique estado de llaves Stillson y mordazas antes de operar.")
         else:
             st.write("Seleccione un módulo operativo para recibir guías técnicas.")
 
-# --- LÓGICA DE CHECKLIST CONTEXTUAL ---
+# --- LÓGICA DE RENDERING ---
 def render_modulo(nombre_menu):
-    # Definimos módulos que requieren checklist de seguridad según tus programas de pozo
-    modulos_operativos = ["Estado del Pozo", "Control de Choke", "Protocolos de Intervención"]
+    modulos_operativos = ["Estado del Pozo", "Control de Choke", "Protocolos de Intervención", "Operaciones de Campo (Company Man)"]
     
     if nombre_menu in modulos_operativos:
         st.subheader(f"🛡️ Validación de Seguridad: {nombre_menu}")
@@ -114,7 +134,6 @@ def render_modulo(nombre_menu):
             st.caption("Referencia: Programas de Pozo 1er y 2do Caso (Vástago/Varilla)")
             col1, col2 = st.columns(2)
             with col1:
-                # Datos sacados de tus documentos
                 s1 = st.checkbox("Verificación de boca de pozo y descompresión")
                 s2 = st.checkbox("Charla de seguridad y medio ambiente realizada")
             with col2:
@@ -143,6 +162,8 @@ def ejecutar_modulo(m):
     elif m == "Análisis IPR/VLP": ipr_vlp()
     elif m == "Cálculos de Producción": formulas_produccion()
     elif m == "Acciones del Supervisor": acciones_supervisor()
+    elif m == "Control de Producción (Supervisor)": gestion_supervisor_prod() # <--- Llamada nueva
+    elif m == "Operaciones de Campo (Company Man)": gestion_company_man()     # <--- Llamada nueva
     elif m == "Reporte de Novedades": reporte_novedades()
     elif m == "Control de Pérdidas": control_perdidas()
     elif m == "Manual de Instrucciones": instrucciones_simulador()
