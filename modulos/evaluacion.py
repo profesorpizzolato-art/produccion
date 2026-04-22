@@ -19,3 +19,14 @@ def evaluacion():
             st.success("Correcto")
         else:
             st.error("Incorrecto")
+
+    pregunta = st.radio(
+        "¿Qué indica alta presión en cabeza de pozo?",
+        ["Operación normal", "Riesgo de surgencia", "Bajo caudal"]
+    )
+
+    if st.button("Responder"):
+        if pregunta == "Riesgo de surgencia":
+            st.success("Correcto")
+        else:
+            st.error("Incorrecto")
