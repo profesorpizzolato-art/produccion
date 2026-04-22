@@ -1,85 +1,88 @@
 import streamlit as st
 
 def gestion_supervisor_prod():
-    st.title("🎓 Consola de Instrucción: Supervisor de Producción")
+    st.title("🎓 Consola de Supervisión: Misión de Planta")
 
-    # --- LÓGICA DE ROLES: INSTRUCTOR ---
+    # --- LÓGICA DE ROLES: INSTRUCTOR (Indicaciones) ---
     if st.session_state.rol == "instructor":
-        st.sidebar.success("MODO INSTRUCTOR: Configurando Escenario")
+        st.sidebar.success("MODO INSTRUCTOR: Configurando Desafío")
         with st.expander("🚩 Panel de Control del Instructor", expanded=True):
-            st.markdown("### Definir Desafío para el Alumno")
+            st.markdown("### Definir Misión Técnica")
             escenario = st.selectbox("Seleccione el problema a simular:", [
-                "Bajo tiempo de residencia en Tanque de Lavado",
-                "Arrastre de agua en crudo Mesa 30",
-                "Contaminación por Gas Ácido (H2S)"
+                "Exceso de sales en crudo (Desalado)",
+                "Baja temperatura de tratamiento (Viscosidad)",
+                "Rotura de emulsión ineficiente"
             ])
             
-            # Guardamos el escenario en la sesión para que el alumno lo vea
-            st.session_state.mensaje_instructor = st.text_area("Indicaciones para el alumno:", 
-                value=f"Atención: Se reportan problemas de {escenario.lower()}. Verifique niveles y tiempos de residencia.")
+            # El instructor define la guía pedagógica
+            st.session_state.guia_pedagogica = st.text_area("Indicaciones para el alumno:", 
+                value=f"Instructor: El crudo presenta problemas de {escenario.lower()}. "
+                      "Recuerde aplicar los criterios de la Clase 11 sobre deshidratación.")
             
-            if st.button("Lanzar Escenario al Simulador"):
-                st.toast("Escenario enviado al panel del alumno")
+            if st.button("Enviar Desafío al Alumno"):
+                st.toast("Misión actualizada")
 
-    # --- LÓGICA DE ROLES: ALUMNO / PANEL DE OPERACIÓN ---
+    # --- LÓGICA DE ROLES: ALUMNO (Acciones) ---
     st.divider()
     
     col_izq, col_der = st.columns([2, 1])
 
     with col_izq:
-        st.subheader("🛠️ Panel de Operación y Toma de Acciones")
+        st.subheader("🛠️ Toma de Acciones del Operador")
         
-        # Pestañas integradas con la info técnica de tus documentos
-        tab1, tab2, tab3 = st.tabs(["📊 KPI y Optimización", "📐 Ingeniería de Niveles", "⛽ Tratamiento de Gas"])
+        tab_desalado, tab_termico, tab_separadores = st.tabs([
+            "🧂 Desalado", "🔥 Tratamiento Térmico", "📐 Separadores"
+        ])
 
-        with tab1:
-            st.markdown("### Eficiencia Operativa (Ref. Clase 11)")
-            st.info("El tratamiento consiste principalmente en la **deshidratación del petróleo** mediante métodos químicos y térmicos.")
-            c1, c2 = st.columns(2)
-            c1.metric("Tiempo de Residencia", "2.5 Horas", "Requerido")
-            c2.metric("Costo de Intervención", "30%", "Límite OPEX")
-
-        with tab2:
-            st.markdown("### Cálculos de Operación (PDVSA Monagas)")
-            st.write("Ajuste los parámetros del **Tanque de Lavado** para crudo Mesa 30:")
+        with tab_desalado:
+            st.markdown("#### Programa de Desalado (Ref: Planta de Tratamiento.pptx)")
+            st.write("El objetivo es remover las sales hasta los valores de especificación comercial.")
+            fase = st.radio("Acción de control:", ["Inyección de agua de lavado", "Ajuste de desemulsificante"])
             
-            with st.container(border=True):
-                st.markdown("**Valores de Diseño:**")
-                st.write("- Altura del distribuidor: **6 ft**")
-                st.write("- Succión de bomba (P-01C): **17 ft**")
-                
-                # El alumno toma la acción aquí
-                nivel_ingresado = st.slider("Nivel de Interfaz Agua/Crudo (ft):", 0.0, 20.0, 12.0)
-                
-                if nivel_ingresado < 13.9:
-                    st.error("⚠️ Nivel insuficiente (Menor a 13.9 ft). Riesgo inminente de arrastre de agua y sedimentación incompleta.")
-                else:
-                    st.success("✅ Nivel de lavado óptimo. Se garantiza la desestabilización de la emulsión y coalescencia.")
-
-        with tab3:
-            st.markdown("### Separación de Gas Natural")
-            st.write("Gestión de contaminantes (H2S y CO2) según protocolos.")
-            
-            opcion_gas = st.radio("Seleccione tecnología de separación:", ["Mallas Moleculares", "Membranas"])
-            
-            if opcion_gas == "Mallas Moleculares":
-                st.help("Uso de lechos fijos para absorción física y deshidratación.")
+            if fase == "Inyección de agua de lavado":
+                st.success("✅ Correcto: El agua de lavado ayuda a disolver y arrastrar las sales del crudo.")
             else:
-                st.warning("La separación por membranas (afinidad/difusividad) puede generar pérdidas de hidrocarburos.")
+                st.info("El desemulsificante ayuda a la coalescencia, pero la remoción de sal requiere agua de lavado.")
+
+        with tab_termico:
+            st.markdown("#### Control de Viscosidad y Temperatura")
+            st.write("Según tus archivos, el calor reduce la viscosidad y rompe la resistencia de la película en las gotas.")
+            temp = st.slider("Ajustar Temperatura de Operación (°F):", 100, 300, 150)
+            
+            # Datos de la Tabla Nº 2 de separadores.docx
+            if temp < 150:
+                st.warning("⚠️ Velocidad de sedimentación muy baja (1,5. 10^-7 cm/seg). La separación será lenta.")
+            elif temp >= 250:
+                st.success(f"✅ Velocidad optimizada (1,6. 10^-2 cm/seg). Sedimentación eficiente para gotas de 500μ.")
+            
+            
+
+        with tab_separadores:
+            st.markdown("#### Dimensionamiento y Residencia")
+            st.write("Garantice que el **Tanque Lavador** opere bajo los parámetros de PDVSA.")
+            residencia = st.number_input("Tiempo de Residencia (Horas):", 1.0, 5.0, 2.5)
+            
+            if residencia < 2.5:
+                st.error("❌ Tiempo insuficiente. Se requiere un mínimo de 2.5h para la desestabilización de la emulsión.")
+            else:
+                st.success("✅ Tiempo de residencia adecuado para el crudo Mesa 30.")
 
     with col_der:
-        st.markdown("### 📢 Feedback Educativo")
-        # Mostramos lo que el instructor escribió
-        if 'mensaje_instructor' in st.session_state:
+        st.markdown("### 📢 Canal de Instrucción")
+        # Visualización de las órdenes del instructor
+        if 'guia_pedagogica' in st.session_state:
             with st.chat_message("assistant"):
-                st.write(st.session_state.mensaje_instructor)
+                st.write(st.session_state.guia_pedagogica)
         else:
-            st.info("Esperando instrucciones del supervisor de guardia...")
+            st.info("Esperando que el instructor configure la planta...")
 
-        # Botón para que el alumno entregue su tarea
-        if st.button("Enviar Reporte de Acciones"):
+        st.divider()
+        st.markdown("#### Estado de la Planta")
+        st.progress(0.75, text="Calidad del Crudo (API/Sal)")
+        
+        if st.button("Cerrar Turno y Enviar Informe"):
             st.balloons()
-            st.success("Reporte enviado para evaluación del instructor.")
+            st.success("Informe de gestión enviado satisfactoriamente.")
 
     st.divider()
-    st.caption("MENFA 3.0 | Datos técnicos extraídos de PDVSA Distrito Norte y Operación de Gas Natural.")
+    st.caption("Módulos actualizados con datos de: Separadores.docx, Plantas de Tratamiento.pptx y PDVSA Monagas.")
