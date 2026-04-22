@@ -99,17 +99,17 @@ def ejecutar_modulo(m):
     # INICIO
     if m == "Dashboard": dashboard_principal()
     
-    # CAMPO
+    # CAMPO Y POZOS
     elif m == "Mapa del Campo": mapa_campo()
     elif m == "Estado del Pozo": pozo_productor()
     elif m == "Control de Choke": choke_control()
     elif m == "Campo Petrolero": campo_petrolero()
     
-    # PLANTA
+    # PLANTA DE PROCESO
     elif m == "Operación de Planta": planta_produccion()
     elif m == "Diagrama de Proceso (P&ID)": diagrama_planta()
     
-    # SCADA
+    # SISTEMA SCADA
     elif m == "Monitor Principal": scada_planta()
     elif m == "Gestión de Alarmas": alarmas_scada()
     elif m == "Tendencias Históricas": tendencias()
@@ -118,12 +118,9 @@ def ejecutar_modulo(m):
     elif m == "Análisis IPR/VLP": ipr_vlp()
     elif m == "Cálculos de Producción": formulas_produccion()
     
-    # GESTIÓN (Aquí está lo nuevo del Supervisor)
-    elif m == "Control de Producción (Supervisor)": 
-        # Esta función debe contener la info de niveles (2.5h) y gas (Mallas/Membranas)
-        gestion_supervisor_prod()
-    elif m == "Operaciones de Campo (Company Man)": 
-        gestion_company_man()
+    # GESTIÓN (AQUÍ ESTÁ LA CLAVE)
+    elif m == "Control de Producción (Supervisor)": gestion_supervisor_prod()
+    elif m == "Operaciones de Campo (Company Man)": gestion_company_man()
     elif m == "Reporte de Novedades": reporte_novedades()
     elif m == "Control de Pérdidas": control_perdidas()
     elif m == "Protocolos de Intervención": protocolos_intervencion()
@@ -131,8 +128,9 @@ def ejecutar_modulo(m):
     # EVALUACIÓN
     elif m == "Manual de Instrucciones": instrucciones_simulador()
     elif m == "Entrenamiento": entrenamiento_operativo()
+    elif m == "Simulador de Fallas": simulador_fallas()
     elif m == "Examen Final": evaluacion()
-
+        
 # --- CONTROL DE SEGURIDAD ---
 modulos_con_seguridad = ["Estado del Pozo", "Control de Choke", "Protocolos de Intervención", "Operaciones de Campo (Company Man)"]
 
