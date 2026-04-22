@@ -10,7 +10,7 @@ from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
 from modulos.planta_produccion import planta_produccion
 from modulos.gestion_supervisor_prod import gestion_supervisor_prod
-from modulos.evaluacion import evaluacion
+from .banco_preguntas import CUESTIONARIO_PRODUCCION
 
 # CONFIGURACIÓN
 st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
@@ -72,10 +72,6 @@ elif area == "📋 Consola de Supervisión":
 
 elif area == "🧠 Evaluación":
     evaluacion()
-import streamlit as st
-
-# Configuración de página con estética "Cibernética/Industrial"
-st.set_page_config(page_title="Simulador de Producción MENFA", layout="wide")
 
 def main():
     # --- SIDEBAR: Selector de Módulos ---
