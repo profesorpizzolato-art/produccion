@@ -28,28 +28,22 @@ from modulos.reporte_novedades import reporte_novedades
 from modulos.control_perdidas import control_perdidas
 from modulos.protocolos_intervencion import protocolos_intervencion
 
-# INTENTO DE IMPORTACIÓN DE LOS NUEVOS MÓDULOS DIFERENCIADOS
+# IMPORTACIONES DIFERENCIADAS (Con manejo de error para que la App no se caiga)
 try:
     from modulos.gestion_supervisor_prod import gestion_supervisor_prod
     from modulos.gestion_company_man import gestion_company_man
 except ImportError:
-    def gestion_supervisor_prod(): st.error("Archivo 'gestion_supervisor_prod.py' no encontrado.")
-    def gestion_company_man(): st.error("Archivo 'gestion_company_man.py' no encontrado.")
+    def gestion_supervisor_prod(): st.error("Módulo de Supervisor no encontrado.")
+    def gestion_company_man(): st.error("Módulo de Company Man no encontrado.")
 
 # CONFIGURACION DE PAGINA
-st.set_page_config(
-    page_title="IPCL MENFA - Producción Petrolera 3.0",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.set_page_config(page_title="IPCL MENFA - Producción Petrolera 3.0", layout="wide")
 
 # --- ESTADO DE SESIÓN ---
 if 'ingresado' not in st.session_state:
     st.session_state.ingresado = False
-if 'rol' not in st.session_state:
-    st.session_state.rol = None
 
-# --- PANTALLA DE INICIO ---
+# --- PANTALLA DE ACCESO ---
 if not st.session_state.ingresado:
     col1, col_center, col3 = st.columns([1, 2, 1])
     with col_center:
@@ -62,13 +56,12 @@ if not st.session_state.ingresado:
             if st.button("INGRESAR", use_container_width=True):
                 if (usuario == "admin" and clave == "menfa2026") or (usuario == "alumno" and clave == "alumno2026"):
                     st.session_state.ingresado = True
-                    st.session_state.rol = "instructor" if usuario == "admin" else "alumno"
                     st.rerun()
                 else:
                     st.error("Credenciales incorrectas")
     st.stop()
 
-# --- SIDEBAR (DEFINICIÓN DEL MENÚ) ---
+# --- SIDEBAR: DEFINICIÓN DE MENÚ ---
 with st.sidebar:
     st.markdown("<h2 style='text-align: center; color: #E67E22;'>MENFA</h2>", unsafe_allow_html=True)
     if st.button("🚪 Cerrar Sesión"):
@@ -97,51 +90,51 @@ with st.sidebar:
             "Protocolos de Intervención"
         ])
     elif categoria == "🧠 Evaluación":
-        opciones_eval = ["Manual de Instrucciones", "Entrenamiento", "Examen Final"]
-        if st.session_state.rol == "instructor": opciones_eval.insert(2, "Simulador de Fallas")
-        menu = st.selectbox("Módulo:", opciones_eval)
+        menu = st.selectbox("Módulo:", ["Manual de Instrucciones", "Entrenamiento", "Examen Final"])
 
-# --- LÓGICA DE RENDERING (EL MOTOR DE LA APP) ---
+# --- LÓGICA DE EJECUCIÓN (RENDER) ---
 def ejecutar_modulo(m):
-    # --- ÁREA INICIO ---
+    # INICIO
     if m == "Dashboard": dashboard_principal()
     
-    # --- ÁREA CAMPO ---
+    # CAMPO
     elif m == "Mapa del Campo": mapa_campo()
     elif m == "Estado del Pozo": pozo_productor()
     elif m == "Control de Choke": choke_control()
     elif m == "Campo Petrolero": campo_petrolero()
     
-    # --- ÁREA PLANTA (CORREGIDO) ---
+    # PLANTA
     elif m == "Operación de Planta": planta_produccion()
     elif m == "Diagrama de Proceso (P&ID)": diagrama_planta()
     
-    # --- ÁREA SCADA ---
+    # SCADA
     elif m == "Monitor Principal": scada_planta()
     elif m == "Gestión de Alarmas": alarmas_scada()
     elif m == "Tendencias Históricas": tendencias()
     
-    # --- ÁREA INGENIERÍA (CORREGIDO) ---
+    # INGENIERÍA
     elif m == "Análisis IPR/VLP": ipr_vlp()
     elif m == "Cálculos de Producción": formulas_produccion()
     
-    # --- ÁREA GESTIÓN ---
-    elif m == "Control de Producción (Supervisor)": gestion_supervisor_prod()
-    elif m == "Operaciones de Campo (Company Man)": gestion_company_man()
+    # GESTIÓN (Aquí está lo nuevo del Supervisor)
+    elif m == "Control de Producción (Supervisor)": 
+        # Esta función debe contener la info de niveles (2.5h) y gas (Mallas/Membranas)
+        gestion_supervisor_prod()
+    elif m == "Operaciones de Campo (Company Man)": 
+        gestion_company_man()
     elif m == "Reporte de Novedades": reporte_novedades()
     elif m == "Control de Pérdidas": control_perdidas()
     elif m == "Protocolos de Intervención": protocolos_intervencion()
     
-    # --- ÁREA EVALUACIÓN ---
+    # EVALUACIÓN
     elif m == "Manual de Instrucciones": instrucciones_simulador()
     elif m == "Entrenamiento": entrenamiento_operativo()
-    elif m == "Simulador de Fallas": simulador_fallas()
     elif m == "Examen Final": evaluacion()
 
-# --- VALIDACIÓN DE SEGURIDAD PARA MÓDULOS CRÍTICOS ---
-modulos_criticos = ["Estado del Pozo", "Control de Choke", "Protocolos de Intervención", "Operaciones de Campo (Company Man)"]
+# --- CONTROL DE SEGURIDAD ---
+modulos_con_seguridad = ["Estado del Pozo", "Control de Choke", "Protocolos de Intervención", "Operaciones de Campo (Company Man)"]
 
-if menu in modulos_criticos:
+if menu in modulos_con_seguridad:
     st.subheader(f"🛡️ Validación de Seguridad: {menu}")
     with st.container(border=True):
         st.caption("Referencia: Programas de Pozo (Clase 12)")
@@ -159,6 +152,7 @@ if menu in modulos_criticos:
         else:
             st.error("🔒 Comandos bloqueados por seguridad.")
 else:
+    # SI NO ES CRÍTICO (PLANTA, INGENIERÍA, ETC), SE EJECUTA DIRECTO
     ejecutar_modulo(menu)
 
 st.sidebar.markdown("---")
