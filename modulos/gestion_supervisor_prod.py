@@ -1,98 +1,85 @@
 import streamlit as st
-import pandas as pd
 
 def gestion_supervisor_prod():
-    st.header("📈 Gestión del Supervisor de Producción")
-    st.subheader("Control de Procesos y Optimización de Planta")
+    st.title("🎓 Consola de Instrucción: Supervisor de Producción")
 
-    # Pestañas para organizar la nueva información técnica
-    tab1, tab2, tab3 = st.tabs(["📊 Indicadores (KPI)", "📐 Cálculos de Niveles", "⛽ Separación y Gas"])
-
-    with tab1:
-        st.markdown("### Eficiencia Operativa (Ref. Clase 11)")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric("Frecuencia de Intervención", "1.8 años", "-0.2", help="Meta: 1 intervención cada 2 años")
-            st.info("El costo de pulling representa el 30% del OPEX total.")
-        with col2:
-            st.metric("Producción Planta", "200 m³/día", "Estable")
-            st.write("**Tratamiento de Crudo:** Deshidratación mediante métodos químicos y térmicos para romper emulsiones W/O.")
-
-    with tab2:
-        st.markdown("### Control de Niveles - Tanque de Lavado")
-        st.write("Cálculos para la deshidratación de crudo Mesa 30 (Estación Amana).")
-        
-        with st.container(border=True):
-            # Información técnica extraída de tus documentos de cálculos
-            st.markdown("**Parámetros de Diseño Críticos:**")
-            st.write("- **Tiempo de Residencia:** 2.5 horas (mínimo necesario para coalescencia).")
-            st.write("- **Altura del Distribuidor:** 1.85 metros (6 ft).")
-            st.write("- **Altura de Lavado e Interfaz:** 13.9 ft (mínimo recomendado).")
+    # --- LÓGICA DE ROLES: INSTRUCTOR ---
+    if st.session_state.rol == "instructor":
+        st.sidebar.success("MODO INSTRUCTOR: Configurando Escenario")
+        with st.expander("🚩 Panel de Control del Instructor", expanded=True):
+            st.markdown("### Definir Desafío para el Alumno")
+            escenario = st.selectbox("Seleccione el problema a simular:", [
+                "Bajo tiempo de residencia en Tanque de Lavado",
+                "Arrastre de agua en crudo Mesa 30",
+                "Contaminación por Gas Ácido (H2S)"
+            ])
             
-            # Simulador de nivel para el alumno
-            nivel_actual = st.slider("Nivel de Interfaz Agua/Crudo (ft):", 0.0, 20.0, 14.0)
-            if nivel_actual < 13.9:
-                st.warning("⚠️ Nivel insuficiente para garantizar la calidad del crudo (sedimentación incompleta).")
+            # Guardamos el escenario en la sesión para que el alumno lo vea
+            st.session_state.mensaje_instructor = st.text_area("Indicaciones para el alumno:", 
+                value=f"Atención: Se reportan problemas de {escenario.lower()}. Verifique niveles y tiempos de residencia.")
+            
+            if st.button("Lanzar Escenario al Simulador"):
+                st.toast("Escenario enviado al panel del alumno")
+
+    # --- LÓGICA DE ROLES: ALUMNO / PANEL DE OPERACIÓN ---
+    st.divider()
+    
+    col_izq, col_der = st.columns([2, 1])
+
+    with col_izq:
+        st.subheader("🛠️ Panel de Operación y Toma de Acciones")
+        
+        # Pestañas integradas con la info técnica de tus documentos
+        tab1, tab2, tab3 = st.tabs(["📊 KPI y Optimización", "📐 Ingeniería de Niveles", "⛽ Tratamiento de Gas"])
+
+        with tab1:
+            st.markdown("### Eficiencia Operativa (Ref. Clase 11)")
+            st.info("El tratamiento consiste principalmente en la **deshidratación del petróleo** mediante métodos químicos y térmicos.")
+            c1, c2 = st.columns(2)
+            c1.metric("Tiempo de Residencia", "2.5 Horas", "Requerido")
+            c2.metric("Costo de Intervención", "30%", "Límite OPEX")
+
+        with tab2:
+            st.markdown("### Cálculos de Operación (PDVSA Monagas)")
+            st.write("Ajuste los parámetros del **Tanque de Lavado** para crudo Mesa 30:")
+            
+            with st.container(border=True):
+                st.markdown("**Valores de Diseño:**")
+                st.write("- Altura del distribuidor: **6 ft**")
+                st.write("- Succión de bomba (P-01C): **17 ft**")
+                
+                # El alumno toma la acción aquí
+                nivel_ingresado = st.slider("Nivel de Interfaz Agua/Crudo (ft):", 0.0, 20.0, 12.0)
+                
+                if nivel_ingresado < 13.9:
+                    st.error("⚠️ Nivel insuficiente (Menor a 13.9 ft). Riesgo inminente de arrastre de agua y sedimentación incompleta.")
+                else:
+                    st.success("✅ Nivel de lavado óptimo. Se garantiza la desestabilización de la emulsión y coalescencia.")
+
+        with tab3:
+            st.markdown("### Separación de Gas Natural")
+            st.write("Gestión de contaminantes (H2S y CO2) según protocolos.")
+            
+            opcion_gas = st.radio("Seleccione tecnología de separación:", ["Mallas Moleculares", "Membranas"])
+            
+            if opcion_gas == "Mallas Moleculares":
+                st.help("Uso de lechos fijos para absorción física y deshidratación.")
             else:
-                st.success("✅ Nivel de lavado óptimo para desestabilización de la emulsión.")
+                st.warning("La separación por membranas (afinidad/difusividad) puede generar pérdidas de hidrocarburos.")
 
-    with tab3:
-        st.markdown("### Operación de Gas Natural")
-        st.write("Gestión de contaminantes (H2S y CO2) según protocolos de planta.")
-        
-        col_a, col_b = st.columns(2)
-        with col_a:
-            st.markdown("**Mallas Moleculares:**")
-            st.caption("Absorción física y deshidratación del gas mediante lechos fijos.")
-        with col_b:
-            st.markdown("**Membranas:**")
-            st.caption("Separación por afinidad y difusividad. Ojo con la pérdida de hidrocarburos.")
-        
-        # 
+    with col_der:
+        st.markdown("### 📢 Feedback Educativo")
+        # Mostramos lo que el instructor escribió
+        if 'mensaje_instructor' in st.session_state:
+            with st.chat_message("assistant"):
+                st.write(st.session_state.mensaje_instructor)
+        else:
+            st.info("Esperando instrucciones del supervisor de guardia...")
 
-        if st.button("Generar Reporte de Calidad de Gas"):
-            st.download_button("Descargar PDF (Simulado)", "Contenido del reporte...", "reporte_gas.txt")
+        # Botón para que el alumno entregue su tarea
+        if st.button("Enviar Reporte de Acciones"):
+            st.balloons()
+            st.success("Reporte enviado para evaluación del instructor.")
 
     st.divider()
-
-import streamlit as st
-
-def gestion_supervisor_prod():
-    st.header("📈 Gestión del Supervisor de Producción")
-    
-    # Pestañas basadas en tus nuevos documentos
-    tab1, tab2, tab3 = st.tabs(["📊 Control de Proceso", "📐 Ingeniería de Niveles", "⛽ Tratamiento de Gas"])
-
-    with tab1:
-        st.subheader("Optimización de Planta (Ref: Plantas de Tratamiento.pdf)")
-        st.write("El tratamiento principal consiste en la **deshidratación del petróleo**.")
-        col1, col2 = st.columns(2)
-        col1.metric("Tiempo de Residencia", "2.5 Horas", "Requerido")
-        col2.metric("Costo de Intervención", "30%", "Límite OPEX")
-        st.info("Métodos utilizados: Químico (desemulsificantes) y Térmico (calor para reducir viscosidad).")
-
-    with tab2:
-        st.subheader("Cálculos de Operación (Ref: PDVSA Monagas)")
-        st.markdown("Cálculos para **Tanque de Lavado** (Crudo Mesa 30):")
-        
-        # Datos extraídos de CALCULOS_PARA_NIVELES_DE_OPER.docx
-        st.write("- **Altura del distribuidor de flujo:** 1.85 m (6 ft)")
-        st.write("- **Altura mínima zona de lavado/interfaz:** 13.9 ft")
-        st.write("- **Altura de toma de succión (Bomba P-01C):** 17 ft")
-        
-        nivel = st.number_input("Ingrese Nivel Actual del Tanque (ft):", value=14.0)
-        if nivel < 13.9:
-            st.error("⚠️ Alerta: Nivel por debajo del límite de sedimentación. Riesgo de arrastre de agua.")
-        else:
-            st.success("✅ Operación normal: Coalescencia y sedimentación garantizada.")
-
-    with tab3:
-        st.subheader("Separación de Gas Natural")
-        st.write("Gestión de componentes ácidos (H2S y CO2).")
-        
-        st.markdown("""
-        **Tecnologías de Separación:**
-        * **Mallas Moleculares:** Lechos fijos para absorción física y deshidratación.
-        * **Membranas:** Separación por afinidad y difusividad (Cuidado con pérdidas de hidrocarburos).
-        """)
-        #
+    st.caption("MENFA 3.0 | Datos técnicos extraídos de PDVSA Distrito Norte y Operación de Gas Natural.")
