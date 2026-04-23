@@ -2,21 +2,21 @@ import streamlit as st
 import sys
 import os
 
-# 1. CONFIGURACIÓN DE PÁGINA (Debe ser la PRIMERA instrucción de Streamlit)
+# CONFIGURACIÓN (Debe ser lo primero)
 st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
 
-# 2. AGREGAR CARPETA MODULOS AL CAMINO DE PYTHON
+# AGREGAR CARPETA MODULOS
 sys.path.append(os.path.join(os.path.dirname(__file__), "modulos"))
 
-try:
-    from modulos.dashboard_principal import dashboard_principal
-    from modulos.pozo_productor import pozo_productor
-    from modulos.planta_produccion import planta_produccion
-    from modulos.gestion_supervisor_prod import gestion_supervisor_prod
-    from modulos.evaluacion import evaluacion  # <--- LÍNEA 17: ASEGURATE QUE TENGA 4 ESPACIOS
-    from modulos.banco_preguntas import CUESTIONARIO_PRODUCCION
-except ImportError as e:
-    st.error(f"Error: {e}")
+# IMPORTACIONES AL RAS DEL MARGEN (Sin espacios al inicio)
+from modulos.dashboard_principal import dashboard_principal
+from modulos.pozo_productor import pozo_productor
+from modulos.planta_produccion import planta_produccion
+from modulos.gestion_supervisor_prod import gestion_supervisor_prod
+from modulos.evaluacion import evaluacion
+from modulos.banco_preguntas import CUESTIONARIO_PRODUCCION
+
+# --- EL RESTO DEL CÓDIGO ---
 # 4. ESTADO DE SESIÓN
 if 'ingresado' not in st.session_state: st.session_state.ingresado = False
 if 'rol' not in st.session_state: st.session_state.rol = "alumno"
