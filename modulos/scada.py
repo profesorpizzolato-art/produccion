@@ -3,20 +3,23 @@ import matplotlib.pyplot as plt
 import sys
 import os
 
-# --- CONEXIÓN DE RUTAS (Fuerza bruta para Streamlit Cloud) ---
-ruta_raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-if ruta_raiz not in sys.path:
-    sys.path.append(ruta_raiz)
+# --- CONEXIÓN DE EMERGENCIA ---
+# Obtenemos la ruta absoluta de la carpeta raíz (donde está app.py)
+current_dir = os.path.dirname(os.path.abspath(__file__)) # carpeta modulos
+root_dir = os.path.dirname(current_dir) # carpeta raiz del proyecto
 
-# Intentamos importar el motor con manejo de error específico
+if root_dir not in sys.path:
+    sys.path.append(root_dir)
+
+# Ahora intentamos la importación con la ruta verificada
 try:
     from motor.motor_simulacion import MotorSimulacion
 except Exception as e:
-    st.error(f"❌ Error crítico de conexión con el motor: {e}")
-    # Definimos una clase temporal para que la app no explote mientras arreglás la carpeta
+    st.error(f"❌ Error de conexión: {e}")
+    st.info(f"Ruta actual detectada: {root_dir}")
+    # Clase de respaldo para que la interfaz no se rompa
     class MotorSimulacion:
-        def evolucion_produccion(self): return [0] * 10
-
+        def evolucion_produccion(self): return [0, 0, 0, 0]
 def show():
     st.header("🖥️ SCADA de Producción - Planta MENFA")
     st.write("Instructor: Fabricio Pizzolato")
