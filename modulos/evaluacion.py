@@ -3,7 +3,7 @@ import streamlit as st
 from modulos.banco_preguntas import CUESTIONARIO_PRODUCCION
 
 def generar_evaluacion():
-    st.header("Panel de Evaluación Técnica")
+    st.header("Evaluación Técnica")
     
     # Iteramos sobre los temas del banco de preguntas
     for i, (modulo, datos) in enumerate(CUESTIONARIO_PRODUCCION.items()):
