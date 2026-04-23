@@ -10,7 +10,7 @@ from modulos.dashboard_principal import dashboard_principal
 from modulos.pozo_productor import pozo_productor
 from modulos.planta_produccion import planta_produccion
 from modulos.gestion_supervisor_prod import gestion_supervisor_prod
-from modulos.banco_preguntas import CUESTIONARIO_PRODUCCION
+from modulos import evaluacion as modulo_evaluacion
 
 # CONFIGURACIÓN
 st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
