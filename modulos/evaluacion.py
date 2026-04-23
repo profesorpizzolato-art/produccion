@@ -1,7 +1,7 @@
 import streamlit as st
 from modulos.banco_preguntas import CUESTIONARIO_PRODUCCION
 
-def show():
+def evaluacion():
     st.header("📋 Centro de Evaluación Técnica - IPCL MENFA")
     st.write("Instructor: Fabricio Pizzolato")
     
