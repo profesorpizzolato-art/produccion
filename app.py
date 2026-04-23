@@ -11,6 +11,18 @@ from modulos.pozo_productor import pozo_productor
 from modulos.planta_produccion import planta_produccion
 from modulos.gestion_supervisor_prod import gestion_supervisor_prod
 from modulos import evaluacion as modulo_evaluacion
+from modulos.banco_preguntas import CUESTIONARIO_PRODUCCION
+
+def main():
+    # Aquí sí va sangría (4 espacios)
+    st.title("Simulador de Producción")
+    
+    # Supongamos que aquí llamas a la evaluación
+    if st.sidebar.button("Ir a Evaluación"):
+        modulo_evaluacion.evaluacion()
+
+if __name__ == "__main__":
+    main()
 
 # CONFIGURACIÓN
 st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
