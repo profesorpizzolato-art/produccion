@@ -1,14 +1,16 @@
 import streamlit as st
 
-def bomba_mecanica():
-
-    st.title("Simulador de Bombeo Mecánico")
-
-    carrera = st.slider("Carrera bomba (in)",10,200,80)
-    spm = st.slider("Golpes por minuto",1,20,8)
-
-    eficiencia = st.slider("Eficiencia (%)",40,100,75)
-
-    produccion = carrera * spm * eficiencia * 0.1
-
-    st.metric("Producción estimada BPD",round(produccion))
+def show():
+    st.header("⚙️ Simulador de Bombeo Mecánico")
+    st.write("Instructor: Fabricio Pizzolato")
+    
+    # Aquí va todo tu código de la bomba, por ejemplo:
+    st.subheader("Parámetros de Operación")
+    ppm = st.slider("Carreras por minuto (PPM)", 0, 20, 8)
+    longitud = st.number_input("Longitud de carrera (pulgadas)", value=86)
+    
+    # Cálculo simple de ejemplo
+    produccion_estimada = ppm * longitud * 0.15 # Tu fórmula real aquí
+    st.metric("Producción Estimada", f"{produccion_estimada} m3/d")
+    
+    # Lógica de la carta dinamométrica, etc.
