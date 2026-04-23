@@ -31,13 +31,15 @@ def evaluacion():
         else:
             st.write(item["pregunta"])
             
-        res = st.radio("Seleccione opción:", item["options"], key=f"eval_{i}", index=None)
-        respuestas_usuario.append(res)
-        
-        if res == item["options"][item["respuesta"]]:
-            categorias[cat]["correctas"] += 1
+    res = st.radio(
+    "Seleccione opción:", 
+    item["opciones"],  # <--- Cambiado de 'options' a 'opciones'
+    key=f"eval_{i}", 
+    index=None
+)
 
-        st.divider()
+if res == item["opciones"][item["respuesta"]]: # <--- También cambiar aquí
+    categorias[cat]["correctas"] += 1
 
     if st.button("📊 FINALIZAR Y GENERAR PERFIL DE COMPETENCIAS"):
         st.header("🎯 Resultado del Perfil Profesional")
