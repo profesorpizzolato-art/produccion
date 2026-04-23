@@ -39,3 +39,41 @@ def show():
         
     except Exception as e:
         st.error(f"Error de ejecución: {e}")
+def show():
+    st.header("🖥️ SCADA de Producción - Planta MENFA")
+    
+    # Inicializamos el estado del ESD en la sesión si no existe
+    if 'esd_status' not in st.session_state:
+        st.session_state.es_status = False
+
+    motor = MotorSimulacion()
+    
+    # Sincronizamos el motor con el estado de la sesión
+    if st.session_state.get('esd_status'):
+        motor.activar_esd()
+
+    # --- BOTÓN DE EMERGENCIA ---
+    col_btn1, col_btn2 = st.columns([1, 1])
+    
+    with col_btn1:
+        if st.button("🚨 ACTIVAR ESD (EMERGENCY SHUT DOWN)", use_container_width=True, type="primary"):
+            st.session_state.esd_status = True
+            st.rerun()
+            
+    with col_btn2:
+        if st.button("✅ RESETEAR PLANTA (START-UP)", use_container_width=True):
+            st.session_state.esd_status = False
+            st.rerun()
+
+    # --- GRÁFICO ---
+    datos = motor.evolucion_produccion()
+    if st.session_state.get('esd_status'):
+        # Si hay ESD, forzamos que el último dato sea 0 en el gráfico
+        datos[-1] = 0.0
+        st.error("⚠️ SISTEMA EN PARADA DE EMERGENCIA - VÁLVULAS SDV CERRADAS")
+
+    fig, ax = plt.subplots(figsize=(10, 3))
+    color_linea = '#ff0000' if st.session_state.get('esd_status') else '#00ff00'
+    ax.plot(datos, color=color_linea, linewidth=3)
+    ax.set_facecolor('#1e1e1e')
+    st.pyplot(fig)
