@@ -42,25 +42,40 @@ def show():
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # --- ACCIONES DE REMEDIACIÓN ---
-    st.subheader("📋 Diagnóstico y Acción")
+  # --- ACCIONES DE REMEDIACIÓN DINÁMICA ---
+    st.subheader("🛠️ Intervención en el Pozo")
     
     col1, col2 = st.columns(2)
     
     with col1:
         if factor > 1.0:
-            st.error(f"⚠️ Alerta: Restricción detectada (Factor: {factor})")
-            if st.button("💉 Inyectar Solvente / Hot Oil"):
-                st.session_state.factor_obstruccion = 1.0
-                st.success("Tratamiento aplicado. Limpiando líneas...")
+            st.warning(f"⚠️ Restricción por Parafinas detectada (Factor: {factor})")
+            
+            if st.button("💉 Aplicar Tratamiento Químico / Solvente"):
+                # Simulación de limpieza gradual
+                progreso = st.progress(0)
+                status_text = st.empty()
+                
+                # Vamos reduciendo el factor de obstrucción paso a paso
+                pasos = np.linspace(factor, 1.0, 5)
+                for i, f_actual in enumerate(pasos):
+                    st.session_state.factor_obstruccion = f_actual
+                    progreso.progress((i + 1) * 20)
+                    status_text.text(f"Inyectando solvente... Limpieza al {int((i+1)*20)}%")
+                    import time
+                    time.sleep(0.4) # Simula el tiempo de reacción
+                
+                st.success("✅ ¡Línea Limpia! La VLP ha vuelto a su estado de diseño.")
                 st.rerun()
         else:
-            st.success("✅ Flujo sin restricciones significativas.")
-            st.metric("Punto de Operación", "Óptimo")
+            st.success("✅ El pozo fluye sin restricciones mecánicas.")
+            if st.button("🔄 Reiniciar Falla (Para Práctica)"):
+                st.session_state.factor_obstruccion = 2.5
+                st.rerun()
 
     with col2:
-        st.info("""
-        **Interpretación para el examen:**
-        1. Si la curva roja (VLP) sube, el pozo produce menos por causas mecánicas.
-        2. Si la intersección ocurre a presiones muy altas, el sistema está sufriendo.
-        """)
+        # Mostramos el impacto en el Caudal
+        p_operacion = 1500 # Valor simplificado para el ejemplo
+        caudal_estimado = (p_res - p_operacion) * pi / factor
+        st.metric("Caudal de Operación", f"{int(caudal_estimado)} STB/D", 
+                  delta=f"{int(caudal_estimado - (pi*p_res/2))} vs Ideal")
