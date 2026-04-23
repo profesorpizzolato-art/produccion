@@ -7,6 +7,7 @@ st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
 
 # AGREGAR CARPETA MODULOS
 sys.path.append(os.path.join(os.path.dirname(__file__), "modulos"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "motor"))
 
 # IMPORTACIONES AL RAS DEL MARGEN (Sin espacios al inicio)
 from modulos.dashboard_principal import dashboard_principal
