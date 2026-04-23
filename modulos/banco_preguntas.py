@@ -1,100 +1,69 @@
+# modulos/banco_preguntas.py
+
 CUESTIONARIO_PRODUCCION = [
+    # --- BLOQUE 1: INGENIERÍA DE NODOS ---
     {
-        "pregunta" : "Función del separador trifásico" ,
-        "opciones" : [
-            "Separar petroleo gas agua" ,
-            "Aumentar presión" ,
-            "Reducir temperatura"
-        ],
-        "respuesta" : 0
+        "tipo": "TEORIA",
+        "pregunta": "¿Qué representa técnicamente el punto donde se cruzan las curvas IPR y VLP?",
+        "opciones": ["La presión máxima del reservorio", "El caudal máximo teórico (AOF)", "El punto de operación real del sistema pozo-línea", "El límite de burbuja del fluido"],
+        "respuesta": 2
     },
     {
-        "pregunta": "¿Qué indica un golpe de fluido en la carta dinamométrica?",
-        "opciones": ["Llenado incompleto de la bomba", "Rotura de varillas", "Falla en válvula"],
+        "tipo": "TAREA",
+        "pregunta": "PRÁCTICA: En el módulo IPR/VLP, sube el Índice de Productividad (IP) a 3.0. ¿Qué efecto observas en la curva de oferta (IPR)?",
+        "opciones": ["La curva se vuelve más vertical (menos pendiente)", "La curva se vuelve más horizontal (mayor aporte)", "La curva no se mueve", "La presión de reservorio aumenta"],
+        "respuesta": 1
+    },
+    # --- BLOQUE 2: PROCESAMIENTO Y SEPARACIÓN ---
+    {
+        "tipo": "TEORIA",
+        "pregunta": "En un separador horizontal, ¿para qué sirve la placa deflectora (inlet diverter) en la entrada?",
+        "opciones": ["Para aumentar la presión de entrada", "Para el cambio brusco de cantidad de movimiento y separación inicial", "Para calentar el crudo", "Para medir el caudal de gas"],
+        "respuesta": 1
+    },
+    {
+        "tipo": "TEORIA",
+        "pregunta": "¿Cuál es la función del 'Vortex Breaker' en la salida de líquido de un recipiente?",
+        "opciones": ["Evitar que el gas sea arrastrado con el líquido", "Aumentar la velocidad de drenaje", "Separar el agua del petróleo", "Filtrar los sólidos"],
         "respuesta": 0
     },
+    # --- BLOQUE 3: FALLAS Y OPERACIÓN ---
     {
-        "pregunta": "Acción ante alarma LAHH en SCADA de Planta:",
-        "opciones": ["Abrir venteo", "Cierre de válvulas de entrada (SDV)", "Aumentar bombeo"],
-        "respuesta": 1
-    }
-]
-preguntas_produccion = [
-    {
-        "pregunta" : "Función del separador trifásico",
-        "opciones" : [
-            "Separar petroleo gas agua",
-            "Aumentar presión",
-            "Reducir temperatura"
-        ],
-        "respuesta" : 0
+        "tipo": "TAREA",
+        "pregunta": "DESAFÍO: Activa 'Aumento de Contrapresión' en el Simulador de Fallas. ¿Cómo afecta esto a la energía requerida por la VLP?",
+        "opciones": ["Requiere menos presión para mover el mismo caudal", "La curva VLP baja", "Requiere más presión de fondo para vencer la resistencia", "El pozo fluye con mayor facilidad"],
+        "respuesta": 2
     },
     {
-        "pregunta": "Función del separador trifásico",
-        "opciones": ["Separar petroleo gas agua", "Aumentar presión", "Reducir temperatura"],
+        "tipo": "TEORIA",
+        "pregunta": "Si el nivel de la interfase agua-petróleo en el separador es demasiado alto, ¿qué riesgo operativo es inminente?",
+        "opciones": ["Arrastre de petróleo en la línea de agua (Oil carry-over)", "Gas seco en la línea de crudo", "Aumento de la presión de burbuja", "Falla en el compresor de gas"],
         "respuesta": 0
     },
+    # --- BLOQUE 4: SEGURIDAD Y PROTOCOLOS (ESD) ---
     {
-        "pregunta": "¿Qué representa el área encerrada en una carta dinamométrica (Dinamómetro)?",
-        "opciones": [
-            "La presión del reservorio",
-            "El trabajo realizado por la bomba en un ciclo",
-            "El caudal instantáneo de producción"
-        ],
+        "tipo": "TAREA",
+        "pregunta": "PROTOCOLO: Activa el ESD en el SCADA. Según el procedimiento de MENFA, ¿qué campo del reporte es vital para el seguro?",
+        "opciones": ["La hora del almuerzo", "La descripción detallada de la causa de la parada", "El color de la línea en el gráfico", "El nombre de la empresa de transporte"],
         "respuesta": 1
     },
     {
-        "pregunta": "En un sistema SCADA, ¿qué acción indica una alarma de nivel LAHH en el separador?",
-        "opciones": [
-            "Aviso preventivo de nivel alto",
-            "Parada de emergencia y cierre de entrada (ESD)",
-            "Apertura manual de la válvula de drenaje"
-        ],
+        "tipo": "TEORIA",
+        "pregunta": "¿Qué significa que una válvula SDV sea 'Fail-Safe Close'?",
+        "opciones": ["Que abre si pierde suministro de aire/energía", "Que cierra ante una falla de suministro por seguridad", "Que nunca falla", "Que requiere operación manual siempre"],
+        "respuesta": 1
+    },
+    # --- BLOQUE 5: DIAGNÓSTICO AVANZADO ---
+    {
+        "tipo": "TEORIA",
+        "pregunta": "¿Cuál es el principal efecto de la presencia de gas libre en una bomba centrífuga de transferencia?",
+        "opciones": ["Aumento de la eficiencia", "Cavitación y pérdida de altura (head)", "Reducción de la viscosidad", "Aumento de la presión de descarga"],
         "respuesta": 1
     },
     {
-        "pregunta": "En el análisis IPR/VLP, ¿qué sucede si la curva VLP se desplaza hacia arriba?",
-        "opciones": [
-            "Aumenta el índice de productividad",
-            "Se requiere mayor presión para mover el mismo caudal",
-            "El pozo fluye con mayor facilidad"
-        ],
+        "tipo": "TAREA",
+        "pregunta": "FINAL: Observa el SCADA en modo normal. Si la presión es 115 psi y el caudal 450 bpd, y de golpe el caudal cae a 100 bpd sin activar el ESD, ¿qué diagnosticarías?",
+        "opciones": ["Falla total del reservorio", "Obstrucción severa o rotura de línea de flujo", "El separador se llenó de gas", "Operación normal de rutina"],
         "respuesta": 1
-    },
-    {
-        "pregunta": "¿Cuál es el propósito principal de un Manifold de producción?",
-        "opciones": [
-            "Aumentar la viscosidad del crudo",
-            "Recolectar la producción de varios pozos y derivarla a líneas de grupo o test",
-            "Separar el gas del petróleo a boca de pozo"
-        ],
-        "respuesta": 1
-    },
-    {
-        "pregunta": "En una Bomba Mecánica, ¿qué síntoma genera el 'Golpe de Bomba' (Pound)?",
-        "opciones": [
-            "Exceso de gas en la formación",
-            "Llenado incompleto del barril por baja sumergencia",
-            "Rotura de la varilla de bombeo"
-        ],
-        "respuesta": 1
-    },
-    {
-        "pregunta": "¿Qué mide específicamente el ensayo de Corte de Agua (BS&W)?",
-        "opciones": [
-            "La presión de vapor del crudo",
-            "El porcentaje de agua y sedimentos en el fluido producido",
-            "La salinidad del agua de formación"
-        ],
-        "respuesta": 1
-    },
-    {
-        "pregunta": "Ante una pérdida de control en el Choke de producción (Choke Control), ¿cuál es el riesgo inmediato?",
-        "opciones": [
-            "Aumento incontrolado de la presión en instalaciones de superficie",
-            "Mejora en la recuperación secundaria",
-            "Disminución de la temperatura del fluido"
-        ],
-        "respuesta": 0
     }
 ]
