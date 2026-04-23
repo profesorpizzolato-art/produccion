@@ -38,7 +38,7 @@ def main_app():
     # --- MENÚ LATERAL ---
     with st.sidebar:
         # Asegúrate de tener la carpeta 'assets' con el logo
-        # st.image("assets/logo_menfa.png") 
+        st.image("assets/logo_menfa.png") 
         st.title("🛠️ Panel de Control")
         st.write(f"👤 **Rol:** {st.session_state.rol.upper()}")
         st.write("Instructor: Fabricio Pizzolato")
@@ -58,6 +58,8 @@ def main_app():
             st.rerun()
 
     # --- MOTOR DE EJECUCIÓN ---
+    # Pasamos st.session_state.area_actual como el driver principal
+    actual = st.session_state.area_actual 
     if area == "🏠 Dashboard":
         dashboard_principal()
 
