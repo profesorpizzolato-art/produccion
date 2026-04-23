@@ -2,27 +2,39 @@ import random
 import numpy as np
 
 class MotorSimulacion:
-    def __init__(self):
-        # Parámetros base para IPCL MENFA
-        self.presion = 115.0  # psi
-        self.nivel = 14.2     # ft
-        self.caudal_base = 450.0 # bpd
-        self.historial = [] # Para el gráfico del SCADA
+# Dentro de la clase MotorSimulacion
+def __init__(self):
+    self.presion = 115.0
+    self.nivel = 14.2
+    self.caudal_base = 450.0
+    self.historial = []
+    self.esd_activo = False  # Estado de la planta
 
-    def obtener_datos(self):
-        """Simula la fluctuación de instrumentos en tiempo real"""
-        # Variaciones aleatorias normales
+def obtener_datos(self):
+    if self.esd_activo:
+        # En ESD, la presión sube por el cierre y el caudal cae a cero
+        self.presion = min(self.presion + 0.1, 160.0) 
+        self.caudal_base = 0.0
+    else:
         self.presion += random.uniform(-0.5, 0.5)
-        self.nivel += random.uniform(-0.05, 0.05)
-        
-        # El caudal puede verse afectado por factores externos en session_state
         self.caudal_base += random.uniform(-1.0, 1.0)
-        
-        return {
-            "presion": round(self.presion, 2),
-            "nivel": round(self.nivel, 2),
-            "caudal": round(self.caudal_base, 2)
-        }
+    
+    return {
+        "presion": round(self.presion, 2),
+        "nivel": round(self.nivel, 2),
+        "caudal": round(self.caudal_base, 2)
+    }
+
+def activar_esd(self):
+    """Cierra las SDV (Válvulas de Seguridad)"""
+    self.esd_activo = True
+    self.caudal_base = 0.0
+
+def reset_planta(self):
+    """Normaliza la planta después de un ESD"""
+    self.esd_activo = False
+    self.presion = 115.0
+    self.caudal_base = 450.0
 
     def evolucion_produccion(self):
         """Genera el array de datos que requiere el gráfico de scada.py"""
