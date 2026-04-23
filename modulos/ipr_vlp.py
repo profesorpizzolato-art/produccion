@@ -1,63 +1,60 @@
 import streamlit as st
+import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
-def ipr_vlp():
+def show():
+    st.header("📈 Análisis de Nodo: IPR vs VLP")
+    st.write("Instructor: Fabricio Pizzolato - Optimización de Producción")
 
-    st.title("Análisis IPR - VLP")
-    st.subheader("Simulador MENFA - Ingeniería de Producción")
+    with st.sidebar.expander("🛠️ Parámetros del Reservorio", expanded=True):
+        p_res = st.number_input("Presión de Reservorio (Pr) [psi]", value=3000)
+        pi = st.number_input("Índice de Productividad (IP)", value=1.5)
+        pb = st.number_input("Presión de Burbuja (Pb) [psi]", value=1500)
 
-    st.markdown("### Parámetros del reservorio")
+    # --- CÁLCULO DE IPR (Vogel / Darcy) ---
+    caudal_max = pi * p_res # Estimación lineal simple
+    caudales = np.linspace(0, caudal_max, 50)
+    
+    # Modelo Simplificado de IPR
+    pwf = p_res - (caudales / pi)
+    pwf = np.maximum(pwf, 0) # No presiones negativas
 
-    col1, col2, col3 = st.columns(3)
+    # --- CÁLCULO DE VLP (Curva de Levantamiento) ---
+    # Simulamos una restricción de tubería (Tubing)
+    vlp = 500 + (0.05 * caudales**1.8) 
 
+    # --- GRÁFICO INTERACTIVO ---
+    fig = go.Figure()
+
+    # Curva IPR
+    fig.add_trace(go.Scatter(x=caudales, y=pwf, name="IPR (Oferta)",
+                             line=dict(color='royalblue', width=4)))
+    
+    # Curva VLP
+    fig.add_trace(go.Scatter(x=caudales, y=vlp, name="VLP (Demanda)",
+                             line=dict(color='firebrick', width=4, dash='dash')))
+
+    fig.update_layout(
+        title="Curvas de Inflow y Outflow",
+        xaxis_title="Caudal de Líquido (STB/D)",
+        yaxis_title="Presión de Fondo Fluyente (Pwf) [psi]",
+        template="plotly_dark"
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    # --- ANÁLISIS TÉCNICO ---
+    st.subheader("📋 Diagnóstico de Producción")
+    col1, col2 = st.columns(2)
+    
     with col1:
-        pr = st.slider("Presión reservorio (psi)",1000,5000,3500)
-
+        st.metric("Puntos de Intersección", "Operando", delta="Estable")
+        st.write("La intersección de ambas curvas representa el **Punto de Operación** actual del pozo.")
+    
     with col2:
-        pb = st.slider("Presión burbuja (psi)",500,4000,2000)
-
-    with col3:
-        qmax = st.slider("Producción máxima (BPD)",500,5000,2500)
-
-    st.markdown("---")
-
-    st.subheader("Curva IPR Vogel")
-
-    pwf = np.linspace(0,pr,50)
-
-    q_ipr = qmax*(1-0.2*(pwf/pr)-0.8*(pwf/pr)**2)
-
-    st.subheader("Curva VLP")
-
-    q_vlp = np.linspace(0,qmax,50)
-
-    pwf_vlp = 500 + 0.8*q_vlp
-
-    fig, ax = plt.subplots()
-
-    ax.plot(q_ipr,pwf,label="IPR")
-    ax.plot(q_vlp,pwf_vlp,label="VLP")
-
-    ax.set_xlabel("Producción (BPD)")
-    ax.set_ylabel("Presión fondo fluyente (psi)")
-
-    ax.legend()
-
-    st.pyplot(fig)
-
-    st.markdown("---")
-
-    st.subheader("Estimación Punto de Operación")
-
-    diferencia = abs(q_ipr - q_vlp)
-
-    idx = diferencia.argmin()
-
-    q_operacion = q_ipr[idx]
-    pwf_operacion = pwf[idx]
-
-    colA, colB = st.columns(2)
-
-    colA.metric("Producción Operación BPD",round(q_operacion))
-    colB.metric("Pwf Operación psi",round(pwf_operacion))
+        st.info("""
+        **Tips para el Alumno:**
+        * Si la **IPR** baja, el reservorio pierde energía.
+        * Si la **VLP** sube, hay una obstrucción o aumento de contrapresión.
+        """)
