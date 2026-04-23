@@ -8,17 +8,15 @@ st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
 # 2. AGREGAR CARPETA MODULOS AL CAMINO DE PYTHON
 sys.path.append(os.path.join(os.path.dirname(__file__), "modulos"))
 
-# 3. IMPORTACIONES
 try:
     from modulos.dashboard_principal import dashboard_principal
     from modulos.pozo_productor import pozo_productor
     from modulos.planta_produccion import planta_produccion
     from modulos.gestion_supervisor_prod import gestion_supervisor_prod
-    from modulos.evaluacion import evaluacion # Función corregida
+    from modulos.evaluacion import evaluacion  # <--- LÍNEA 17: ASEGURATE QUE TENGA 4 ESPACIOS
     from modulos.banco_preguntas import CUESTIONARIO_PRODUCCION
 except ImportError as e:
-    st.error(f"Error de importación: {e}. Verificá que exista 'modulos/__init__.py'")
-
+    st.error(f"Error: {e}")
 # 4. ESTADO DE SESIÓN
 if 'ingresado' not in st.session_state: st.session_state.ingresado = False
 if 'rol' not in st.session_state: st.session_state.rol = "alumno"
