@@ -107,3 +107,5 @@ def show():
             delta_color="normal"
         )
         st.info(f"Presión de fondo fluyente: {int(presion_op)} psi")
+# Dentro de modulos/ipr_vlp.py
+st.session_state.caudal_real_scada = float(caudal_op)
