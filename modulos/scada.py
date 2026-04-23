@@ -24,46 +24,57 @@ def show():
     st.header("🖥️ SCADA de Producción - Planta MENFA")
     st.write("Instructor: Fabricio Pizzolato")
 
-    try:
-        motor = MotorSimulacion()
-        # Verificá que en motor_simulacion.py la función se llame EXACTAMENTE así:
-        datos = motor.evolucion_produccion() 
+    # Inicializamos estados si no existen
+    if 'esd_status' not in st.session_state: st.session_state.esd_status = False
+    if 'reporte_completado' not in st.session_state: st.session_state.reporte_completado = False
 
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.plot(datos, color='#00ff00', linewidth=2)
-        ax.set_title("Producción Real Time", color='white')
-        ax.set_facecolor('#1e1e1e')
-        fig.patch.set_facecolor('#0e1117')
+    # --- LÓGICA DE CONTROL ---
+    if st.session_state.esd_status:
+        st.error("🛑 PLANTA BLOQUEADA POR SISTEMA DE EMERGENCIA (ESD)")
         
-        st.pyplot(fig)
-        
-    except Exception as e:
-        st.error(f"Error de ejecución: {e}")
-def show():
-    st.header("🖥️ SCADA de Producción - Planta MENFA")
-    
-    # Inicializamos el estado del ESD en la sesión si no existe
-    if 'esd_status' not in st.session_state:
-        st.session_state.es_status = False
-
-    motor = MotorSimulacion()
-    
-    # Sincronizamos el motor con el estado de la sesión
-    if st.session_state.get('esd_status'):
-        motor.activar_esd()
-
-    # --- BOTÓN DE EMERGENCIA ---
-    col_btn1, col_btn2 = st.columns([1, 1])
-    
-    with col_btn1:
-        if st.button("🚨 ACTIVAR ESD (EMERGENCY SHUT DOWN)", use_container_width=True, type="primary"):
-            st.session_state.esd_status = True
-            st.rerun()
+        # Formulario de Reporte de Incidente
+        with st.expander("📋 REPORTE DE INCIDENTE OBLIGATORIO", expanded=not st.session_state.reporte_completado):
+            st.warning("Debe completar el informe técnico para habilitar el Start-Up.")
+            causa = st.selectbox("Causa de la Parada:", [
+                "Falla Instrumental", "Sobrepresión en Separador", 
+                "Fuga de Hidrocarburo", "Falla de Energía", "Prueba de Seguridad"
+            ])
+            descripcion = st.text_area("Descripción detallada de la maniobra:")
+            operador = st.text_input("Firma del Operador:", value="Alumno IPCL")
             
-    with col_btn2:
-        if st.button("✅ RESETEAR PLANTA (START-UP)", use_container_width=True):
-            st.session_state.esd_status = False
-            st.rerun()
+            if st.button("Enviar Reporte y Validar"):
+                if len(descripcion) > 10:
+                    st.session_state.reporte_completado = True
+                    st.success("✅ Reporte archivado. Sistema de seguridad desbloqueado.")
+                    st.rerun()
+                else:
+                    st.error("Por favor, sea más específico en la descripción técnica.")
+
+    # --- BOTONERA DINÁMICA ---
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if not st.session_state.esd_status:
+            if st.button("🚨 ACTIVAR ESD", use_container_width=True, type="primary"):
+                st.session_state.esd_status = True
+                st.session_state.reporte_completado = False # Reseteamos el reporte
+                st.rerun()
+        else:
+            st.button("🚨 ESD ACTIVADO", use_container_width=True, disabled=True)
+
+    with col2:
+        # El botón de Reset solo se habilita si el reporte está listo
+        if st.session_state.esd_status and st.session_state.reporte_completado:
+            if st.button("✅ REARMAR PLANTA (START-UP)", use_container_width=True):
+                st.session_state.esd_status = False
+                st.session_state.reporte_completado = False
+                st.balloons()
+                st.rerun()
+        else:
+            st.button("✅ START-UP BLOQUEADO", use_container_width=True, disabled=True)
+
+    # --- VISUALIZACIÓN DEL SCADA ---
+    # (Aquí sigue tu código de gráfico y motor de la respuesta anterior)
 
     # --- GRÁFICO ---
     datos = motor.evolucion_produccion()
