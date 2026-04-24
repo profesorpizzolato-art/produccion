@@ -33,7 +33,7 @@ def dashboard_principal():
     # En la Fila 2 de tu dashboard_principal.py
     with col5:
         if st.button("📈 Ingeniería (IPR-VLP)", use_container_width=True, key="btn_ing"):
-           st.session_state.area_actual = "📈 Ingeniería" # <--- Corregido
+           st.session_state.area_actual = "📈 Ingeniería"
            st.rerun()
     with col6:
         if st.button("🧮 Fórmulas Petroleras", use_container_width=True, key="btn_form"):
