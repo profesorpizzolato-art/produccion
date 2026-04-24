@@ -1,3 +1,4 @@
 rename módulos modulos
 mv módulos modulos
 streamlit run app.py
+pip install google-cloud-firestore
