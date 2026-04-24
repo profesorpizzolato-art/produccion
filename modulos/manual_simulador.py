@@ -43,6 +43,7 @@ def mostrar_manual():
         """)
 
     st.divider()
+  # --- LÓGICA PARA GENERAR EL PDF CORREGIDA ---
     def generar_pdf():
         pdf = FPDF()
         pdf.add_page()
@@ -51,21 +52,32 @@ def mostrar_manual():
         
         pdf.set_font("Arial", size=12)
         pdf.ln(10)
-        pdf.multi_cell(0, 10, txt="Este documento certifica las normas operativas del simulador.\n\n"
-                                 "1. OPERACIONES DE CAMPO: Control de sistemas AIB, ESP y PCP.\n"
-                                 "2. PLANTA DE PROCESO: Gestión de presiones (V-01) y temperaturas (E-01).\n"
-                                 "3. SEGURIDAD: Protocolo de parada de emergencia (ESD).\n"
-                                 "4. INGENIERÍA: Análisis de curvas IPR y VLP.")
         
-        return pdf.output(dest='S').encode('latin-1') # Esto genera el binario real del PDF
+        # Texto del manual
+        contenido = (
+            "Este documento certifica las normas operativas del simulador.\n\n"
+            "1. OPERACIONES DE CAMPO: Control de sistemas AIB, ESP y PCP.\n"
+            "2. PLANTA DE PROCESO: Gestion de presiones (V-01) y temperaturas (E-01).\n"
+            "3. SEGURIDAD: Protocolo de parada de emergencia (ESD).\n"
+            "4. INGENIERIA: Analisis de curvas IPR y VLP."
+        )
+        
+        # Usamos multi_cell para el cuerpo del texto
+        pdf.multi_cell(0, 10, txt=contenido)
+        
+        # IMPORTANTE: En fpdf2, output() sin argumentos devuelve bytes directamente
+        return pdf.output() 
 
-    pdf_output = generar_pdf()
+    # Generamos los bytes del PDF
+    try:
+        pdf_bytes = generar_pdf()
 
-    st.download_button(
-        label="📄 Descargar Manual Completo (PDF)",
-        data=pdf_output,
-        file_name="manual_menfa_operaciones_campo_2026.pdf",
-        mime="application/pdf",
-        help="Haga clic para descargar el manual compatible con Adobe Reader."
-    )
-    
+        st.download_button(
+            label="📄 Descargar Manual Completo (PDF)",
+            data=pdf_bytes,
+            file_name="manual_menfa_Operaciones_campo_2026.pdf",
+            mime="application/pdf",
+            help="Haga clic para descargar el manual compatible con Adobe Reader."
+        )
+    except Exception as e:
+        st.error(f"Error al generar el PDF: {e}")
