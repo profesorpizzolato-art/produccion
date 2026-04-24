@@ -46,6 +46,7 @@ def main_app():
         "🗺️ Mapa del Campo", 
         "📊 Campo Petrolero",
         "🏭 Planta de Proceso",
+        "📦 Equipos de Planta",
         "📈 Ingeniería",
         "🖥️ Monitoreo SCADA",
         "📋 Gestión y Reportes",
@@ -107,6 +108,9 @@ def main_app():
     elif actual == "🏭 Planta de Proceso":
         from modulos.planta_produccion import planta_produccion
         planta_produccion()
+    elif seleccion == "📦 Equipos de Planta":
+        # LLAMADO AL NUEVO MÓDULO
+        mostrar_equipos_planta()    
 
     elif actual == "📈 Ingeniería":
         from modulos.ingenieria import mostrar_ingenieria
