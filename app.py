@@ -139,6 +139,7 @@ def main_app():
     elif actual == "📘 Manual":
         from modulos.manual_simulador import mostrar_manual
         mostrar_manual()
+        
 # --- FLUJO PRINCIPAL ---
 if not st.session_state.ingresado:
     login()
