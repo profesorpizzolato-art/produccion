@@ -1,5 +1,5 @@
 import streamlit as st
-
+from fpdf import FPDF
 def mostrar_manual():
     st.header("📘 Manual de Usuario - IPCL MENFA")
     
@@ -43,10 +43,29 @@ def mostrar_manual():
         """)
 
     st.divider()
+    def generar_pdf():
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", "B", 16)
+        pdf.cell(200, 10, txt="MANUAL TÉCNICO - IPCL MENFA 3.0", ln=True, align='C')
+        
+        pdf.set_font("Arial", size=12)
+        pdf.ln(10)
+        pdf.multi_cell(0, 10, txt="Este documento certifica las normas operativas del simulador.\n\n"
+                                 "1. OPERACIONES DE CAMPO: Control de sistemas AIB, ESP y PCP.\n"
+                                 "2. PLANTA DE PROCESO: Gestión de presiones (V-01) y temperaturas (E-01).\n"
+                                 "3. SEGURIDAD: Protocolo de parada de emergencia (ESD).\n"
+                                 "4. INGENIERÍA: Análisis de curvas IPR y VLP.")
+        
+        return pdf.output(dest='S').encode('latin-1') # Esto genera el binario real del PDF
+
+    pdf_output = generar_pdf()
+
     st.download_button(
         label="📄 Descargar Manual Completo (PDF)",
-        data="Contenido del manual para exportar...",
-        file_name="manual_menfa_2026.pdf",
+        data=pdf_output,
+        file_name="manual_menfa_operaciones_campo_2026.pdf",
         mime="application/pdf",
-        help="Descarga la guía técnica para estudio offline."
+        help="Haga clic para descargar el manual compatible con Adobe Reader."
     )
+    
