@@ -16,12 +16,17 @@ def mostrar_mantenimiento_integridad():
             "Estado": ["Normal", "⚠️ Requiere Service", "Normal", "Inspección Visual OK"]
         }
         df_equipos = pd.DataFrame(equipos)
-        
+               # --- CORRECCIÓN AQUÍ ---
         def color_estado(val):
             color = 'red' if 'Requiere' in val else 'green'
             return f'color: {color}'
 
-        st.table(df_equipos.style.applymap(color_estado, subset=['Estado']))
+        # Usamos .map() en lugar de .applymap()
+        st.dataframe(
+            df_equipos.style.map(color_estado, subset=['Estado']),
+            use_container_width=True,
+            hide_index=True
+        )
         
         if st.button("📝 Generar Orden de Trabajo (OT)"):
             st.success("Orden de Trabajo enviada al equipo de mantenimiento para MENFA-001.")
