@@ -100,7 +100,11 @@ def main_app():
             except ImportError:
                 st.error("No se pudo cargar el módulo de Bomba Mecánica.")
 
-    elif actual == "🏭 Planta de Tratamiento":
+    elif actual== "🗺️ Mapa del Campo":
+        mapa_campo()
+    elif actual== "📊 Campo Petrolero":
+        campo_petrolero()
+    elif actual == "🏭 Planta de proceso":
         planta_produccion()
     elif actual == "📈 Ingeniería":
         mostrar_ingenieria()
