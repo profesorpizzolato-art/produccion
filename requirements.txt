@@ -5,3 +5,5 @@ pandas
 numpy
 plotly
 fpdf2
+google-cloud-firestore
+google-auth
