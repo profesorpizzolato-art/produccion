@@ -42,7 +42,9 @@ def login():
 def main_app():
     opciones = [
         "🏠 Dashboard", 
-        "🛢️ Operaciones de Campo", 
+        "🛢️ Operaciones de Campo",
+        "🗺️ Mapa del Campo", 
+        "📊 Campo Petrolero",
         "🏭 Planta de Tratamiento",
         "📈 Ingeniería",
         "🖥️ Monitoreo SCADA",
