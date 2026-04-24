@@ -107,7 +107,8 @@ def main_app():
     elif actual == "📊 Campo Petrolero":
          from campo_petrolero import mostrar_estadisticas
          mostrar_estadisticas()
-    elif actual == "🏭 Planta de proceso":
+    elif actual == "🏭 Planta de Proceso": # <-- Verificá que la 'P' sea mayúscula
+        from modulos.planta_produccion import planta_produccion
         planta_produccion()
     elif actual == "📈 Ingeniería":
         mostrar_ingenieria()
