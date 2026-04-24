@@ -1,82 +1,26 @@
 import streamlit as st
+import pandas as pd
 
-def mapa_campo():
+def mostrar_mapa():
+    st.header("🗺️ Mapa Georreferenciado del Yacimiento")
+    st.write("Ubicación estratégica de activos en la Cuenca Cuyana.")
 
-    st.title("Mapa del Campo Petrolero")
-    st.subheader("Simulador MENFA")
+    # Datos simulados de pozos en zona sur de Mendoza
+    df_pozos = pd.DataFrame({
+        'lat': [-37.124, -37.145, -37.110, -37.135],
+        'lon': [-69.721, -69.702, -69.740, -69.695],
+        'Pozo': ['MENFA-001', 'MENFA-002 (Intervenido)', 'MENFA-003', 'MENFA-004'],
+        'Estado': ['Activo', 'Parado', 'Activo', 'Activo']
+    })
 
-    st.markdown("### Estado de Pozos")
+    # Selector de visualización
+    capa = st.radio("Capa de datos:", ["Pozos de Producción", "Líneas de Conducción"], horizontal=True)
+    
+    if capa == "Pozos de Producción":
+        st.map(df_pozos, zoom=11)
+        st.dataframe(df_pozos, use_container_width=True)
+    else:
+        st.info("Visualizando trazado de ductos hacia Planta de Tratamiento de Crudo (PTC).")
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Oil_and_gas_field_map_icon.svg/1024px-Oil_and_gas_field_map_icon.svg.png", width=200)
 
-    col1, col2, col3 = st.columns(3)
-
-    p1 = col1.slider("Pozo A1 (BPD)",0,1000,400)
-    p2 = col1.slider("Pozo A2 (BPD)",0,1000,350)
-
-    p3 = col2.slider("Pozo B1 (BPD)",0,1000,300)
-    p4 = col2.slider("Pozo B2 (BPD)",0,1000,250)
-
-    p5 = col3.slider("Pozo C1 (BPD)",0,1000,200)
-    p6 = col3.slider("Pozo C2 (BPD)",0,1000,150)
-
-    st.markdown("---")
-
-    def color_pozo(prod):
-
-        if prod < 100:
-            return "red"
-
-        elif prod < 300:
-            return "orange"
-
-        else:
-            return "green"
-
-    st.markdown("### Mapa del Campo")
-
-    st.markdown(
-        f"""
-        <div style="text-align:center">
-
-        <div style="display:flex;justify-content:center;gap:40px">
-
-        <div style="background:{color_pozo(p1)};padding:10px;border-radius:10px">Pozo A1</div>
-        <div style="background:{color_pozo(p2)};padding:10px;border-radius:10px">Pozo A2</div>
-
-        </div>
-
-        <br>
-
-        <div style="display:flex;justify-content:center;gap:40px">
-
-        <div style="background:{color_pozo(p3)};padding:10px;border-radius:10px">Pozo B1</div>
-        <div style="background:{color_pozo(p4)};padding:10px;border-radius:10px">Pozo B2</div>
-
-        </div>
-
-        <br>
-
-        <div style="display:flex;justify-content:center;gap:40px">
-
-        <div style="background:{color_pozo(p5)};padding:10px;border-radius:10px">Pozo C1</div>
-        <div style="background:{color_pozo(p6)};padding:10px;border-radius:10px">Pozo C2</div>
-
-        </div>
-
-        <br>
-
-        ↓
-
-        <div style="background:lightblue;padding:12px;border-radius:10px">MANIFOLD</div>
-
-        ↓
-
-        <div style="background:lightgreen;padding:12px;border-radius:10px">SEPARADOR</div>
-
-        ↓
-
-        <div style="background:lightgray;padding:12px;border-radius:10px">TANQUES</div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.success("📍 Sistema de coordenadas: WGS 84 / UTM zone 19S")
