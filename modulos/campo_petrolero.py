@@ -2,51 +2,32 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-def campo_petrolero():
+def mostrar_estadisticas():
+    st.header("📊 Estadísticas de Producción del Campo")
+    
+    # Métricas de cabecera
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Producción Total", "2,450 m³/d", "+5%")
+    m2.metric("Corte de Agua (WC)", "42%", "-1.5%")
+    m3.metric("Gas Producido", "1,200 MSCFD", "Estable")
+    m4.metric("Pozos Activos", "12 / 15", "Normal")
 
-    st.title("Simulador de Campo Petrolero")
-    st.subheader("Simulador MENFA - Producción de Campo")
+    st.divider()
 
-    st.markdown("---")
+    # Gráfico de tendencia
+    st.subheader("📈 Evolución Diaria (Últimos 30 días)")
+    chart_data = pd.DataFrame(
+        np.random.randn(30, 2) / [10, 20] + [120, 45],
+        columns=['Presión Promedio (psi)', 'Caudal (m³/d)']
+    )
+    st.line_chart(chart_data)
 
-    st.write("Ajuste la producción de cada pozo")
-
-    col1, col2, col3 = st.columns(3)
-
-    pozo1 = col1.slider("Pozo A1 (BPD)", 0, 1000, 400)
-    pozo2 = col1.slider("Pozo A2 (BPD)", 0, 1000, 350)
-
-    pozo3 = col2.slider("Pozo B1 (BPD)", 0, 1000, 300)
-    pozo4 = col2.slider("Pozo B2 (BPD)", 0, 1000, 250)
-
-    pozo5 = col3.slider("Pozo C1 (BPD)", 0, 1000, 200)
-    pozo6 = col3.slider("Pozo C2 (BPD)", 0, 1000, 150)
-
-    st.markdown("---")
-
-    produccion_total = pozo1 + pozo2 + pozo3 + pozo4 + pozo5 + pozo6
-
-    st.metric("Producción total del campo", f"{produccion_total} BPD")
-
-    st.markdown("---")
-
-    datos = pd.DataFrame({
-        "Pozo": ["A1","A2","B1","B2","C1","C2"],
-        "Producción": [pozo1,pozo2,pozo3,pozo4,pozo5,pozo6]
-    })
-
-    st.bar_chart(datos.set_index("Pozo"))
-
-    st.markdown("---")
-
-    if produccion_total > 3500:
-
-        st.warning("Producción muy alta para capacidad de planta")
-
-    elif produccion_total < 1000:
-
-        st.error("Producción de campo muy baja")
-
-    else:
-
-        st.success("Producción dentro del rango operativo")
+    # Estado de Sistemas de Extracción
+    st.subheader("⚙️ Distribución de Sistemas de Extracción")
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.bar_chart({"AIB (Mecánico)": 8, "ESP (Sumergible)": 3, "PCP (Tornillo)": 2, "Surgencia": 2})
+    with col_b:
+        st.write("**Alertas Operativas:**")
+        st.warning("⚠️ Pozo MENFA-002: Requiere cambio de cuplas por fatiga.")
+        st.error("🚨 Baja presión en línea de transferencia hacia Batería 2.")
