@@ -49,7 +49,8 @@ def main_app():
         "📈 Ingeniería",
         "🖥️ Monitoreo SCADA",
         "📋 Gestión y Reportes",
-        "🧠 Evaluación"
+        "🧠 Evaluación",
+        "📘 Manual"
     ]
 
     # --- MENÚ LATERAL ---
@@ -124,7 +125,9 @@ def main_app():
 
     elif actual == "🧠 Evaluación":
         evaluacion()
-
+    elif actual == "📘 Manual":
+        from modulos.manual_simulador import mostrar_manual
+        mostrar_manual()
 # --- FLUJO PRINCIPAL ---
 if not st.session_state.ingresado:
     login()
