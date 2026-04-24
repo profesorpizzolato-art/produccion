@@ -2,103 +2,134 @@ import streamlit as st
 from fpdf import FPDF
 
 def mostrar_manual():
-    st.header("📘 Manual Tecnico y Normativo - IPCL MENFA")
-    st.write("Guia integral: Ingenieria, Procesos, Seguridad y Normativa Legal.")
+    st.header("📘 Manual de Especialización en Producción Petrolera")
+    st.write("Soporte Teórico-Operativo para Técnicos Superiores.")
     st.divider()
 
-    def generar_pdf():
+    # --- BASE DE DATOS TEÓRICA ---
+    # Centralizamos la info para que sea fácil editarla
+    teoria_petrolera = {
+        "1. Ingeniería de Reservorio": {
+            "resumen": "La gestión de la energía del yacimiento.",
+            "detalle": (
+                "El Indice de Productividad (IP) es la métrica reina. Representa cuántos metros cúbicos "
+                "entrega el pozo por cada psi de caída de presión. \n\n"
+                "TEORIA DEL DRAWDOWN: Es la diferencia entre la presión estática y la fluyente. "
+                "Un drawdown excesivo puede provocar 'conificación' de agua o arenamiento. \n"
+                "LEY DE DARCY: El flujo es proporcional a la permeabilidad y al área, "
+                "e inversamente proporcional a la viscosidad del fluido."
+            ),
+            "formula": "J = Q / (Pr - Pwf)"
+        },
+        "2. Separación Física": {
+            "resumen": "Principios de Gravedad, Momento y Coalescencia.",
+            "detalle": (
+                "La separación ocurre por diferencia de densidades. En un separador horizontal, "
+                "el petróleo necesita 'Tiempo de Residencia' para soltar las burbujas de gas. \n\n"
+                "LEY DE STOKES: Define la velocidad de caída de una gota de agua en el crudo. "
+                "A mayor viscosidad, más lento cae el agua; por eso en Mendoza se usa calor "
+                "para bajar la viscosidad y acelerar la separación."
+            ),
+            "formula": "v = (2 * r² * g * (d1 - d2)) / (9 * n)"
+        },
+        "3. Medición AGA 3": {
+            "resumen": "Medición de gas por presión diferencial.",
+            "detalle": (
+                "Se basa en el Efecto Venturi. Al restringir el paso con una placa de orificio, "
+                "la velocidad aumenta y la presión cae. Esa 'Diferencial' nos dice cuánto gas pasa. \n\n"
+                "PUNTOS CRÍTICOS: La placa debe tener el borde filoso hacia aguas arriba. "
+                "Si la placa está sucia o roma, medirá menos gas del real (Pérdida económica)."
+            ),
+            "formula": "Q = C' * sqrt(hw * Pf)"
+        },
+        "4. Normativa y Seguridad": {
+            "resumen": "Resolución 148/07 y API RP 14C.",
+            "detalle": (
+                "La Res. 148 de Mendoza exige auditorías de integridad. No es opcional. \n\n"
+                "PROTOCOLOS DE SEGURIDAD: \n"
+                "- PSH (Pressure Switch High): Protege el equipo de una explosión.\n"
+                "- LSH (Level Switch High): Evita que el crudo pase a la línea de gas.\n"
+                "- LOTO: Bloqueo físico (candado) para que nadie arranque una bomba mientras la reparas."
+            ),
+            "formula": "Normas: API 14C / Res. 148 Mendoza"
+        }
+    }
+
+    # --- FUNCIÓN GENERADORA DE PDF ---
+    def generar_pdf_pro():
         pdf = FPDF()
         pdf.add_page()
         
-        # --- ENCABEZADO ---
+        # Portada/Encabezado
         pdf.set_font("Helvetica", "B", 16)
-        pdf.set_text_color(0, 51, 102) # Azul oscuro profesional
-        pdf.cell(200, 10, txt="MANUAL TECNICO Y DE SEGURIDAD OPERATIVA", ln=True, align='C')
+        pdf.cell(0, 10, "MANUAL TECNICO DE PRODUCCION IPCL 3.0", ln=True, align='C')
         pdf.set_font("Helvetica", "I", 10)
-        pdf.set_text_color(100, 100, 100)
-        pdf.cell(200, 10, txt="Menfa Capacitaciones - Simulador IPCL 3.0", ln=True, align='C')
+        pdf.cell(0, 10, "Desarrollado por Menfa Capacitaciones - Instructor: F. Pizzolato", ln=True, align='C')
         pdf.ln(10)
 
-        # --- SECCIONES TÉCNICAS ---
-        sections = [
-            ("1. INGENIERIA DE PRODUCCION Y FORMULAS", [
-                "Indice de Productividad (IP): J = Q / (Pr - Pwf)",
-                "Calculo de Eficiencia Volumetrica: Ev = (Q_real / Q_teorico) x 100",
-                "Presion de Fluido (Hidrostatica): Ph = 0.052 x Densidad x Profundidad"
-            ]),
-            ("2. SEGURIDAD OPERATIVA Y NORMAS (SSMA)", [
-                "Res. SEN 148/07: Normas de integridad y abandono.",
-                "API RP 14C: Analisis de seguridad en instalaciones de superficie.",
-                "Protocolos LOTO: Bloqueo y Etiquetado para intervenciones seguras."
-            ])
-        ]
-
-        # --- AQUÍ ESTABA EL ERROR: El bucle debe estar dentro de la función ---
-        for title, content in sections:
+        for titulo, info in teoria_petrolera.items():
+            # Título de Sección
             pdf.set_font("Helvetica", "B", 12)
-            pdf.set_fill_color(240, 240, 240)
-            pdf.set_text_color(0, 0, 0)
-            pdf.cell(0, 10, txt=title, ln=True, fill=True)
+            pdf.set_fill_color(230, 230, 230)
+            pdf.cell(0, 10, titulo, ln=True, fill=True)
+            
+            # Cuerpo Teórico
             pdf.set_font("Helvetica", size=10)
-            for line in content:
-                # Usamos un guion para evitar errores de fuente Unicode
-                pdf.cell(0, 7, txt=f" - {line}", ln=True) 
+            # Limpiamos tildes para evitar errores de fuente
+            texto_limpio = info['detalle'].encode('latin-1', 'ignore').decode('latin-1')
+            pdf.multi_cell(0, 7, texto_limpio)
+            
+            # Fórmula Destacada
+            pdf.set_font("Helvetica", "B", 10)
+            pdf.set_text_color(200, 0, 0)
+            pdf.cell(0, 7, f"Formula Clave: {info['formula']}", ln=True)
+            pdf.set_text_color(0, 0, 0)
             pdf.ln(5)
-       
-        # --- SECCIÓN DE COMPROMISO Y FIRMA ---
+
+        # Hoja de firmas
+        pdf.ln(10)
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.cell(0, 10, "VALIDACION DE COMPETENCIAS", ln=True)
         pdf.ln(20)
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.cell(0, 10, txt="4. COMPROMISO DE SEGURIDAD OPERATIVA", ln=True)
-        pdf.set_font("Helvetica", size=10)
-        pdf.multi_cell(0, 7, txt=(
-            "Como operario/tecnico capacitado por Menfa Capacitaciones, entiendo los riesgos "
-            "asociados a las operaciones de petroleo y gas. Me comprometo a respetar las "
-            "presiones maximas (MAOP), utilizar los elementos de proteccion personal (EPP) "
-            "y nunca puentear sistemas de seguridad sin la debida autorizacion."
-        ))
-        
-        pdf.ln(30)
-        # Líneas para firma
-        y_actual = pdf.get_y()
-        col_width = pdf.w / 2.5
-        pdf.line(20, y_actual, 20 + col_width, y_actual) # Línea Alumno
-        pdf.line(110, y_actual, 110 + col_width, y_actual) # Línea Instructor
-        
-        pdf.set_font("Helvetica", "B", 8)
-        pdf.set_y(y_actual + 2)
-        pdf.set_x(35)
-        pdf.cell(col_width, 5, txt="Firma del Alumno")
-        pdf.set_x(125)
-        pdf.cell(col_width, 5, txt="Firma Instructor (F. Pizzolato)")
+        y = pdf.get_y()
+        pdf.line(20, y, 80, y)
+        pdf.line(120, y, 180, y)
+        pdf.text(35, y+5, "Firma Alumno")
+        pdf.text(125, y+5, "Firma F. Pizzolato")
 
         return bytes(pdf.output())
 
-    # --- INTERFAZ STREAMLIT ---
-    col_info, col_btn = st.columns([2, 1])
+    # --- RENDERIZADO EN PANTALLA ---
+    st.subheader("📖 Biblioteca de Consulta Rápida")
+    
+    # Selector de teoría interactiva
+    capitulo = st.selectbox("Seleccione el área de estudio:", list(teoria_petrolera.keys()))
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.markdown(f"### {capitulo}")
+        st.info(teoria_petrolera[capitulo]["resumen"])
+        st.write(teoria_petrolera[capitulo]["detalle"])
+        st.latex(teoria_petrolera[capitulo]["formula"])
 
-    with col_info:
-        st.markdown("""
-        ### 📋 ¿Qué incluye este manual?
-        * **Ingeniería:** Fórmulas para cálculo de IP y eficiencia.
-        * **Normativa:** Resumen de la Res. 148 y Normas API.
-        * **Seguridad:** Protocolos de bloqueo (LOTO) y parada de emergencia (ESD).
-        * **Compromiso:** Hoja de firmas para validación de competencia.
-        """)
-
-    with col_btn:
+    with col2:
+        st.write("---")
+        st.write("**Acciones Técnicas:**")
         try:
-            # Primero intentamos generar los bytes
-            pdf_bytes = generar_pdf()
-            st.success("PDF generado con éxito.")
+            pdf_data = generar_pdf_pro()
             st.download_button(
-                label="📥 Descargar Manual y Compromiso",
-                data=pdf_bytes,
-                file_name="Manual_Seguridad_IPCL_MENFA.pdf",
+                label="📥 Descargar Manual Extendido (PDF)",
+                data=pdf_data,
+                file_name="Manual_Produccion_Menfa_Pro.pdf",
                 mime="application/pdf",
                 use_container_width=True
             )
         except Exception as e:
-            st.error(f"Error al preparar el PDF: {e}")
+            st.error(f"Error PDF: {e}")
+        
+        if st.button("❓ Troubleshooting (Fallas)"):
+            st.warning("**Caso:** Si sube la presión y baja el nivel... \n\n **Diagnóstico:** Obstrucción en la salida de gas o válvula de control trabada.")
 
     st.divider()
-    st.info("💡 **Consejo para el alumno:** Imprima este manual y manténgalo en su legajo técnico personal.")
+    st.caption("IPCL MENFA 3.0 - Mendoza, Argentina.")
