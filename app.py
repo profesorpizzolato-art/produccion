@@ -122,6 +122,7 @@ def main_app():
             st.error("No se pudo cargar el sistema SCADA.")
 
     elif actual == "📋 Gestión y Reportes":
+        from modulos.gestion_supervision_prod import gestion_supevision_prod
         gestion_supervisor_prod()
     elif actual == "🎯 Entrenamiento Operativo":
         from modulos.entrenamiento import mostrar_entrenamiento
