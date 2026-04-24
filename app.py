@@ -156,7 +156,84 @@ def main_app():
     elif actual == "📘 Manual":
         from modulos.manual_simulador import mostrar_manual
         mostrar_manual()
+    import streamlit as st
+# Importamos las funciones que creamos antes
+from modulos.nube import enviar_falla, resetear_planta, conectar_db
+def modulo_instructor_pizzolato():
+    st.title("👨‍🏫 Panel de Control Maestro (Instructor)")
+    st.markdown("---")
+    
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        st.subheader("🚀 Inyectar Falla en Tiempo Real")
+        falla_nombre = st.selectbox("Seleccione el incidente:", [
+            "Fuga de H2S en Manifold",
+            "Cavitación en Bomba P-101",
+            "BSW Fuera de Especificación",
+            "Pérdida de Presión en Línea de Venta",
+            "Parada de Emergencia (ESD) Activada"
+        ])
         
+        detalles = st.text_area("Descripción detallada del síntoma:", 
+                                 "El manómetro de entrada muestra una caída de 5 psi y se activa la alarma visual.")
+        
+        if st.button("🔴 LANZAR FALLA A LOS ALUMNOS"):
+            enviar_falla(falla_nombre, detalles)
+            st.error(f"FALLA LANZADA: {falla_nombre}")
+            st.toast("La planta de los alumnos ha sido alterada.")
+
+    with col2:
+        st.subheader("🛡️ Gestión de Planta")
+        if st.button("🟢 NORMALIZAR OPERACIÓN"):
+            resetear_planta()
+            st.success("Planta reseteada a condiciones normales.")
+            st.balloons()
+            
+        st.divider()
+        st.write("**Estado de Conexión:**")
+        # Aquí podrías consultar quién está conectado
+        st.write("📡 Servidor Firebase: Activo")
+
+    # --- SECCIÓN DE MONITOREO DE RESPUESTAS ---
+    st.markdown("---")
+    st.subheader("📥 Respuestas de Alumnos en Vivo")
+    
+    db = conectar_db()
+    # Leemos la respuesta que el alumno escribió en la DB
+    doc = db.collection("simulador").document("sala_emergencia").get().to_dict()
+    
+    if doc and doc.get("respuesta_alumno"):
+        st.info(f"**Última respuesta recibida:**\n\n {doc['respuesta_alumno']}")
+        
+        # Sistema de calificación rápida
+        puntos = st.slider("Calificar maniobra:", 0, 100, 70)
+        if st.button("Validar y Calificar"):
+            # Aquí podrías guardar la nota en el legajo del alumno
+            st.success(f"Nota de {puntos} enviada al historial.")
+    else:
+        st.write("Esperando respuestas de maniobras...")
+
+if __name__ == "__main__":
+    main()
+def main():
+    st.sidebar.title("Navegación IPCL")
+    
+    # Selector de Rol para separar las aguas
+    rol = st.sidebar.radio("Seleccione su Rol:", ["Alumno", "Instructor"])
+
+    if rol == "Instructor":
+        # Ponemos una contraseña simple para que los alumnos no entren
+        clave = st.sidebar.text_input("Clave de Acceso:", type="password")
+        if clave == "menfa2026": # Podés cambiar esta clave
+            modulo_instructor_pizzolato()
+        else:
+            st.sidebar.warning("Clave incorrecta")
+            st.info("Ingrese la clave de instructor para acceder al panel de control.")
+    
+    else:
+        # Aquí va la lógica normal del alumno
+        simulador_alumno()    
 # --- FLUJO PRINCIPAL ---
 if not st.session_state.ingresado:
     login()
