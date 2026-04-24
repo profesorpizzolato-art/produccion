@@ -30,9 +30,11 @@ def dashboard_principal():
     with col4:
         if st.button("🏭 Planta de Proceso", use_container_width=True, key="btn_planta"):
             navegar_a("🏭 Planta de Tratamiento")
+    # En la Fila 2 de tu dashboard_principal.py
     with col5:
         if st.button("📈 Ingeniería (IPR-VLP)", use_container_width=True, key="btn_ing"):
-            navegar_a("🏭 Planta de Tratamiento")
+           st.session_state.area_actual = "📈 Ingeniería" # <--- Corregido
+           st.rerun()
     with col6:
         if st.button("🧮 Fórmulas Petroleras", use_container_width=True, key="btn_form"):
             navegar_a("🧠 Evaluación")
