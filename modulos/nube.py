@@ -1,7 +1,12 @@
 import streamlit as st
-from google.cloud import firestore
-from google.oauth2 import service_account
 import json
+
+# Intentamos importar, si falla avisamos qué falta
+try:
+    from google.cloud import firestore
+    from google.oauth2 import service_account
+except ModuleNotFoundError:
+    st.error("Falta instalar 'google-cloud-firestore'. Agregalo a requirements.txt")
 
 def conectar_db():
     # Lee las llaves desde la sección Secrets de Streamlit
