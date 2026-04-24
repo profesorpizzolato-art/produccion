@@ -43,17 +43,16 @@ def mostrar_manual():
         """)
 
     st.divider()
-  # --- LÓGICA PARA GENERAR EL PDF CORREGIDA ---
+ # --- LÓGICA PARA GENERAR EL PDF (VERSIÓN FINAL) ---
     def generar_pdf():
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Arial", "B", 16)
-        pdf.cell(200, 10, txt="MANUAL TÉCNICO - IPCL MENFA 3.0", ln=True, align='C')
+        pdf.set_font("Helvetica", "B", 16) # Cambiado a Helvetica (estándar)
+        pdf.cell(200, 10, txt="MANUAL TECNICO - IPCL MENFA 3.0", ln=True, align='C')
         
-        pdf.set_font("Arial", size=12)
+        pdf.set_font("Helvetica", size=12)
         pdf.ln(10)
         
-        # Texto del manual
         contenido = (
             "Este documento certifica las normas operativas del simulador.\n\n"
             "1. OPERACIONES DE CAMPO: Control de sistemas AIB, ESP y PCP.\n"
@@ -62,22 +61,22 @@ def mostrar_manual():
             "4. INGENIERIA: Analisis de curvas IPR y VLP."
         )
         
-        # Usamos multi_cell para el cuerpo del texto
         pdf.multi_cell(0, 10, txt=contenido)
         
-        # IMPORTANTE: En fpdf2, output() sin argumentos devuelve bytes directamente
-        return pdf.output() 
+        # Obtenemos el bytearray y lo convertimos a bytes puros
+        return bytes(pdf.output()) 
 
-    # Generamos los bytes del PDF
     try:
-        pdf_bytes = generar_pdf()
+        # Generamos los bytes reales
+        pdf_data = generar_pdf()
 
         st.download_button(
             label="📄 Descargar Manual Completo (PDF)",
-            data=pdf_bytes,
-            file_name="manual_menfa_Operaciones_campo_2026.pdf",
-            mime="application/pdf",
-            help="Haga clic para descargar el manual compatible con Adobe Reader."
+            data=pdf_data,
+            file_name="manual_menfa_operacines_campo_2026.pdf",
+            mime="application/pdf"
         )
+        st.success("✅ PDF listo para descarga.")
     except Exception as e:
-        st.error(f"Error al generar el PDF: {e}")
+        st.error(f"Error técnico: {e}")
+   
