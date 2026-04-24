@@ -108,9 +108,10 @@ def main_app():
     elif actual == "🏭 Planta de Proceso":
         from modulos.planta_produccion import planta_produccion
         planta_produccion()
-    elif seleccion == "📦 Equipos de Planta":
-        # LLAMADO AL NUEVO MÓDULO
-        mostrar_equipos_planta()    
+        
+    elif actual == "📦 Equipos de Planta":  # <--- Corregido: de 'seleccion' a 'actual'
+        from modulos.equipos_planta import mostrar_equipos_planta # <--- Agregamos la importación
+        mostrar_equipos_planta() 
 
     elif actual == "📈 Ingeniería":
         from modulos.ingenieria import mostrar_ingenieria
