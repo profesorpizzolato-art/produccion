@@ -1,5 +1,12 @@
 import streamlit as st
-
+def mostrar_alerta_seguridad():
+    alertas = [
+        "🛡️ RES. 148: Verifique que los recintos de tanques estén limpios y con válvulas de drenaje cerradas.",
+        "⚠️ CLIMA: Alerta por viento Zonda. Asegure elementos sueltos en locación y suspenda trabajos en altura.",
+        "💧 QUÍMICA: Verifique stock de inhibidor de parafina. Las bajas temperaturas aumentan el riesgo de bloqueo.",
+        "🔒 LOTO: Recuerde que el candado de seguridad es personal e intransferible."
+    ]
+    st.sidebar.info(random.choice(alertas))
 def dashboard_principal():
     # --- FUNCIÓN AUXILIAR DE NAVEGACIÓN ---
     # Esto asegura que el sidebar y el contenido cambien al mismo tiempo
