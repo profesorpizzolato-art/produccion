@@ -49,6 +49,7 @@ def main_app():
         "📈 Ingeniería",
         "🖥️ Monitoreo SCADA",
         "📋 Gestión y Reportes",
+        "🛠️ Mantenimiento e Integridad",
         "🧠 Evaluación",
         "🎯 Entrenamiento Operativo",
         "📘 Manual"
@@ -119,7 +120,9 @@ def main_app():
         # Corregido: Importamos el nombre correcto del archivo y la función
         from modulos.gestion_supervisor_prod import gestion_supervisor_prod
         gestion_supervisor_prod()
-
+    elif actual == "🛠️ Mantenimiento e Integridad":
+        from modulos.mantenimiento_integridad import mostrar_mantenimiento_integridad
+        mostrar_mantenimiento_integridad()
     elif actual == "🎯 Entrenamiento Operativo":
         from modulos.entrenamiento import mostrar_entrenamiento
         mostrar_entrenamiento()
