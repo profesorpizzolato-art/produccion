@@ -1,0 +1,19 @@
+from modulos.nube import enviar_falla, resetear_planta
+
+def modulo_instructor_pizzolato():
+    st.title("👨‍🏫 Comando Maestro de Instructor")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        falla = st.text_input("Nombre de la falla:", "Cavitación en Bomba")
+        desc = st.text_area("Instrucciones/Síntomas:", "Vibración alta y presión de succión en 0.")
+        if st.button("🔴 LANZAR EMERGENCIA"):
+            enviar_falla(falla, desc)
+            st.toast("Falla enviada a todos los alumnos")
+
+    with col2:
+        st.write("---")
+        if st.button("🟢 NORMALIZAR PLANTA"):
+            resetear_planta()
+            st.toast("Planta normalizada")
