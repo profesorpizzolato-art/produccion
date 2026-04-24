@@ -50,6 +50,7 @@ def main_app():
         "🖥️ Monitoreo SCADA",
         "📋 Gestión y Reportes",
         "🧠 Evaluación",
+        "🎯 Entrenamiento Operativo",
         "📘 Manual"
     ]
 
@@ -122,7 +123,9 @@ def main_app():
 
     elif actual == "📋 Gestión y Reportes":
         gestion_supervisor_prod()
-
+    elif actual == "🎯 Entrenamiento Operativo":
+        from modulos.entrenamiento import mostrar_entrenamiento
+        mostrar_entrenamiento()
     elif actual == "🧠 Evaluación":
         evaluacion()
     elif actual == "📘 Manual":
