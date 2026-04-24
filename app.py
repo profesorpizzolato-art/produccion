@@ -84,51 +84,50 @@ def main_app():
             st.session_state.clear()
             st.rerun()
 
-    # --- MOTOR DE EJECUCIÓN ---
-    # Usamos st.session_state.area_actual como la única fuente de verdad
+ # --- MOTOR DE EJECUCIÓN (Corrección de Rutas) ---
     actual = st.session_state.area_actual
 
     if actual == "🏠 Dashboard":
+        from modulos.dashboard_principal import dashboard_principal
         dashboard_principal()
 
     elif actual == "🛢️ Operaciones de Campo":
-        tab1, tab2, tab3 = st.tabs(["📍 Pozo Productor", "⚙️ Choke Control", "🏗️ Bomba Mecánica"])
-        with tab1: pozo_productor()
-        with tab2: st.info("Simulador de presión en cabeza de pozo (Choke Manifold).")
-        with tab3: 
-            try:
-                import modulos.bomba_mecanica as bm
-                bm.show()
-            except ImportError:
-                st.error("No se pudo cargar el módulo de Bomba Mecánica.")
+        from modulos.pozo_productor import pozo_productor
+        pozo_productor()
 
-   
     elif actual == "🗺️ Mapa del Campo":
-         from mapa_campo import mostrar_mapa
-         mostrar_mapa()
+        from modulos.mapa_campo import mostrar_mapa
+        mostrar_mapa()
+
     elif actual == "📊 Campo Petrolero":
-         from campo_petrolero import mostrar_estadisticas
-         mostrar_estadisticas()
-    elif actual == "🏭 Planta de Proceso": # <-- Verificá que la 'P' sea mayúscula
+        from modulos.campo_petrolero import mostrar_estadisticas
+        mostrar_estadisticas()
+
+    elif actual == "🏭 Planta de Proceso":
         from modulos.planta_produccion import planta_produccion
         planta_produccion()
+
     elif actual == "📈 Ingeniería":
+        from modulos.ingenieria import mostrar_ingenieria
         mostrar_ingenieria()
+
     elif actual == "🖥️ Monitoreo SCADA":
-        try:
-            import modulos.scada as scada
-            scada.show()
-        except ImportError:
-            st.error("No se pudo cargar el sistema SCADA.")
+        from modulos.scada import show
+        show()
 
     elif actual == "📋 Gestión y Reportes":
-        from modulos.gestion_supervisor_prod import gestion_supevisor_prod
+        # Corregido: Importamos el nombre correcto del archivo y la función
+        from modulos.gestion_supervisor_prod import gestion_supervisor_prod
         gestion_supervisor_prod()
+
     elif actual == "🎯 Entrenamiento Operativo":
         from modulos.entrenamiento import mostrar_entrenamiento
         mostrar_entrenamiento()
+
     elif actual == "🧠 Evaluación":
+        from modulos.evaluacion import evaluacion
         evaluacion()
+
     elif actual == "📘 Manual":
         from modulos.manual_simulador import mostrar_manual
         mostrar_manual()
