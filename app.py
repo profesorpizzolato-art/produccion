@@ -23,6 +23,7 @@ from modulos.pozo_productor import pozo_productor
 from modulos.planta_produccion import planta_produccion
 from modulos.gestion_supervisor_prod import gestion_supervisor_prod
 from modulos.evaluacion import evaluacion
+from modulos.ingenieria import mostrar_ingenieria # Agregá esta importación
 
 # --- SISTEMA DE ACCESO ---
 def login():
@@ -99,10 +100,8 @@ def main_app():
 
     elif actual == "🏭 Planta de Tratamiento":
         planta_produccion()
-    elif area == "📈 Ingeniería":
-       st.header("Análisis de Ingeniería de Producción")
-       st.info("Módulo de curvas IPR (Inflow Performance Relationship) y VLP (Vertical Lift Performance).")
-    # import modulos.ingenieria as ing; ing.show()
+    elif actual == "📈 Ingeniería":
+        mostrar_ingenieria()
     elif actual == "🖥️ Monitoreo SCADA":
         try:
             import modulos.scada as scada
