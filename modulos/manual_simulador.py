@@ -6,78 +6,95 @@ def mostrar_manual():
     st.write("Guía integral: Ingeniería, Procesos, Seguridad y Normativa Legal.")
     st.divider()
 
-    # --- FUNCIÓN PARA GENERAR EL PDF ---
     def generar_pdf():
         pdf = FPDF()
         pdf.add_page()
         
-        # Encabezado con estilo
+        # --- ENCABEZADO ---
         pdf.set_font("Helvetica", "B", 16)
+        pdf.set_text_color(0, 51, 102) # Azul oscuro profesional
         pdf.cell(200, 10, txt="MANUAL TÉCNICO Y DE SEGURIDAD OPERATIVA", ln=True, align='C')
         pdf.set_font("Helvetica", "I", 10)
+        pdf.set_text_color(100, 100, 100)
         pdf.cell(200, 10, txt="Menfa Capacitaciones - Simulador IPCL 3.0", ln=True, align='C')
         pdf.ln(10)
 
-        # SECCIÓN 1: INGENIERÍA
+        # --- SECCIONES TÉCNICAS ---
+        sections = [
+            ("1. INGENIERÍA DE PRODUCCIÓN Y FÓRMULAS", [
+                "Índice de Productividad (IP): J = Q / (Pr - Pwf)",
+                "Cálculo de Eficiencia Volumétrica: Ev = (Q_real / Q_teorico) x 100",
+                "Presión de Fluido (Hidrostática): Ph = 0.052 x Densidad x Profundidad"
+            ]),
+            ("2. SEGURIDAD OPERATIVA Y NORMAS (SSMA)", [
+                "Res. SEN 148/07: Normas de integridad y abandono.",
+                "API RP 14C: Análisis de seguridad en instalaciones de superficie.",
+                "Protocolos LOTO: Bloqueo y Etiquetado para intervenciones seguras."
+            ])
+        ]
+
+        for title, content in sections:
+            pdf.set_font("Helvetica", "B", 12)
+            pdf.set_fill_color(240, 240, 240)
+            pdf.set_text_color(0, 0, 0)
+            pdf.cell(0, 10, txt=title, ln=True, fill=True)
+            pdf.set_font("Helvetica", size=10)
+            for line in content:
+                pdf.cell(0, 7, txt=f"• {line}", ln=True)
+            pdf.ln(5)
+
+        # --- SECCIÓN DE COMPROMISO Y FIRMA ---
+        pdf.ln(20)
         pdf.set_font("Helvetica", "B", 12)
-        pdf.set_fill_color(230, 230, 230)
-        pdf.cell(0, 10, txt="1. INGENIERÍA DE PRODUCCIÓN Y FÓRMULAS", ln=True, fill=True)
+        pdf.cell(0, 10, txt="4. COMPROMISO DE SEGURIDAD OPERATIVA", ln=True)
         pdf.set_font("Helvetica", size=10)
         pdf.multi_cell(0, 7, txt=(
-            "Índice de Productividad (IP): J = Q / (Pr - Pwf)\n"
-            "Cálculo de Eficiencia Volumétrica: Ev = (Q_real / Q_teorico) x 100\n"
-            "Presión de Fluido (Hidrostática): Ph = 0.052 x Densidad x Profundidad\n"
-            "Velocidad Crítica de Erosión: v = C / (rho^0.5)"
+            "Como operario/técnico capacitado por Menfa Capacitaciones, entiendo los riesgos "
+            "asociados a las operaciones de petróleo y gas. Me comprometo a respetar las "
+            "presiones máximas (MAOP), utilizar los elementos de protección personal (EPP) "
+            "y nunca puentear sistemas de seguridad sin la debida autorización."
         ))
-        pdf.ln(5)
-
-        # SECCIÓN 2: ROLES
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.cell(0, 10, txt="2. FUNCIONES Y RESPONSABILIDADES", ln=True, fill=True)
-        pdf.set_font("Helvetica", size=10)
-        pdf.multi_cell(0, 7, txt=(
-            "- SUPERVISOR: Asegurar la integridad de las instalaciones y validar permisos.\n"
-            "- OPERADOR DE PLANTA: Monitorear SCADA y actuar ante alarmas LSH/PSH.\n"
-            "- RECORREDOR DE CAMPO: Inspección visual y detección de parafinas."
-        ))
-        pdf.ln(5)
-
-        # SECCIÓN 3: SEGURIDAD
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.cell(0, 10, txt="3. SEGURIDAD OPERATIVA (SSMA) Y NORMAS", ln=True, fill=True)
-        pdf.set_font("Helvetica", size=10)
-        texto_seguridad = (
-            "NORMATIVAS:\n"
-            "- Res. SEN 148/07: Integridad de pozos y abandono.\n"
-            "- API RP 14C: Sistemas de seguridad en plantas.\n"
-            "PROTOCOLOS:\n"
-            "1. ESD: Parada de emergencia.\n"
-            "2. LOTO: Bloqueo y etiquetado."
-        )
-        pdf.multi_cell(0, 7, txt=texto_seguridad)
+        
+        pdf.ln(30)
+        # Líneas para firma
+        col_width = pdf.w / 2.5
+        pdf.line(20, pdf.get_y(), 20 + col_width, pdf.get_y()) # Línea Alumno
+        pdf.line(110, pdf.get_y(), 110 + col_width, pdf.get_y()) # Línea Instructor
+        
+        pdf.set_font("Helvetica", "B", 8)
+        pdf.set_y(pdf.get_y() + 2)
+        pdf.set_x(35)
+        pdf.cell(col_width, 5, txt="Firma del Alumno")
+        pdf.set_x(125)
+        pdf.cell(col_width, 5, txt="Firma Instructor (F. Pizzolato)")
 
         return bytes(pdf.output())
 
-    # --- INTERFAZ EN EL SIMULADOR ---
-    col1, col2 = st.columns([2, 1])
+    # --- INTERFAZ STREAMLIT ---
+    col_info, col_btn = st.columns([2, 1])
 
-    with col1:
-        st.subheader("📚 Contenidos del Módulo")
-        with st.expander("Ver Fórmulas de Ingeniería"):
-            st.code("J = Q / (Pr - Pwf)\nPh = 0.052 * d * h")
-        with st.expander("Ver Normativa y Seguridad"):
-            st.write("**Res. 148/07:** Control de integridad en Mendoza.")
-            st.write("**API RP 14C:** Dispositivos de protección (LSH, PSH, SDV).")
+    with col_info:
+        st.markdown("""
+        ### 📋 ¿Qué incluye este manual?
+        * **Ingeniería:** Fórmulas para cálculo de IP y eficiencia.
+        * **Normativa:** Resumen de la Res. 148 y Normas API.
+        * **Seguridad:** Protocolos de bloqueo (LOTO) y parada de emergencia (ESD).
+        * **Compromiso:** Hoja de firmas para validación de competencia.
+        """)
 
-    with col2:
-        st.info("Generar versión PDF para imprimir o estudiar fuera de línea.")
+    with col_btn:
+        st.success("PDF Generado correctamente.")
         try:
-            pdf_data = generar_pdf()
+            pdf_bytes = generar_pdf()
             st.download_button(
-                label="💾 Descargar Manual (PDF)",
-                data=pdf_data,
-                file_name="manual_operativo_menfa_pro.pdf",
-                mime="application/pdf"
+                label="📥 Descargar Manual y Compromiso",
+                data=pdf_bytes,
+                file_name="Manual_Seguridad_IPCL_MENFA.pdf",
+                mime="application/pdf",
+                use_container_width=True
             )
         except Exception as e:
-            st.error(f"Error al generar PDF: {e}")
+            st.error(f"Error: {e}")
+
+    st.divider()
+    st.info("💡 **Consejo para el alumno:** Imprima este manual y manténgalo en su legajo técnico personal.")
