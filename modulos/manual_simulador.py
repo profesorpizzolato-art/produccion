@@ -1,82 +1,77 @@
 import streamlit as st
 from fpdf import FPDF
+
 def mostrar_manual():
-    st.header("📘 Manual de Usuario - IPCL MENFA")
-    
-    tab1, tab2, tab3 = st.tabs(["🚀 Inicio Rápido", "⚙️ Guía de Operación", "🚨 Protocolos"])
+    st.header("📘 Manual Técnico y Normativo - IPCL MENFA")
+    st.write("Guía integral: Ingeniería, Procesos, Seguridad y Normativa Legal.")
 
-    with tab1:
-        st.subheader("Bienvenido al Simulador 3.0")
-        st.write("""
-        Este software ha sido diseñado para entrenar técnicos en el manejo de yacimientos y plantas de tratamiento.
-        
-        **Pasos iniciales:**
-        1. **Navegación:** Utilice el panel lateral para saltar entre el Mapa, la Planta y la Ingeniería.
-        2. **Monitoreo:** Revise constantemente el módulo SCADA para detectar alertas.
-        3. **Interacción:** El simulador reacciona a sus cambios. Si sube la temperatura en la planta, verá el efecto en la eficiencia.
-        """)
-        st.info("💡 **Dato:** Todos los datos están basados en estándares de la Cuenca Cuyana.")
-
-    with tab2:
-        st.subheader("Control de Procesos")
-        
-        with st.expander("🛢️ Operaciones de Campo"):
-            st.write("""
-            * **Pozos:** Identificados por sistema de extracción (AIB, ESP, PCP).
-            * **Fallas Comunes:** Si un pozo aparece en **amarillo**, requiere inspección por fatiga o mecánica.
-            """)
-            
-        with st.expander("🏭 Planta de Proceso (PTC)"):
-            st.write("""
-            * **Separador V-01:** Es el corazón de la planta. Si la presión supera los 150 psi, se activará una alarma en el SCADA.
-            * **Calentador E-01:** Crucial para reducir la viscosidad. Rango óptimo: 60°C - 70°C.
-            """)
-
-    with tab3:
-        st.subheader("Protocolos de Emergencia")
-        st.error("**ESD (Emergency Shutdown):**")
-        st.write("""
-        En caso de una alerta roja en el SCADA o una presión incontrolable en el manifold, el operador debe:
-        1. Pulsar el botón **ESD** en el módulo de Planta.
-        2. Verificar el cierre de válvulas en el Mapa de Campo.
-        3. Reportar la novedad en el panel de Gestión.
-        """)
-
-    st.divider()
- # --- LÓGICA PARA GENERAR EL PDF (VERSIÓN FINAL) ---
     def generar_pdf():
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Helvetica", "B", 16) # Cambiado a Helvetica (estándar)
-        pdf.cell(200, 10, txt="MANUAL TECNICO - IPCL MENFA 3.0", ln=True, align='C')
         
-        pdf.set_font("Helvetica", size=12)
+        # --- ENCABEZADO ---
+        pdf.set_font("Helvetica", "B", 16)
+        pdf.cell(200, 10, txt="MANUAL TECNICO Y DE SEGURIDAD OPERATIVA", ln=True, align='C')
+        pdf.set_font("Helvetica", "I", 10)
+        pdf.cell(200, 10, txt="Menfa Capacitaciones - Simulador IPCL 3.0", ln=True, align='C')
         pdf.ln(10)
+
+        # --- SECCIÓN 1: INGENIERÍA Y FÓRMULAS ---
+        pdf.set_font("Helvetica", "B", 12)
+        pdf.set_fill_color(230, 230, 230)
+        pdf.cell(0, 10, txt="1. INGENIERIA DE PRODUCCION Y FORMULAS", ln=True, fill=True)
+        pdf.set_font("Helvetica", size=10)
+        pdf.multi_cell(0, 7, txt=(
+            "Indice de Productividad (IP): J = Q / (Pr - Pwf)\n"
+            "Calculo de Eficiencia Volumetrica: Ev = (Q_real / Q_teorico) x 100\n"
+            "Presion de Fluido (Hidrostatica): Ph = 0.052 x Densidad x Profundidad\n"
+            "Velocidad Critica de Erosion: v = C / (rho^0.5)"
+        ))
+        pdf.ln(5)
+
+        # --- SECCIÓN 2: FUNCIONES DEL PERSONAL ---
+        pdf.set_font("Helvetica", "B", 12)
+        pdf.cell(0, 10, txt="2. FUNCIONES Y RESPONSABILIDADES", ln=True, fill=True)
+        pdf.set_font("Helvetica", size=10)
+        pdf.multi_cell(0, 7, txt=(
+            "- SUPERVISOR: Asegurar la integridad de las instalaciones, validar permisos de trabajo "
+            "y optimizar el balance de masa diario (Control de Perdidas).\n"
+            "- OPERADOR DE PLANTA: Monitorear el SCADA, ajustar setpoints de separadores y "
+            "actuar ante alarmas de nivel (LSH) o presion (PSH).\n"
+            "- RECORREDOR DE CAMPO: Inspeccion visual de locaciones, toma de presiones en boca "
+            "de pozo y deteccion temprana de fugas o parafinas."
+        ))
+        pdf.ln(5)
+
+        # --- SECCIÓN 3: SEGURIDAD OPERATIVA Y NORMATIVA ---
+        pdf.set_font("Helvetica", "B", 12)
+        pdf.cell(0, 10, txt="3. SEGURIDAD OPERATIVA (SSMA) Y NORMAS", ln=True, fill=True)
+        pdf.set_font("Helvetica", size=10)
         
-        contenido = (
-            "Este documento certifica las normas operativas del simulador.\n\n"
-            "1. OPERACIONES DE CAMPO: Control de sistemas AIB, ESP y PCP.\n"
-            "2. PLANTA DE PROCESO: Gestion de presiones (V-01) y temperaturas (E-01).\n"
-            "3. SEGURIDAD: Protocolo de parada de emergencia (ESD).\n"
-            "4. INGENIERIA: Analisis de curvas IPR y VLP."
+        texto_seguridad = (
+            "NORMATIVAS CLAVE:\n"
+            "- Res. SEN 148/07: Normas para el abandono de pozos e integridad.\n"
+            "- API RP 14C: Analisis, diseño e instalacion de sistemas de seguridad en plataformas y plantas.\n"
+            "- ISO 14001: Gestion Ambiental para el control de derrames.\n\n"
+            "PROTOCOLOS CRITICOS:\n"
+            "1. ESD (Emergency Shutdown): Parada total por sobrepresion o fuego.\n"
+            "2. LOTO (Lock Out - Tag Out): Bloqueo y etiquetado para mantenimiento de bombas.\n"
+            "3. MAOP: Nunca exceder la Presion Maxima de Operacion Admisible en lineas."
         )
-        
-        pdf.multi_cell(0, 10, txt=contenido)
-        
-        # Obtenemos el bytearray y lo convertimos a bytes puros
-        return bytes(pdf.output()) 
+        pdf.multi_cell(0, 7, txt=texto_seguridad)
 
+        return bytes(pdf.output())
+
+    # --- RENDERIZADO ---
     try:
-        # Generamos los bytes reales
         pdf_data = generar_pdf()
-
+        st.success("Manual actualizado con secciones de Seguridad, Funciones y Normativa (API/Res. 148).")
+        
         st.download_button(
-            label="📄 Descargar Manual Completo (PDF)",
+            label="💾 Descargar Manual Profesional (PDF)",
             data=pdf_data,
-            file_name="manual_menfa_operacines_campo_2026.pdf",
+            file_name="manual_operativo_menfa_pro.pdf",
             mime="application/pdf"
         )
-        st.success("✅ PDF listo para descarga.")
     except Exception as e:
-        st.error(f"Error técnico: {e}")
-   
+        st.error(f"Error técnico al compilar el PDF: {e}")
