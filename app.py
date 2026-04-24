@@ -1,7 +1,24 @@
 import streamlit as st
 import sys
 import os
+from modulos.nube import leer_estado_actual
 
+def verificar_emergencias_remotas():
+    estado = leer_estado_actual()
+    
+    if estado and estado.get("activo"):
+        # Bloqueo Visual de Emergencia
+        st.markdown("<style>body {background-color: #3e0000 !important;}</style>", unsafe_allow_html=True)
+        
+        st.error(f"🚨 EMERGENCIA LANZADA POR EL INSTRUCTOR")
+        st.header(estado['falla'])
+        st.warning(estado['descripcion'])
+        
+        respuesta = st.text_area("Procedimiento de Maniobra:", placeholder="Ej: Cerrar válvula maestra, abrir bypass...")
+        
+        if st.button("Enviar Respuesta"):
+            # Aquí podrías guardar la respuesta en otra colección de la DB
+            st.success("Maniobra reportada. Espere a que el instructor normalice la planta.")
 # 1. CONFIGURACIÓN (Debe ser lo primero absoluto)
 st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
 
