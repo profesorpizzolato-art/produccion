@@ -42,7 +42,8 @@ def main_app():
     opciones = [
         "🏠 Dashboard", 
         "🛢️ Operaciones de Campo", 
-        "🏭 Planta de Tratamiento", 
+        "🏭 Planta de Tratamiento",
+        "📈 Ingeniería",
         "🖥️ Monitoreo SCADA",
         "📋 Gestión y Reportes",
         "🧠 Evaluación"
@@ -98,7 +99,10 @@ def main_app():
 
     elif actual == "🏭 Planta de Tratamiento":
         planta_produccion()
-
+    elif area == "📈 Ingeniería":
+       st.header("Análisis de Ingeniería de Producción")
+       st.info("Módulo de curvas IPR (Inflow Performance Relationship) y VLP (Vertical Lift Performance).")
+    # import modulos.ingenieria as ing; ing.show()
     elif actual == "🖥️ Monitoreo SCADA":
         try:
             import modulos.scada as scada
