@@ -4,74 +4,80 @@ from fpdf import FPDF
 def mostrar_manual():
     st.header("📘 Manual Técnico y Normativo - IPCL MENFA")
     st.write("Guía integral: Ingeniería, Procesos, Seguridad y Normativa Legal.")
+    st.divider()
 
+    # --- FUNCIÓN PARA GENERAR EL PDF ---
     def generar_pdf():
         pdf = FPDF()
         pdf.add_page()
         
-        # --- ENCABEZADO ---
+        # Encabezado con estilo
         pdf.set_font("Helvetica", "B", 16)
-        pdf.cell(200, 10, txt="MANUAL TECNICO Y DE SEGURIDAD OPERATIVA", ln=True, align='C')
+        pdf.cell(200, 10, txt="MANUAL TÉCNICO Y DE SEGURIDAD OPERATIVA", ln=True, align='C')
         pdf.set_font("Helvetica", "I", 10)
         pdf.cell(200, 10, txt="Menfa Capacitaciones - Simulador IPCL 3.0", ln=True, align='C')
         pdf.ln(10)
 
-        # --- SECCIÓN 1: INGENIERÍA Y FÓRMULAS ---
+        # SECCIÓN 1: INGENIERÍA
         pdf.set_font("Helvetica", "B", 12)
         pdf.set_fill_color(230, 230, 230)
-        pdf.cell(0, 10, txt="1. INGENIERIA DE PRODUCCION Y FORMULAS", ln=True, fill=True)
+        pdf.cell(0, 10, txt="1. INGENIERÍA DE PRODUCCIÓN Y FÓRMULAS", ln=True, fill=True)
         pdf.set_font("Helvetica", size=10)
         pdf.multi_cell(0, 7, txt=(
-            "Indice de Productividad (IP): J = Q / (Pr - Pwf)\n"
-            "Calculo de Eficiencia Volumetrica: Ev = (Q_real / Q_teorico) x 100\n"
-            "Presion de Fluido (Hidrostatica): Ph = 0.052 x Densidad x Profundidad\n"
-            "Velocidad Critica de Erosion: v = C / (rho^0.5)"
+            "Índice de Productividad (IP): J = Q / (Pr - Pwf)\n"
+            "Cálculo de Eficiencia Volumétrica: Ev = (Q_real / Q_teorico) x 100\n"
+            "Presión de Fluido (Hidrostática): Ph = 0.052 x Densidad x Profundidad\n"
+            "Velocidad Crítica de Erosión: v = C / (rho^0.5)"
         ))
         pdf.ln(5)
 
-        # --- SECCIÓN 2: FUNCIONES DEL PERSONAL ---
+        # SECCIÓN 2: ROLES
         pdf.set_font("Helvetica", "B", 12)
         pdf.cell(0, 10, txt="2. FUNCIONES Y RESPONSABILIDADES", ln=True, fill=True)
         pdf.set_font("Helvetica", size=10)
         pdf.multi_cell(0, 7, txt=(
-            "- SUPERVISOR: Asegurar la integridad de las instalaciones, validar permisos de trabajo "
-            "y optimizar el balance de masa diario (Control de Perdidas).\n"
-            "- OPERADOR DE PLANTA: Monitorear el SCADA, ajustar setpoints de separadores y "
-            "actuar ante alarmas de nivel (LSH) o presion (PSH).\n"
-            "- RECORREDOR DE CAMPO: Inspeccion visual de locaciones, toma de presiones en boca "
-            "de pozo y deteccion temprana de fugas o parafinas."
+            "- SUPERVISOR: Asegurar la integridad de las instalaciones y validar permisos.\n"
+            "- OPERADOR DE PLANTA: Monitorear SCADA y actuar ante alarmas LSH/PSH.\n"
+            "- RECORREDOR DE CAMPO: Inspección visual y detección de parafinas."
         ))
         pdf.ln(5)
 
-        # --- SECCIÓN 3: SEGURIDAD OPERATIVA Y NORMATIVA ---
+        # SECCIÓN 3: SEGURIDAD
         pdf.set_font("Helvetica", "B", 12)
         pdf.cell(0, 10, txt="3. SEGURIDAD OPERATIVA (SSMA) Y NORMAS", ln=True, fill=True)
         pdf.set_font("Helvetica", size=10)
-        
         texto_seguridad = (
-            "NORMATIVAS CLAVE:\n"
-            "- Res. SEN 148/07: Normas para el abandono de pozos e integridad.\n"
-            "- API RP 14C: Analisis, diseño e instalacion de sistemas de seguridad en plataformas y plantas.\n"
-            "- ISO 14001: Gestion Ambiental para el control de derrames.\n\n"
-            "PROTOCOLOS CRITICOS:\n"
-            "1. ESD (Emergency Shutdown): Parada total por sobrepresion o fuego.\n"
-            "2. LOTO (Lock Out - Tag Out): Bloqueo y etiquetado para mantenimiento de bombas.\n"
-            "3. MAOP: Nunca exceder la Presion Maxima de Operacion Admisible en lineas."
+            "NORMATIVAS:\n"
+            "- Res. SEN 148/07: Integridad de pozos y abandono.\n"
+            "- API RP 14C: Sistemas de seguridad en plantas.\n"
+            "PROTOCOLOS:\n"
+            "1. ESD: Parada de emergencia.\n"
+            "2. LOTO: Bloqueo y etiquetado."
         )
         pdf.multi_cell(0, 7, txt=texto_seguridad)
 
         return bytes(pdf.output())
 
-    # --- RENDERIZADO ---
-    try:
-        pdf_data = generar_pdf()
-        st.success("Manual actualizado con secciones de Seguridad, Funciones y Normativa (API/Res. 148).")
-        
-        st.download_button(
-            label="💾 Descargar Manual Profesional (PDF)",
-            data=pdf_data,
-            file_name="manual_operativo_menfa_pro.pdf",
-            mime="application/pdf"
-        )
-    except Exception as e:
-        st.error(f"Error técnico al compilar el PDF: {e}")
+    # --- INTERFAZ EN EL SIMULADOR ---
+    col1, col2 = st.columns([2, 1])
+
+    with col1:
+        st.subheader("📚 Contenidos del Módulo")
+        with st.expander("Ver Fórmulas de Ingeniería"):
+            st.code("J = Q / (Pr - Pwf)\nPh = 0.052 * d * h")
+        with st.expander("Ver Normativa y Seguridad"):
+            st.write("**Res. 148/07:** Control de integridad en Mendoza.")
+            st.write("**API RP 14C:** Dispositivos de protección (LSH, PSH, SDV).")
+
+    with col2:
+        st.info("Generar versión PDF para imprimir o estudiar fuera de línea.")
+        try:
+            pdf_data = generar_pdf()
+            st.download_button(
+                label="💾 Descargar Manual (PDF)",
+                data=pdf_data,
+                file_name="manual_operativo_menfa_pro.pdf",
+                mime="application/pdf"
+            )
+        except Exception as e:
+            st.error(f"Error al generar PDF: {e}")
