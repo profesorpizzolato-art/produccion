@@ -32,17 +32,17 @@ def mostrar_manual():
                 "Protocolos LOTO: Bloqueo y Etiquetado para intervenciones seguras."
             ])
         ]
-
-        for title, content in sections:
+       for title, content in sections:
             pdf.set_font("Helvetica", "B", 12)
             pdf.set_fill_color(240, 240, 240)
             pdf.set_text_color(0, 0, 0)
             pdf.cell(0, 10, txt=title, ln=True, fill=True)
             pdf.set_font("Helvetica", size=10)
             for line in content:
-                pdf.cell(0, 7, txt=f"• {line}", ln=True)
+                # Usamos un guion en lugar del punto para evitar el error de fuente
+                pdf.cell(0, 7, txt=f" - {line}", ln=True) 
             pdf.ln(5)
-
+       
         # --- SECCIÓN DE COMPROMISO Y FIRMA ---
         pdf.ln(20)
         pdf.set_font("Helvetica", "B", 12)
