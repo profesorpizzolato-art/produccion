@@ -1,66 +1,67 @@
 import streamlit as st
-import numpy as np
-import time
+import pandas as pd
 
 def planta_produccion():
+    st.header("🏭 Planta de Tratamiento de Crudo (PTC) - Control Central")
+    st.write("Monitoreo de Tren de Separación, Calentamiento y Deshidratación.")
 
-    st.title("SCADA Planta de Producción")
-    st.subheader("Simulador Operativo MENFA")
+    # --- 1. ESTADO DE LA PLANTA (Session State para interactividad) ---
+    if 'presion_sep' not in st.session_state:
+        st.session_state.presion_sep = 120.0
+    if 'temp_calentador' not in st.session_state:
+        st.session_state.temp_calentador = 65.0
 
-    st.markdown("---")
+    # --- 2. LAYOUT PRINCIPAL ---
+    col_proceso, col_control = st.columns([3, 1])
 
-    col1, col2, col3 = st.columns(3)
+    with col_proceso:
+        st.subheader("Esquema de Flujo (P&ID Simplificado)")
+        
+        # Representación visual del flujo
+        st.info("📥 Manifold de Entrada ➔ 🛢️ Separador Trifásico ➔ 🔥 Calentador ➔ 💧 Tanque Cortador ➔ 🚛 Despacho")
+        
+        # Métricas de Proceso en tiempo real
+        m1, m2, m3 = st.columns(3)
+        m1.metric("Presión Separador", f"{st.session_state.presion_sep} psi", "Normal")
+        m2.metric("Temperatura Crudo", f"{st.session_state.temp_calentador} °C", "Óptima")
+        m3.metric("Caudal de Entrada", "1850 BPD", "+12 BPD")
 
-    presion_pozo = st.slider("Presión Pozo (psi)",500,5000,2500)
-    temperatura = st.slider("Temperatura Fluido (°C)",20,120,60)
-    caudal = st.slider("Caudal Producción (BPD)",100,5000,1200)
+        # Gráfico de Niveles en Tanques
+        st.write("**Niveles de Tanques de Almacenamiento (TK-101 / TK-102)**")
+        niveles = pd.DataFrame({
+            'Tanque': ['TK-01 (Crudo)', 'TK-02 (Agua)', 'TK-03 (Aux)'],
+            'Nivel (%)': [75, 20, 45]
+        })
+        st.bar_chart(niveles.set_index('Tanque'))
 
-    st.markdown("---")
+    with col_control:
+        st.subheader("🎮 Operación")
+        st.write("Ajuste de Setpoints:")
+        
+        # Sliders para variar la simulación
+        nueva_p = st.slider("Consigna Presión (psi)", 50, 250, int(st.session_state.presion_sep))
+        nueva_t = st.slider("Consigna Temp (°C)", 40, 90, int(st.session_state.temp_calentador))
+        
+        if st.button("Aplicar Cambios en Planta"):
+            st.session_state.presion_sep = nueva_p
+            st.session_state.temp_calentador = nueva_t
+            st.success("Setpoints actualizados en el sistema SCADA.")
+            st.rerun()
 
-    st.subheader("Flujo del Sistema")
+        st.divider()
+        st.write("**Parada de Emergencia (ESD):**")
+        if st.button("🚨 ACTIVAR ESD", use_container_width=True):
+            st.error("PLANTA BLOQUEADA. Válvulas de entrada cerradas.")
 
-    st.info("Pozo → Flowline → Manifold → Separador → Tanques")
-
-    colA, colB, colC, colD = st.columns(4)
-
-    colA.metric("Presión Pozo",f"{presion_pozo} psi")
-    colB.metric("Temperatura",f"{temperatura} °C")
-    colC.metric("Caudal",f"{caudal} BPD")
-
-    nivel_tanque = caudal * 0.8
-
-    colD.metric("Nivel Tanque",f"{round(nivel_tanque)} bbl")
-
-    st.markdown("---")
-
-    st.subheader("Estado de Equipos")
-
-    colE, colF, colG = st.columns(3)
-
-    if presion_pozo > 4000:
-        colE.error("Alta presión en pozo")
-    else:
-        colE.success("Presión normal")
-
-    if temperatura > 100:
-        colF.warning("Alta temperatura")
-    else:
-        colF.success("Temperatura normal")
-
-    if caudal < 300:
-        colG.warning("Producción baja")
-    else:
-        colG.success("Producción estable")
-import streamlit as st
-
-def planta_produccion():
-    st.title("🏭 Planta de Producción")
-
-    temp = st.slider("Temperatura separador (°C)", 20, 120, 60)
-    nivel = st.slider("Nivel tanque (%)", 0, 100, 50)
-
-    st.write(f"Temperatura: {temp} °C")
-    st.write(f"Nivel: {nivel}%")
-
-    if nivel > 80:
-        st.warning("Nivel alto en tanque")
+    # --- 3. SECCIÓN TÉCNICA: EFICIENCIA DE SEPARACIÓN ---
+    st.divider()
+    with st.expander("📊 Análisis de Eficiencia de Separación"):
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.write("**Calidad del Crudo (Salida)**")
+            st.write("- BSW: 0.5%")
+            st.write("- Salinidad: 20 PTB")
+        with col_b:
+            st.write("**Calidad del Agua (Drenaje)**")
+            st.write("- Hidrocarburos en agua: 15 ppm")
+            st.write("- Sólidos en suspensión: 10 mg/l")
