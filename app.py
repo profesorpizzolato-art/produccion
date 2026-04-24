@@ -45,7 +45,7 @@ def main_app():
         "🛢️ Operaciones de Campo",
         "🗺️ Mapa del Campo", 
         "📊 Campo Petrolero",
-        "🏭 Planta de Tratamiento",
+        "🏭 Planta de Proceso",
         "📈 Ingeniería",
         "🖥️ Monitoreo SCADA",
         "📋 Gestión y Reportes",
