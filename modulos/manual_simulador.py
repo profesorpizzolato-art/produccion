@@ -1,6 +1,20 @@
 import streamlit as st
 from fpdf import FPDF
-
+def mostrar_utilitarios():
+    st.subheader("🧮 Calculadora y Tablas de Referencia")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("**Conversor de Caudal**")
+        m3_dia = st.number_input("Metros Cúbicos por día (m³/d):", value=1.0)
+        st.write(f"Equivale a: **{m3_dia * 6.29:.2f} Barriles por día (bpd)**")
+    
+    with col2:
+        st.write("**Tabla de Gravedad API (Referencia)**")
+        st.table({
+            "Tipo de Crudo": ["Extra Pesado", "Pesado", "Mediano", "Ligero"],
+            "Grados API": ["< 10", "10 - 22.3", "22.3 - 31.1", "> 31.1"]
+        })
 def mostrar_manual():
     st.header("📘 Manual de Especialización en Producción Petrolera")
     st.write("Soporte Teórico-Operativo para Técnicos Superiores.")
