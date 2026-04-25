@@ -25,83 +25,60 @@ if 'area_actual' not in st.session_state:
 
 # --- FUNCIONES DE ACCESO Y SEGURIDAD ---
 def login():
-    # 1. ESTILOS DE PRECISIÓN: Esto ubica los campos EXACTAMENTE sobre la imagen
+    # 1. CSS DEFINITIVO: Fondo con imagen y campos encima
     st.markdown("""
     <style>
+    /* Fondo total oscuro */
     .stApp { background-color: #0e1117; }
-    
-    /* El contenedor que encierra la imagen y los inputs */
-    .contenedor-login {
-        position: relative;
+
+    /* Contenedor que usa la imagen como fondo */
+    .login-container {
+        background-image: url("https://raw.githubusercontent.com/TU_USUARIO/TU_REPOSITORIO/main/assets/login_menfa.png");
+        background-size: contain;
+        background-repeat: no-repeat;
         width: 100%;
-        max-width: 800px;
+        height: 600px; /* Ajustá esto según el alto de tu imagen */
+        position: relative;
         margin: auto;
     }
 
-    /* CAMPO USUARIO: Ajustado para caer sobre el primer rectángulo */
-    .posicion-usuario {
-        position: absolute;
-        top: 450px; /* Si ves que queda alto o bajo, tocá este número */
-        right: 80px;
-        width: 250px;
-        z-index: 1000;
+    /* Ocultar elementos nativos de Streamlit para que no molesten */
+    div[data-testid="stVerticalBlock"] > div:has(div.login-container) {
+        gap: 0px;
     }
-
-    /* CAMPO CONTRASEÑA: Ajustado para caer sobre el segundo rectángulo */
-    .posicion-password {
-        position: absolute;
-        top: 515px; /* Si ves que queda alto o bajo, tocá este número */
-        right: 80px;
-        width: 250px;
-        z-index: 1000;
-    }
-
-    /* BOTÓN INICIAR: Ajustado para caer sobre el botón naranja */
-    .posicion-boton {
-        position: absolute;
-        top: 590px;
-        right: 80px;
-        width: 250px;
-        z-index: 1000;
-    }
-
-    /* ESTILO INVISIBLE: Hace que los cuadros de Streamlit no tengan fondo ni bordes */
-    .stTextInput input {
-        background-color: transparent !important;
-        color: white !important;
-        border: none !important;
-        font-size: 16px !important;
-    }
-    
-    /* Ocultar etiquetas feas de Streamlit */
     label { display: none !important; }
     </style>
     """, unsafe_allow_html=True)
 
-    # 2. ESTRUCTURA VISUAL
-    st.markdown('<div class="contenedor-login">', unsafe_allow_html=True)
+    # 2. ESTRUCTURA: Imagen a la izquierda, Cuadro a la derecha
+    # Usamos columnas estándar pero con CSS para que los inputs floten
     
-    # Ponemos la imagen de fondo completa
-    try:
+    st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([1.2, 1]) # 1.2 para el técnico, 1 para el login
+
+    with col1:
+        # Mostramos la imagen sola a la izquierda
         st.image("assets/login_menfa.png", use_container_width=True)
-    except:
-        st.error("No se encontró la imagen en assets/login_menfa.png")
 
-    # Inyectamos los inputs en las posiciones que definimos arriba
-    with st.container():
-        # Campo Usuario
-        st.markdown('<div class="posicion-usuario">', unsafe_allow_html=True)
-        u = st.text_input("U", placeholder="Escribí tu usuario...", key="u_pizzolato")
-        st.markdown('</div>', unsafe_allow_html=True)
+    with col2:
+        # El cuadro de login a la derecha, estilizado para que parezca el de la imagen
+        st.markdown("""
+            <div style="background-color: #1a232e; padding: 40px; border-radius: 15px; 
+                        border-left: 6px solid #f37021; margin-top: 50px; 
+                        box-shadow: 10px 10px 30px rgba(0,0,0,0.5);">
+                <h1 style="color: white; margin-bottom: 0;">MENFA</h1>
+                <p style="color: #f37021; letter-spacing: 2px; font-size: 12px; margin-bottom: 30px;">
+                    SIMULADOR DE PRODUCCIÓN
+                </p>
+        """, unsafe_allow_html=True)
 
-        # Campo Contraseña
-        st.markdown('<div class="posicion-password">', unsafe_allow_html=True)
-        p = st.text_input("P", type="password", placeholder="Escribí tu clave...", key="p_pizzolato")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # Botón invisible sobre el botón naranja
-        st.markdown('<div class="posicion-boton">', unsafe_allow_html=True)
-        if st.button("⠀", key="btn_pizzolato", use_container_width=True): # Usamos un caracter invisible para el botón
+        u = st.text_input("Usuario", placeholder="Usuario", key="u_pizz")
+        p = st.text_input("Contraseña", type="password", placeholder="Contraseña", key="p_pizz")
+        
+        st.write("")
+        
+        if st.button("INICIAR SESIÓN", use_container_width=True):
             if u == "admin" and p == "menfa2026":
                 st.session_state.ingresado = True
                 st.session_state.rol = "instructor"
@@ -111,7 +88,8 @@ def login():
                 st.session_state.rol = "alumno"
                 st.rerun()
             else:
-                st.error("Datos incorrectos")
+                st.error("Credenciales incorrectas")
+        
         st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
