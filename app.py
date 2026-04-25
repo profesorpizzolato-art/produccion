@@ -25,67 +25,66 @@ if 'area_actual' not in st.session_state:
 
 # --- FUNCIONES DE ACCESO Y SEGURIDAD ---
 def login():
-    # 1. ESTILOS AVANZADOS (Posicionamiento sobre la imagen)
+    # 1. ESTILOS CSS PARA POSICIONAR LOS INPUTS SOBRE LA IMAGEN
     st.markdown("""
     <style>
     .stApp { background-color: #0e1117; }
     
-    /* Contenedor principal que mantiene la imagen de fondo */
+    /* Contenedor de la imagen */
     .login-wrapper {
         position: relative;
-        width: 100%;
-        max-width: 900px;
+        width: 350px; /* Ajustado al ancho de tu recorte */
         margin: auto;
     }
 
-    /* El cuadro de login que "flota" a la derecha de la imagen */
-    .login-box-overlay {
+    /* Estilo para que los inputs sean invisibles pero funcionales */
+    .overlay-input {
         position: absolute;
-        top: 50px;
-        right: 40px;
-        width: 320px;
-        background-color: rgba(26, 35, 46, 0.92);
-        padding: 30px;
-        border-radius: 15px;
-        border-left: 6px solid #f37021;
-        box-shadow: 10px 10px 25px rgba(0,0,0,0.8);
-        z-index: 100;
-        text-align: center;
+        width: 280px;
+        left: 35px;
+        background: transparent !important;
     }
 
-    .login-title { color: white; font-weight: 800; font-size: 32px; margin: 0; }
-    .login-subtitle { color: #f37021; font-size: 10px; letter-spacing: 2px; margin-bottom: 20px; }
-
-    /* Estilo de los inputs para que no desentonen */
     .stTextInput input {
-        background-color: #1b263b !important;
+        background-color: transparent !important;
         color: white !important;
-        border: 1px solid #415a77 !important;
+        border: none !important;
+        padding-left: 45px !important; /* Espacio para el icono de la imagen */
+        height: 45px !important;
     }
+
+    /* Posición exacta para Usuario */
+    .user-pos { top: 765px; } /* Ajustar según resolución */
+    
+    /* Posición exacta para Contraseña */
+    .pass-pos { top: 875px; } /* Ajustar según resolución */
+
+    /* Ocultar etiquetas de Streamlit */
+    label { display: none !important; }
     </style>
     """, unsafe_allow_html=True)
 
-    # 2. ESTRUCTURA (Todo dentro de un solo contenedor)
-    st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
-    
-    # La imagen del técnico (ocupa el fondo del contenedor)
-    try:
-        st.image("assets/login_menfa.png", use_container_width=True)
-    except:
-        st.error("Error: Asegúrate de que la imagen esté en assets/login_menfa.png")
+    # 2. ESTRUCTURA
+    _, col_centro, _ = st.columns([1, 2, 1])
 
-    # El cuadro que aparece EN CIMA (Overlay)
-    # Usamos un contenedor de Streamlit vacío para meter los inputs dentro del div de CSS
-    with st.container():
-        st.markdown('<div class="login-box-overlay">', unsafe_allow_html=True)
+    with col_centro:
+        st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
         
-        st.markdown('<p class="login-title">MENFA</p>', unsafe_allow_html=True)
-        st.markdown('<p class="login-subtitle">SIMULADOR DE PRODUCCIÓN</p>', unsafe_allow_html=True)
+        # Mostramos la imagen de fondo (la que pasaste recién)
+        try:
+            st.image("assets/login_cuadros.png", use_container_width=True)
+        except:
+            st.error("Asegúrate de que la imagen esté en assets/login_cuadros.png")
+
+        # Inputs posicionados ABSOLUTAMENTE sobre los cuadros
+        # Nota: He usado contenedores vacíos para inyectar el input dentro del estilo
         
-        u = st.text_input("Usuario", placeholder="Usuario", label_visibility="collapsed", key="user_login")
-        p = st.text_input("Contraseña", type="password", placeholder="Contraseña", label_visibility="collapsed", key="pass_login")
+        u = st.text_input("User", placeholder=" ", key="u_field")
+        p = st.text_input("Pass", type="password", placeholder=" ", key="p_field")
         
-        if st.button("INICIAR SESIÓN", use_container_width=True):
+        # Botón de ingreso (podés ponerlo debajo o intentar pisar el naranja)
+        st.write("")
+        if st.button("INGRESAR AL SIMULADOR", use_container_width=True):
             if u == "admin" and p == "menfa2026":
                 st.session_state.ingresado = True
                 st.session_state.rol = "instructor"
@@ -96,11 +95,8 @@ def login():
                 st.rerun()
             else:
                 st.error("Credenciales incorrectas")
-        
+
         st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
 def verificar_emergencias_remotas():
     """Función que bloquea al alumno si hay una falla activa en Firebase"""
     try:
