@@ -7,17 +7,22 @@ try:
     from google.oauth2 import service_account
 except ModuleNotFoundError:
     st.error("Falta instalar 'google-cloud-firestore'. Agregalo a requirements.txt")
+import streamlit as st
+import json
+import base64
+from google.cloud import firestore
+from google.oauth2 import service_account
+
 def conectar_db():
-    import json
-    # Buscamos el secreto que crearemos en el paso siguiente
     try:
-        # Intentamos leerlo como un diccionario directo (Streamlit lo hace si el formato es correcto)
-        key_dict = dict(st.secrets["gcp_service_account"])
+        # 1. Leemos el bloque codificado desde Secrets
+        b64_str = st.secrets["gcp_service_account"]["content_b64"]
         
-        # Corregimos los saltos de línea que son el 99% del problema
-        if "private_key" in key_dict:
-            key_dict["private_key"] = key_dict["private_key"].replace("\\n", "\n")
-            
+        # 2. Decodificamos y convertimos a diccionario
+        json_data = base64.b64decode(b64_str).decode("utf-8")
+        key_dict = json.loads(json_data)
+        
+        # 3. Conexión oficial
         creds = service_account.Credentials.from_service_account_info(key_dict)
         return firestore.Client(credentials=creds)
     except Exception as e:
