@@ -8,34 +8,37 @@ try:
 except ModuleNotFoundError:
     st.error("Falta instalar 'google-cloud-firestore'. Agregalo a requirements.txt")
 def conectar_db():
-    # 1. Leemos el diccionario desde los secrets
+    # 1. Convertimos los secretos a un diccionario real de Python
+    # Streamlit a veces devuelve un objeto 'AtributeDict', por eso usamos dict()
     key_dict = dict(st.secrets["textkey"])
     
-    # 2. LIMPIEZA PROFUNDA DE LA LLAVE
     if "private_key" in key_dict:
-        pk = key_dict["private_key"]
+        pk = str(key_dict["private_key"])
         
-        # Eliminamos espacios accidentales al inicio y al final
-        pk = pk.strip()
+        # --- LIMPIEZA QUIRÚRGICA ---
+        # 1. Quitamos los encabezados para limpiar el "corazón" de la llave
+        header = "-----BEGIN PRIVATE KEY-----"
+        footer = "-----END PRIVATE KEY-----"
         
-        # Corregimos los saltos de línea literales que a veces mete TOML
-        pk = pk.replace("\\n", "\n")
-        
-        # Si por error se pegaron comillas extras, las sacamos
-        pk = pk.replace('"', '').replace("'", "")
-        
-        # Aseguramos que los encabezados PEM sean correctos
-        if "-----BEGIN PRIVATE KEY-----" not in pk:
-            pk = "-----BEGIN PRIVATE KEY-----\n" + pk
-        if "-----END PRIVATE KEY-----" not in pk:
-            pk = pk + "\n-----END PRIVATE KEY-----"
+        if header in pk and footer in pk:
+            # Extraemos solo el contenido entre los guiones
+            contenido = pk.split(header)[1].split(footer)[0]
+            # Borramos: espacios, saltos de línea, tabulaciones y comillas
+            contenido = contenido.replace("\\n", "").replace("\n", "").replace(" ", "").replace('"', '').replace("'", "").strip()
             
-        key_dict["private_key"] = pk
+            # 2. Reconstruimos el PEM con el formato exacto que exige Google
+            # El contenido debe ser una sola tira de texto entre los encabezados
+            pk_limpia = f"{header}\n{contenido}\n{footer}\n"
+            key_dict["private_key"] = pk_limpia
 
-    # 3. Conexión
-    creds = service_account.Credentials.from_service_account_info(key_dict)
-    return firestore.Client(credentials=creds)
-
+    # 3. Intento de conexión con manejo de error específico
+    try:
+        creds = service_account.Credentials.from_service_account_info(key_dict)
+        return firestore.Client(credentials=creds)
+    except Exception as e:
+        st.error(f"Error en la llave de Google: {e}")
+        st.info("Revisá que en Secrets la 'private_key' no tenga espacios extra.")
+        raise e
 
 def enviar_falla(nombre_falla, descripcion):
     db = conectar_db()
