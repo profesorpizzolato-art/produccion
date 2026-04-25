@@ -6,8 +6,7 @@ def mostrar_entrenamiento():
     st.write("Simulación de escenarios críticos y toma de decisiones en tiempo real.")
 
     # --- SELECTOR DE ESCENARIO ÚNICO ---
-    # He unido todas las opciones en un solo menú para que sea fácil de navegar
-   opciones = [
+    opciones = [
         "---", 
         "🚨 Falla de Presión en Manifold", 
         "🔥 Baja Eficiencia en Separación", 
@@ -16,8 +15,8 @@ def mostrar_entrenamiento():
         "⚙️ Operativa: Cambio de pozo a Control",
         "🔊 Diagnóstico: Cavitación en Bomba B-201",
         "🧪 Química: Emulsión Crítica (Pad de Tanques)",
-        "💨 Gas Lift: Inestabilidad de Flujo"
-        "🔥 Operación: Encendido de Calentador E-102",     
+        "💨 Gas Lift: Inestabilidad de Flujo", # Agregué la coma que faltaba
+        "🔥 Operación: Encendido de Calentador E-102",      
         "🧼 Mantenimiento: Cambio de Filtro de Entrada",  
         "⚡ Recuperación: Arranque de Pozo (Post-Corte)"
     ]
@@ -119,108 +118,112 @@ def mostrar_entrenamiento():
             else:
                 st.error("❌ ¡Peligro! Generaste un pico de presión que puede dañar la empaquetadura del pozo.")
 
-    st.divider()
-    st.caption("⏱️ El tiempo de respuesta es fundamental en la operación real.")
-
-elif seleccion == "🔊 Diagnóstico: Cavitación en Bomba B-201":
+    # --- ESCENARIO 6: CAVITACIÓN ---
+    elif seleccion == "🔊 Diagnóstico: Cavitación en Bomba B-201":
         st.subheader("Escenario: Ruidos anormales en Planta de Inyección")
-        st.warning("La bomba de inyección de agua de formación emite un sonido similar a 'bombear piedras' y vibra intensamente.")
+        st.warning("La bomba emite un sonido similar a 'bombear piedras' y vibra intensamente.")
         
-        causa = st.radio("¿Cuál es el diagnóstico probable y la acción inmediata?", [
+        causa = st.radio("¿Diagnóstico y acción inmediata?", [
             "Alta presión en la descarga - Abrir válvula de alivio",
-            "Baja presión en la succión (Cavitación) - Limpiar filtro de entrada y verificar nivel de tanque",
-            "Falla de rodamientos - Engrasar y seguir operando",
-            "Aire en la línea - Purgar la bomba en marcha"
+            "Baja presión en la succión (Cavitación) - Limpiar filtro de entrada",
+            "Falla de rodamientos - Engrasar",
+            "Aire en la línea - Purgar"
         ])
         
         if st.button("Confirmar Diagnóstico"):
             if "Cavitación" in causa:
-                st.success("✅ ¡Correcto! Identificaste el fenómeno de cavitación. La caída de presión en la succión genera burbujas de vapor que dañan el impulsor.")
+                st.success("✅ ¡Correcto! La caída de presión en succión genera burbujas de vapor que dañan el impulsor.")
             else:
-                st.error("❌ Incorrecto. Ese sonido es característico de la cavitación por falta de NPSH (carga neta de succión positiva).")
+                st.error("❌ Incorrecto. Ese sonido es cavitación por falta de NPSH.")
 
-elif seleccion == "🧪 Química: Emulsión Crítica (Pad de Tanques)":
+    # --- ESCENARIO 7: QUÍMICA ---
+    elif seleccion == "🧪 Química: Emulsión Crítica (Pad de Tanques)":
         st.subheader("Situación: El crudo no separa a pesar de la temperatura")
-        st.info("Tenés el calentador a 75°C (máximo operativo), pero el BSW sigue en 4%.")
+        st.info("Calentador a 75°C, pero el BSW sigue en 4%.")
         
-        accion_quimica = st.selectbox("¿Qué ajuste realizas en la dosificación?", [
+        accion_quimica = st.selectbox("¿Qué ajuste realizas?", [
             "Seleccionar...",
-            "Aumentar la inyección de desemulsionante y verificar punto de aplicación",
-            "Bajar la temperatura para que el agua pese más",
-            "Aumentar el tiempo de residencia cerrando la salida de planta"
+            "Aumentar la inyección de desemulsionante",
+            "Bajar la temperatura",
+            "Aumentar el tiempo de residencia"
         ])
         
-        if st.button("Aplicar Cambio Químico"):
+        if st.button("Aplicar Cambio"):
             if "desemulsionante" in accion_quimica:
-                st.success("✅ Correcto. A veces la temperatura sola no rompe la tensión interfacial. Un ajuste en las ppm de química es la clave.")
+                st.success("✅ Correcto. Un ajuste en las ppm de química es la clave cuando el calor no basta.")
             else:
-                st.error("❌ Fallaste. Bajar la temperatura solo empeorará la viscosidad y el BSW subirá.")
+                st.error("❌ Fallaste. Bajar la temperatura empeorará la separación.")
 
-elif seleccion == "💨 Gas Lift: Inestabilidad de Flujo":
-        st.subheader("Situación: Pozo MENFA-005 con Flujo Intermitente (Slugging)")
-        st.write("La presión de inyección de gas oscila violentamente y el pozo entrega 'burbujones' de crudo.")
+    # --- ESCENARIO 8: GAS LIFT ---
+    elif seleccion == "💨 Gas Lift: Inestabilidad de Flujo":
+        st.subheader("Situación: Pozo con Flujo Intermitente (Slugging)")
+        st.write("La presión de inyección oscila y el pozo entrega 'burbujones'.")
         
         maniobra_gas = st.radio("¿Cómo estabilizas el pozo?", [
-            "Cerrar la inyección de gas de golpe",
-            "Incrementar la presión de inyección de forma gradual para barrer el líquido",
-            "Abrir el pozo a la atmósfera (venteo)",
-            "Reducir el orificio de la válvula de producción"
+            "Cerrar la inyección de gas",
+            "Incrementar la presión de inyección gradualmente",
+            "Abrir el pozo a la atmósfera",
+            "Reducir el orificio de producción"
         ])
         
-        if st.button("Estabilizar Pozo"):
+        if st.button("Estabilizar"):
             if "Incrementar" in maniobra_gas:
-                st.success("✅ ¡Muy bien! Incrementaste la velocidad de flujo para pasar de flujo intermitente a flujo anular continuo.")
+                st.success("✅ ¡Muy bien! Barriste el líquido acumulado hacia un flujo continuo.")
             else:
-                st.error("❌ Error operativo. Cerrar el gas de golpe podría 'ahogar' el pozo definitivamente.")
+                st.error("❌ Error operativo. Cerrar el gas podría ahogar el pozo.")
 
-elif seleccion == "🔥 Operación: Encendido de Calentador E-102":
-        st.subheader("Maniobra: Puesta en servicio de Calentador de Fuego Directo")
-        st.info("El equipo estuvo parado por mantenimiento. Debés iniciar el ciclo de encendido.")
+    # --- ESCENARIO 9: CALENTADOR ---
+    elif seleccion == "🔥 Operación: Encendido de Calentador E-102":
+        st.subheader("Maniobra: Puesta en servicio de Calentador")
+        st.info("Iniciando ciclo de encendido post-mantenimiento.")
         
-        paso = st.radio("¿Cuál es el primer paso crítico antes de encender el piloto?", [
-            "Abrir el paso de gas principal",
-            "Realizar el barrido de aire (Purge) de la cámara de combustión",
-            "Aumentar el setpoint de temperatura",
-            "Cerrar la chimenea para conservar calor"
+        paso_cal = st.radio("¿Paso crítico antes del piloto?", [
+            "Abrir gas principal",
+            "Realizar el barrido de aire (Purge) de la cámara",
+            "Aumentar temperatura",
+            "Cerrar chimenea"
         ])
         
-        if st.button("Iniciar Encendido"):
-            if "barrido" in paso:
-                st.success("✅ ¡Correcto! El barrido elimina gases remanentes evitando una explosión al encender el piloto (Pre-purge).")
+        if st.button("Iniciar"):
+            if "barrido" in paso_cal:
+                st.success("✅ ¡Correcto! Barrido finalizado (Pre-purge). Área segura.")
             else:
-                st.error("❌ ¡PELIGRO! Encender sin barrido previo puede causar una explosión en la cámara por acumulación de gases.")
+                st.error("❌ ¡PELIGRO! Explosión por acumulación de gases remanentes.")
 
-elif seleccion == "🧼 Mantenimiento: Cambio de Filtro de Entrada":
-        st.subheader("Maniobra: Limpieza de Filtro Dúplex en Operación")
-        st.warning("El diferencial de presión en el filtro A es alto. Debés pasar al filtro B sin detener la producción.")
+    # --- ESCENARIO 10: FILTROS ---
+    elif seleccion == "🧼 Mantenimiento: Cambio de Filtro de Entrada":
+        st.subheader("Maniobra: Limpieza de Filtro Dúplex")
+        st.warning("Diferencial alto en filtro A. Pasar a filtro B.")
         
-        secuencia = st.selectbox("¿Cuál es la secuencia operativa segura?", [
+        secuencia_f = st.selectbox("¿Secuencia segura?", [
             "Seleccionar...",
-            "Cerrar A y luego abrir B rápidamente",
-            "Abrir válvula de equilibrio, llenar filtro B, abrir B y cerrar A",
-            "Pedir parada de planta para cambiar filtros",
-            "Abrir B y dejar los dos abiertos permanentemente"
+            "Cerrar A y abrir B",
+            "Abrir válvula de equilibrio, llenar B, abrir B y cerrar A",
+            "Abrir B y dejar ambos abiertos"
         ])
         
-        if st.button("Ejecutar Cambio"):
-            if "equilibrio" in secuencia:
-                st.success("✅ ¡Impecable! El uso de la línea de equilibrio evita el golpe de presión y garantiza que el filtro nuevo no tenga aire.")
+        if st.button("Ejecutar"):
+            if "equilibrio" in secuencia_f:
+                st.success("✅ ¡Impecable! Sin golpe de presión ni entrada de aire al sistema.")
             else:
-                st.error("❌ Incorrecto. Si no equilibrás presiones primero, podés dañar las mallas o causar una caída de presión que dispare la parada de planta.")
+                st.error("❌ Incorrecto. Podés disparar una parada de planta por transitorio de presión.")
 
-elif seleccion == "⚡ Recuperación: Arranque de Pozo (Post-Corte)":
-        st.subheader("Maniobra: Normalización de Pozo con AIB tras falla eléctrica")
-        st.write("La energía volvió. El pozo estuvo parado 4 horas y el fluido se enfrió en la línea.")
+    # --- ESCENARIO 11: ARRANQUE POST-CORTE ---
+    elif seleccion == "⚡ Recuperación: Arranque de Pozo (Post-Corte)":
+        st.subheader("Maniobra: Arranque de AIB post-falla eléctrica")
+        st.write("Pozo parado 4 horas, fluido frío.")
         
-        accion_aib = st.radio("¿Cómo procedés con el arranque?", [
-            "Arrancar el motor a máxima velocidad inmediatamente",
-            "Verificar nivel de aceite, realizar giros manuales/breves y arrancar con bypass de presión",
-            "Abrir la purga al suelo y arrancar",
-            "Esperar a que salga el sol para que caliente la línea"
+        accion_aib = st.radio("¿Cómo arrancás?", [
+            "Arranque directo",
+            "Verificar aceite, giros breves/intermitentes y bypass",
+            "Abrir purga al suelo"
         ])
         
-        if st.button("Normalizar Pozo"):
-            if "bypass" in accion_aib or "breves" in accion_aib:
-                st.success("✅ ¡Excelente! Los arranques intermitentes 'despegan' la bomba suavemente evitando la rotura del vástago por carga de fluido estático.")
+        if st.button("Normalizar"):
+            if "breves" in accion_aib:
+                st.success("✅ ¡Excelente! Evitaste el corte del vástago por carga estática.")
             else:
-                st.error("❌ ¡Peligro! Un arranque brusco con la columna de fluido fría puede cortar el vástago o dañar los pernos del equipo.")
+                st.error("❌ ¡Peligro! Esfuerzo excesivo en los pernos y el vástago.")
+
+    st.divider()
+    st.caption("⏱️ IPCL MENFA - Entrenamiento Operativo Avanzado")
