@@ -25,72 +25,91 @@ if 'area_actual' not in st.session_state:
 
 # --- FUNCIONES DE ACCESO Y SEGURIDAD ---
 def login():
-    # 1. CSS DEFINITIVO: Fondo con imagen y campos encima
+    # 1. ESTILOS: Posicionamiento absoluto para "pisar" la imagen
     st.markdown("""
     <style>
-    /* Fondo total oscuro */
+    /* Fondo oscuro para toda la página */
     .stApp { background-color: #0e1117; }
 
-    /* Contenedor que usa la imagen como fondo */
-    .login-container {
-        background-image: url("https://raw.githubusercontent.com/TU_USUARIO/TU_REPOSITORIO/main/assets/login_menfa.png");
-        background-size: contain;
-        background-repeat: no-repeat;
-        width: 100%;
-        height: 600px; /* Ajustá esto según el alto de tu imagen */
+    /* Contenedor principal */
+    .contenedor-login {
         position: relative;
+        width: 100%;
+        max-width: 500px; /* Ajustamos al ancho de la imagen */
         margin: auto;
     }
 
-    /* Ocultar elementos nativos de Streamlit para que no molesten */
-    div[data-testid="stVerticalBlock"] > div:has(div.login-container) {
-        gap: 0px;
+    /* Estilo de los inputs para que sean transparentes y calcen en los cuadros */
+    .stTextInput input {
+        background-color: rgba(0,0,0,0) !important; /* Transparente total */
+        color: white !important;
+        border: none !important;
+        font-size: 16px !important;
+        height: 42px !important;
     }
+
+    /* Ubicación exacta del Usuario */
+    div[data-key="u_pizzolato"] {
+        position: absolute;
+        top: 435px; /* Ajustar este número si no cae justo */
+        left: 65px;
+        width: 310px;
+        z-index: 10;
+    }
+
+    /* Ubicación exacta de la Contraseña */
+    div[data-key="p_pizzolato"] {
+        position: absolute;
+        top: 490px; /* Ajustar este número si no cae justo */
+        left: 65px;
+        width: 310px;
+        z-index: 10;
+    }
+
+    /* Ubicación exacta del Botón */
+    div[data-key="btn_pizzolato"] {
+        position: absolute;
+        top: 550px;
+        left: 65px;
+        width: 310px;
+        z-index: 10;
+    }
+
+    /* Ocultar etiquetas de Streamlit */
     label { display: none !important; }
+    
+    /* Hacer el botón de Streamlit invisible para que se vea el naranja de abajo */
+    div[data-key="btn_pizzolato"] button {
+        background: transparent !important;
+        border: none !important;
+        color: transparent !important;
+        height: 45px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-    # 2. ESTRUCTURA: Imagen a la izquierda, Cuadro a la derecha
-    # Usamos columnas estándar pero con CSS para que los inputs floten
+    # 2. ESTRUCTURA: Ponemos la imagen y encima los campos
+    st.markdown('<div class="contenedor-login">', unsafe_allow_html=True)
     
-    st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+    # Imagen de fondo (la que ya tiene los cuadros dibujados)
+    st.image("assets/login_menfa.png", use_container_width=True)
+
+    # Inputs con llaves (keys) específicas para que el CSS los encuentre
+    u = st.text_input("U", key="u_pizzolato")
+    p = st.text_input("P", type="password", key="p_pizzolato")
     
-    col1, col2 = st.columns([1.2, 1]) # 1.2 para el técnico, 1 para el login
-
-    with col1:
-        # Mostramos la imagen sola a la izquierda
-        st.image("assets/login_menfa.png", use_container_width=True)
-
-    with col2:
-        # El cuadro de login a la derecha, estilizado para que parezca el de la imagen
-        st.markdown("""
-            <div style="background-color: #1a232e; padding: 40px; border-radius: 15px; 
-                        border-left: 6px solid #f37021; margin-top: 50px; 
-                        box-shadow: 10px 10px 30px rgba(0,0,0,0.5);">
-                <h1 style="color: white; margin-bottom: 0;">MENFA</h1>
-                <p style="color: #f37021; letter-spacing: 2px; font-size: 12px; margin-bottom: 30px;">
-                    SIMULADOR DE PRODUCCIÓN
-                </p>
-        """, unsafe_allow_html=True)
-
-        u = st.text_input("Usuario", placeholder="Usuario", key="u_pizz")
-        p = st.text_input("Contraseña", type="password", placeholder="Contraseña", key="p_pizz")
-        
-        st.write("")
-        
-        if st.button("INICIAR SESIÓN", use_container_width=True):
-            if u == "admin" and p == "menfa2026":
-                st.session_state.ingresado = True
-                st.session_state.rol = "instructor"
-                st.rerun()
-            elif u == "alumno" and p == "alumno2026":
-                st.session_state.ingresado = True
-                st.session_state.rol = "alumno"
-                st.rerun()
-            else:
-                st.error("Credenciales incorrectas")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Botón invisible sobre el botón naranja de la imagen
+    if st.button("INGRESAR", key="btn_pizzolato", use_container_width=True):
+        if u == "admin" and p == "menfa2026":
+            st.session_state.ingresado = True
+            st.session_state.rol = "instructor"
+            st.rerun()
+        elif u == "alumno" and p == "alumno2026":
+            st.session_state.ingresado = True
+            st.session_state.rol = "alumno"
+            st.rerun()
+        else:
+            st.error("Credenciales incorrectas")
 
     st.markdown('</div>', unsafe_allow_html=True)
 def verificar_emergencias_remotas():
