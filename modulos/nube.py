@@ -9,8 +9,18 @@ except ModuleNotFoundError:
     st.error("Falta instalar 'google-cloud-firestore'. Agregalo a requirements.txt")
 
 def conectar_db():
-    # Lee las llaves desde la sección Secrets de Streamlit
-    key_dict = json.loads(st.secrets["textkey"])
+    # 1. Obtenemos el secreto
+    secret_data = st.secrets["textkey"]
+    
+    # 2. Verificamos si es un string o ya es un diccionario
+    if isinstance(secret_data, str):
+        # Si es texto (string), lo cargamos como JSON
+        key_dict = json.loads(secret_data)
+    else:
+        # Si ya es un diccionario (dict), lo usamos directo
+        key_dict = secret_data
+        
+    # 3. Conectamos con las credenciales
     creds = service_account.Credentials.from_service_account_info(key_dict)
     return firestore.Client(credentials=creds)
 
