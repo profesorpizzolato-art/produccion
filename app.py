@@ -24,7 +24,6 @@ if 'area_actual' not in st.session_state:
     st.session_state.area_actual = "🏠 Dashboard"
 
 # --- FUNCIONES DE ACCESO Y SEGURIDAD ---
-
 def login():
     # 1. ESTILOS: Esto crea el look "petrolero profesional"
     st.markdown("""
@@ -66,7 +65,7 @@ def login():
         with col_img:
             # Mostramos al técnico ilustrado
             try:
-                st.image("login_menfa.jpg", use_container_width=True)
+                st.image("login_menfa.png", use_container_width=True)
             except:
                 st.error("Falta imagen en assets/login_menfa.png")
 
@@ -97,6 +96,7 @@ def login():
             
             st.markdown('</div>', unsafe_allow_html=True) 
             # --- AQUÍ SE CIERRA EL CUADRO ---
+
 def verificar_emergencias_remotas():
     """Función que bloquea al alumno si hay una falla activa en Firebase"""
     try:
