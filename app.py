@@ -215,28 +215,24 @@ def modulo_instructor_pizzolato():
     else:
         st.write("Esperando respuestas de maniobras...")
 
+# --- FUNCIÓN DE CONTROL TOTAL ---
 def main():
-    st.sidebar.title("Navegación IPCL")
-    
-    # Selector de Rol para separar las aguas
-    rol = st.sidebar.radio("Seleccione su Rol:", ["Alumno", "Instructor"])
-
-    if rol == "Instructor":
-        # Ponemos una contraseña simple para que los alumnos no entren
-        clave = st.sidebar.text_input("Clave de Acceso:", type="password")
-        if clave == "menfa2026": # Podés cambiar esta clave
-            modulo_instructor_pizzolato()
-        else:
-            st.sidebar.warning("Clave incorrecta")
-            st.info("Ingrese la clave de instructor para acceder al panel de control.")
-    
+    # 1. Si no ha ingresado, mostramos el Login
+    if not st.session_state.ingresado:
+        login()
     else:
-        # Aquí va la lógica normal del alumno
-        simulador_alumno()    
-# --- FLUJO PRINCIPAL ---
-if not st.session_state.ingresado:
-    login()
-else:
-    main_app()
+        # 2. Si ya ingresó, manejamos la navegación según el rol
+        if st.session_state.rol == "instructor":
+            # Si es admin, le damos la opción de ver el simulador o el panel maestro
+            modo = st.sidebar.selectbox("Modo de Vista:", ["🖥️ Simulador Operativo", "🎮 Control Maestro"])
+            if modo == "🎮 Control Maestro":
+                modulo_instructor_pizzolato()
+            else:
+                main_app()
+        else:
+            # Si es alumno, va directo a la app
+            main_app()
+
+# --- EJECUCIÓN FINAL (SIEMPRE AL ÚLTIMO) ---
 if __name__ == "__main__":
     main()
