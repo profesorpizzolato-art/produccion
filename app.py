@@ -25,77 +25,81 @@ if 'area_actual' not in st.session_state:
 
 # --- FUNCIONES DE ACCESO Y SEGURIDAD ---
 def login():
-    # 1. ESTILOS: Esto crea el look "petrolero profesional"
+    # 1. ESTILOS AVANZADOS (Posicionamiento sobre la imagen)
     st.markdown("""
     <style>
-    /* Fondo de la página */
     .stApp { background-color: #0e1117; }
     
-    /* El cuadro de login (idéntico a tu imagen) */
-    .login-box-bg {
-        background-color: rgba(26, 35, 46, 0.95);
-        padding: 35px;
-        border-radius: 15px;
-        border: 1px solid #34495e;
-        border-left: 6px solid #f37021; /* El borde naranja de MENFA */
-        box-shadow: 0px 10px 30px rgba(0,0,0,0.8);
-        text-align: center;
-        margin-top: 20px;
+    /* Contenedor principal que mantiene la imagen de fondo */
+    .login-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 900px;
+        margin: auto;
     }
 
-    /* Títulos dentro del cuadro */
-    .login-title { color: white; font-family: sans-serif; font-weight: 800; font-size: 35px; margin-bottom: 0; }
-    .login-subtitle { color: #f37021; font-size: 11px; letter-spacing: 2px; margin-top: 0; margin-bottom: 20px; }
+    /* El cuadro de login que "flota" a la derecha de la imagen */
+    .login-box-overlay {
+        position: absolute;
+        top: 50px;
+        right: 40px;
+        width: 320px;
+        background-color: rgba(26, 35, 46, 0.92);
+        padding: 30px;
+        border-radius: 15px;
+        border-left: 6px solid #f37021;
+        box-shadow: 10px 10px 25px rgba(0,0,0,0.8);
+        z-index: 100;
+        text-align: center;
+    }
 
-    /* Ajuste para que los inputs se vean bien en fondo oscuro */
+    .login-title { color: white; font-weight: 800; font-size: 32px; margin: 0; }
+    .login-subtitle { color: #f37021; font-size: 10px; letter-spacing: 2px; margin-bottom: 20px; }
+
+    /* Estilo de los inputs para que no desentonen */
     .stTextInput input {
-        background-color: #172535 !important;
+        background-color: #1b263b !important;
         color: white !important;
         border: 1px solid #415a77 !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # 2. ESTRUCTURA: Imagen a la izquierda, Cuadro a la derecha
-    _, col_centro, _ = st.columns([0.05, 0.9, 0.05]) # Margen pequeño a los lados
+    # 2. ESTRUCTURA (Todo dentro de un solo contenedor)
+    st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
+    
+    # La imagen del técnico (ocupa el fondo del contenedor)
+    try:
+        st.image("assets/login_menfa.png", use_container_width=True)
+    except:
+        st.error("Error: Asegúrate de que la imagen esté en assets/login_menfa.png")
 
-    with col_centro:
-        col_img, col_form = st.columns([1.2, 1], gap="large")
+    # El cuadro que aparece EN CIMA (Overlay)
+    # Usamos un contenedor de Streamlit vacío para meter los inputs dentro del div de CSS
+    with st.container():
+        st.markdown('<div class="login-box-overlay">', unsafe_allow_html=True)
+        
+        st.markdown('<p class="login-title">MENFA</p>', unsafe_allow_html=True)
+        st.markdown('<p class="login-subtitle">SIMULADOR DE PRODUCCIÓN</p>', unsafe_allow_html=True)
+        
+        u = st.text_input("Usuario", placeholder="Usuario", label_visibility="collapsed", key="user_login")
+        p = st.text_input("Contraseña", type="password", placeholder="Contraseña", label_visibility="collapsed", key="pass_login")
+        
+        if st.button("INICIAR SESIÓN", use_container_width=True):
+            if u == "admin" and p == "menfa2026":
+                st.session_state.ingresado = True
+                st.session_state.rol = "instructor"
+                st.rerun()
+            elif u == "alumno" and p == "alumno2026":
+                st.session_state.ingresado = True
+                st.session_state.rol = "alumno"
+                st.rerun()
+            else:
+                st.error("Credenciales incorrectas")
+        
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        with col_img:
-            # Mostramos al técnico ilustrado
-            try:
-                st.image("assets/login_menfa.png", use_container_width=True)
-            except:
-                st.error("Falta imagen en assets/login_menfa.png")
-
-        with col_form:
-            # --- AQUÍ SE ABRE EL CUADRO NARANJA ---
-            st.markdown('<div class="login-box-bg">', unsafe_allow_html=True)
-            
-            st.markdown('<p class="login-title">MENFA</p>', unsafe_allow_html=True)
-            st.markdown('<p class="login-subtitle">SIMULADOR DE PRODUCCIÓN</p>', unsafe_allow_html=True)
-            
-            # Inputs (label_visibility="collapsed" para que no se vea el texto arriba)
-            u = st.text_input("Usuario", placeholder="Usuario", label_visibility="collapsed")
-            p = st.text_input("Contraseña", type="password", placeholder="Contraseña", label_visibility="collapsed")
-            
-            st.write("") # Espaciador
-            
-            if st.button("INICIAR SESIÓN"):
-                if u == "admin" and p == "menfa2026":
-                    st.session_state.ingresado = True
-                    st.session_state.rol = "instructor"
-                    st.rerun()
-                elif u == "alumno" and p == "alumno2026":
-                    st.session_state.ingresado = True
-                    st.session_state.rol = "alumno"
-                    st.rerun()
-                else:
-                    st.error("Credenciales incorrectas")
-            
-            st.markdown('</div>', unsafe_allow_html=True) 
-            # --- AQUÍ SE CIERRA EL CUADRO ---
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def verificar_emergencias_remotas():
     """Función que bloquea al alumno si hay una falla activa en Firebase"""
