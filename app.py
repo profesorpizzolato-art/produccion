@@ -65,7 +65,7 @@ def login():
         with col_img:
             # Mostramos al técnico ilustrado
             try:
-                st.image("login_menfa.png", use_container_width=True)
+                st.image("assets/login_menfa.png", use_container_width=True)
             except:
                 st.error("Falta imagen en assets/login_menfa.png")
 
