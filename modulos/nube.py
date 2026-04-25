@@ -8,36 +8,20 @@ try:
 except ModuleNotFoundError:
     st.error("Falta instalar 'google-cloud-firestore'. Agregalo a requirements.txt")
 def conectar_db():
-    # 1. Convertimos los secretos a un diccionario real de Python
-    # Streamlit a veces devuelve un objeto 'AtributeDict', por eso usamos dict()
-    key_dict = dict(st.secrets["textkey"])
-    
-    if "private_key" in key_dict:
-        pk = str(key_dict["private_key"])
-        
-        # --- LIMPIEZA QUIRÚRGICA ---
-        # 1. Quitamos los encabezados para limpiar el "corazón" de la llave
-        header = "-----BEGIN PRIVATE KEY-----"
-        footer = "-----END PRIVATE KEY-----"
-        
-        if header in pk and footer in pk:
-            # Extraemos solo el contenido entre los guiones
-            contenido = pk.split(header)[1].split(footer)[0]
-            # Borramos: espacios, saltos de línea, tabulaciones y comillas
-            contenido = contenido.replace("\\n", "").replace("\n", "").replace(" ", "").replace('"', '').replace("'", "").strip()
-            
-            # 2. Reconstruimos el PEM con el formato exacto que exige Google
-            # El contenido debe ser una sola tira de texto entre los encabezados
-            pk_limpia = f"{header}\n{contenido}\n{footer}\n"
-            key_dict["private_key"] = pk_limpia
-
-    # 3. Intento de conexión con manejo de error específico
+    import json
+    # Buscamos el secreto que crearemos en el paso siguiente
     try:
+        # Intentamos leerlo como un diccionario directo (Streamlit lo hace si el formato es correcto)
+        key_dict = dict(st.secrets["gcp_service_account"])
+        
+        # Corregimos los saltos de línea que son el 99% del problema
+        if "private_key" in key_dict:
+            key_dict["private_key"] = key_dict["private_key"].replace("\\n", "\n")
+            
         creds = service_account.Credentials.from_service_account_info(key_dict)
         return firestore.Client(credentials=creds)
     except Exception as e:
-        st.error(f"Error en la llave de Google: {e}")
-        st.info("Revisá que en Secrets la 'private_key' no tenga espacios extra.")
+        st.error(f"Error de conexión: {e}")
         raise e
 
 def enviar_falla(nombre_falla, descripcion):
