@@ -69,3 +69,33 @@ def mostrar_equipos_planta():
             st.metric("Caudal de Gas", f"{caudal:.2f} m3/std")
             if h_diff > 90: st.warning("Cambiar a placa mayor")
             if h_diff < 10: st.warning("Cambiar a placa menor")
+# --- AGREGAR ESTO AL FINAL DE mostrar_equipos_planta() ---
+    st.markdown("---")
+    st.header("🎮 Operación de Equipos Críticos")
+    
+    op_equipo = st.radio("Seleccioná equipo para operar:", ["Separador/Calentador", "Unidad LACT (Despacho)"], horizontal=True)
+
+    if op_equipo == "Separador/Calentador":
+        st.subheader("🔥 Control de Temperatura y Calidad (BSW)")
+        t = st.slider("Ajustar Temperatura Calentador (°C)", 30, 90, 50)
+        # Simulación técnica de BSW según temperatura
+        bsw = max(0.5, 10.0 - (t * 0.15))
+        st.metric("Calidad de Salida (BSW)", f"{round(bsw, 2)} %")
+        if bsw > 1.0: st.error("❌ Crudo fuera de norma (BSW > 1%)")
+        else: st.success("✅ Crudo en especificación comercial.")
+
+    elif op_equipo == "Unidad LACT (Despacho)":
+        st.subheader("📏 Transferencia de Custodia (Venta)")
+        vol = st.number_input("Volumen Bruto (m3)", value=100.0)
+        bsw_medido = st.slider("BSW Medido (%)", 0.0, 2.0, 0.5)
+        neto = vol * (1 - (bsw_medido/100))
+        
+        if st.button("Generar Ticket de Medición"):
+            st.code(f"""
+            IPCL MENFA - CERTIFICADO DE DESPACHO
+            ------------------------------------
+            Volumen Bruto: {vol} m3
+            BSW: {bsw_medido} %
+            Petróleo Neto: {round(neto, 3)} m3
+            Estado: APROBADO PARA VENTA
+            """, language="text")
