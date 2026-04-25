@@ -215,8 +215,6 @@ def modulo_instructor_pizzolato():
     else:
         st.write("Esperando respuestas de maniobras...")
 
-if __name__ == "__main__":
-    main()
 def main():
     st.sidebar.title("Navegación IPCL")
     
@@ -240,3 +238,5 @@ if not st.session_state.ingresado:
     login()
 else:
     main_app()
+if __name__ == "__main__":
+    main()
