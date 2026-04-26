@@ -511,11 +511,7 @@ def mostrar_manual():
             st.write(teoria_petrolera[capitulo]["detalle"])
             st.latex(teoria_petrolera[capitulo]["formula"])
 
-        with col_pdf:
-            st.write("**Certificación y Descarga**")
             
-# --- DENTRO DE LA FUNCIÓN mostrar_manual() ---
-
         with col_pdf:
             st.write("**Certificación y Descarga**")
             
