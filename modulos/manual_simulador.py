@@ -1,6 +1,7 @@
 import streamlit as st
 from fpdf import FPDF
-
+import time  
+import datetime
 def mostrar_manual():
     # 1. El Gran Diccionario (Asegúrate de que cierre bien al final)
     teoria_petrolera = {
