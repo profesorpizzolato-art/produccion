@@ -480,7 +480,22 @@ def mostrar_manual():
                 "3. LECCIONES APRENDIDAS: Analizar incidentes de otras plantas para evitar que ocurran en la propia."
             ),
             "formula": r"Seguridad = Prevision \cdot Disciplina"
-        }
+       }  # Este cierra el bloque del punto 50
+    }  # <--- ESTE ES EL QUE FALTA (Cierra el diccionario teoria_petrolera)
+
+    # --- AQUÍ EMPIEZA LA LÓGICA DE STREAMLIT ---
+    import streamlit as st
+    
+    st.header("📘 Manual Técnico de Especialización")
+    
+    # Selector de capítulos
+    capitulo = st.selectbox("Seleccione un módulo:", list(teoria_petrolera.keys()))
+    
+    # Mostrar contenido
+    st.subheader(capitulo)
+    st.info(teoria_petrolera[capitulo]["resumen"])
+    st.write(teoria_petrolera[capitulo]["detalle"])
+    st.latex(teoria_petrolera[capitulo]["formula"])
     # --- 2. PESTAÑAS DE INTERFAZ ---
     tab_teoria, tab_utilitarios = st.tabs(["📖 Teoría y PDF", "🧮 Utilitarios y Tablas"])
 
