@@ -2,15 +2,11 @@ import streamlit as st
 from fpdf import FPDF
 
 def mostrar_manual():
-    st.header("📘 Manual de Especialización - IPCL MENFA")
-    st.write("Soporte Teórico-Operativo y Herramientas para Técnicos Superiores.")
-    st.divider()
-
-    # --- 1. BASE DE DATOS TEÓRICA ---
+    # 1. El Gran Diccionario (Asegúrate de que cierre bien al final)
     teoria_petrolera = {
         "1. Ingeniería de Reservorio": {
             "resumen": "La gestión de la energía del yacimiento.",
-            "detalle": "El Indice de Productividad (IP) es la métrica reina. Representa cuántos metros cúbicos entrega el pozo por cada psi de caída de presión. TEORIA DEL DRAWDOWN: Es la diferencia entre la presión estática y la fluyente. LEY DE DARCY: El flujo es proporcional a la permeabilidad y al área, e inversamente proporcional a la viscosidad.",
+            "detalle": "El Indice de Productividad (IP) es la métrica reina...",
             "formula": r"J = \frac{Q}{P_r - P_{wf}}"
         },
         "2. Separación Física": {
@@ -394,6 +390,7 @@ def mostrar_manual():
             ),
             "formula": "h_f = f \cdot \frac{L}{D} \cdot \frac{v^2}{2g}"
         },
+        
         "41. Análisis de Fallas en Varillas de Bombeo": {
             "resumen": "Identificación de fatiga y fallas mecánicas en AIB.",
             "detalle": (
@@ -401,7 +398,7 @@ def mostrar_manual():
                 "2. CORROSIÓN-FATIGA: El H2S o CO2 acelera el proceso de rotura. Se previene con inhibidores y evitando el pandeo (buckling).\n"
                 "3. MARCAS DE LLAVE: Una mala manipulación con las llaves de potencia crea concentradores de tensión que inician la grieta."
             ),
-            "formula": "Tension_Max = (Carga_Pulida / Area_Varilla)"
+            "formula": r"Tension_{Max} = \frac{Carga_{Pulida}}{Area_{Varilla}}"
         },
         "42. Tecnología de Inyección de Polímeros (EOR)": {
             "resumen": "Recuperación Terciaria para mejorar la eficiencia de barrido.",
@@ -410,7 +407,7 @@ def mostrar_manual():
                 "2. RELACIÓN DE MOVILIDAD: El objetivo es que el agua no 'dedee' (fingering) a través del petróleo.\n"
                 "3. DEGRADACIÓN MECÁNICA: El polímero es sensible al cizallamiento en válvulas y bombas; debe manejarse con baja velocidad de flujo."
             ),
-            "formula": "M = (k_w / \mu_w) / (k_o / \mu_o)"
+            "formula": r"M = \frac{k_w / \mu_w}{k_o / \mu_o}"
         },
         "43. Medición Multifásica (Virtual Flow Metering)": {
             "resumen": "Estimación de caudales sin separación física.",
@@ -419,7 +416,7 @@ def mostrar_manual():
                 "2. VENTAJAS: Reduce el costo de instalar grandes separadores de ensayo en locaciones remotas.\n"
                 "3. REDES NEURONALES: Los sistemas modernos aprenden del comportamiento histórico del pozo para ganar precisión."
             ),
-            "formula": "Q_{total} = f(P_{anular}, P_{tubing}, \%Choke)"
+            "formula": r"Q_{total} = f(P_{anular}, P_{tubing}, \%Choke)"
         },
         "44. Estabilidad de Pozo y Ventana Operativa": {
             "resumen": "Geomecánica aplicada para evitar colapsos.",
@@ -428,7 +425,7 @@ def mostrar_manual():
                 "2. GRADIENTE DE FRACTURA: El límite superior de presión antes de romper la formación de forma no deseada.\n"
                 "3. DENSIDAD DEL LODO: Debe mantenerse dentro de la 'ventana' para que el pozo no fluya (kick) ni se pierda circulación."
             ),
-            "formula": "P_{pore} < P_{hidrostatica} < P_{fractura}"
+            "formula": r"P_{pore} < P_{hidrostatica} < P_{fractura}"
         },
         "45. Deshidratación de Gas con Glicol (TEG)": {
             "resumen": "Proceso de absorción para alcanzar especificación de venta.",
@@ -437,7 +434,7 @@ def mostrar_manual():
                 "2. REGENERACIÓN: El glicol rico (con agua) se calienta en el reboiler para evaporar el agua y reutilizar el glicol.\n"
                 "3. PUNTO DE ROCÍO DE GAS: El objetivo suele ser < 7 lb H2O / MMSCF para evitar hidratos en el gasoducto."
             ),
-            "formula": "Eficiencia = f(Tasa_Glicol, Nro_Platos)"
+            "formula": r"Eficiencia = f(Tasa_{Glicol}, Nro_{Platos})"
         },
         "46. Gestión de Paros de Planta (Turnarounds)": {
             "resumen": "Planificación de mantenimiento mayor.",
@@ -446,7 +443,7 @@ def mostrar_manual():
                 "2. DESPRESURIZACIÓN Y PURGADO: El paso más crítico para la seguridad del personal de mantenimiento.\n"
                 "3. TRABAJOS EN CALIENTE: Protocolos estrictos de medición de explosividad (LEL) constantes."
             ),
-            "formula": "Disponibilidad = (Tiempo_Operativo / Tiempo_Total) * 100"
+            "formula": r"Disponibilidad = \frac{Tiempo_{Op}}{Tiempo_{Tot}} \cdot 100"
         },
         "47. Caracterización de Crudos: Curva TBP": {
             "resumen": "True Boiling Point y rendimiento de destilería.",
@@ -455,7 +452,7 @@ def mostrar_manual():
                 "2. FACTOR DE CARACTERIZACIÓN (K): Indica si un crudo es más parafínico, nafténico o aromático.\n"
                 "3. CONTENIDO DE AZUFRE: Crucial para el precio de venta (crudos 'sweet' vs 'sour')."
             ),
-            "formula": "K = (VARTB)^{1/3} / GE"
+            "formula": r"K = \frac{(VARTB)^{1/3}}{GE}"
         },
         "48. Telemetría y Edge Computing": {
             "resumen": "El futuro del control remoto en yacimientos inteligentes.",
@@ -464,25 +461,25 @@ def mostrar_manual():
                 "2. EDGE COMPUTING: El procesamiento de datos ocurre en el pozo, no en la nube, permitiendo cierres de emergencia instantáneos.\n"
                 "3. PROTOCOLO MQTT: Estándar liviano para transmitir datos en zonas con mala señal de celular."
             ),
-            "formula": "Latencia < Tiempo_Respuesta_Seguridad"
+            "formula": r"Latencia < Tiempo_{Rta\_Seguridad}"
         },
         "49. Logística de Hidrocarburos: Baches y Planificación": {
             "resumen": "Manejo de poliductos y transporte.",
             "detalle": (
                 "1. INTERFASE: La zona de mezcla entre dos productos diferentes (ej. crudo liviano y pesado) en un mismo ducto.\n"
-                "2. PROGRAMACIÓN DE BOMBEO: Coordinación para que el producto llegue a la refinería justo cuando se necesita (Just in Time).\n"
+                "2. PROGRAMACIÓN DE BOMBEO: Coordinación para que el producto llegue a la refinería justo cuando se necesita.\n"
                 "3. ALMACENAMIENTO ESTRATÉGICO: Gestión de stock para absorber paradas imprevistas en los yacimientos."
             ),
-            "formula": "Vol_Interface = f(Diametro, Longitud, Reynolds)"
+            "formula": r"Vol_{Interface} = f(Diametro, Longitud, Reynolds)"
         },
         "50. Liderazgo en Gestión de la Seguridad Operacional (PSM)": {
             "resumen": "Cultura de seguridad para el Técnico Líder.",
             "detalle": (
-                "1. DISCIPLINA OPERATIVA: Hacer las tareas siempre de la misma forma, siguiendo el procedimiento, incluso cuando nadie mira.\n"
-                "2. GESTIÓN DEL ERROR HUMANO: Aceptar que el humano se equivoca y diseñar sistemas que perdonen el error (Poka-yoke).\n"
-                "3. LECCIONES APRENDIDAS: Analizar incidentes de otras plantas para evitar que ocurran en la propia (Memoria Institucional)."
+                "1. DISCIPLINA OPERATIVA: Hacer las tareas siempre de la misma forma, siguiendo el procedimiento.\n"
+                "2. GESTIÓN DEL ERROR HUMANO: Diseñar sistemas que perdonen el error (Poka-yoke).\n"
+                "3. LECCIONES APRENDIDAS: Analizar incidentes de otras plantas para evitar que ocurran en la propia."
             ),
-            "formula": "Cultura = Comportamiento + Compromiso"
+            "formula": r"Seguridad = Prevision \cdot Disciplina"
         }
     # --- 2. PESTAÑAS DE INTERFAZ ---
     tab_teoria, tab_utilitarios = st.tabs(["📖 Teoría y PDF", "🧮 Utilitarios y Tablas"])
@@ -578,7 +575,7 @@ def mostrar_manual():
                     use_container_width=True,
                     key="btn_manual_pdf"
                 )
-                st.caption("⚠️ El manual incluye los 24 módulos técnicos actualizados.")
+                st.caption("⚠️ El manual incluye los 50 módulos técnicos actualizados.")
             except Exception as e:
                 st.error(f"Error al generar el manual: {e}")
 
