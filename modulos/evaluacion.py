@@ -27,6 +27,9 @@ def generar_certificado_pdf(nombre, dni, puntaje):
     pdf.set_line_width(3)
     pdf.rect(10, 10, 277, 190)
     
+    
+    
+    
     # --- 3. TEXTOS DEL CERTIFICADO ---
     pdf.set_font("Helvetica", "B", 35)
     pdf.set_text_color(243, 156, 18)
