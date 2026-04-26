@@ -2,6 +2,7 @@ import streamlit as st
 from fpdf import FPDF
 import time  
 import datetime
+
 def mostrar_manual():
     # 1. El Gran Diccionario (Asegúrate de que cierre bien al final)
     teoria_petrolera = {
@@ -499,7 +500,44 @@ def mostrar_manual():
     st.latex(teoria_petrolera[capitulo]["formula"])
     # --- 2. PESTAÑAS DE INTERFAZ ---
     tab_teoria, tab_utilitarios = st.tabs(["📖 Teoría y PDF", "🧮 Utilitarios y Tablas"])
+    with tab_utilitarios:
+        st.subheader("🛠️ Herramientas de Cálculo Rápido")
+        
+        col_calc, col_tab = st.columns(2)
 
+        with col_calc:
+            st.write("**Calculadora de Densidad API**")
+            ge_input = st.number_input("Densidad Relativa (SG):", value=0.9, step=0.01, format="%.3f")
+            api_res = (141.5 / ge_input) - 131.5
+            
+            # Clasificación automática
+            if api_res < 10: tipo = "Extrapesado"
+            elif api_res < 22.3: tipo = "Pesado"
+            elif api_res < 31.1: tipo = "Mediano"
+            else: tipo = "Liviano"
+            
+            st.metric("Resultado:", f"{api_res:.1f} °API", delta=tipo)
+            st.caption("Fórmula: (141.5 / SG) - 131.5")
+
+        with col_tab:
+            st.write("**Tabla de Torque de Bridas (ANSI 600)**")
+            data_bridas = {
+                "Ø Nominal (pulg)": ["2\"", "3\"", "4\"", "6\""],
+                "Nro Espárragos": [8, 8, 8, 12],
+                "Torque (Ft-Lb)": [110, 160, 160, 220]
+            }
+            st.table(data_bridas)
+
+        st.divider()
+
+        # Tercer elemento: Conversor de Unidades Petroleras
+        st.write("**Conversor de Caudal**")
+        c1, c2 = st.columns(2)
+        with c1:
+            m3h = st.number_input("Metros cúbicos/hora (m³/h):", value=1.0)
+        with c2:
+            bpd = m3h * 150.96
+            st.metric("Barriles por día (BPD):", f"{bpd:,.2f}")
     with tab_teoria:
         # Selector de teoría interactiva
         capitulo = st.selectbox("Seleccione área de estudio:", list(teoria_petrolera.keys()))
