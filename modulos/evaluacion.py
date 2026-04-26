@@ -3,7 +3,6 @@ from fpdf import FPDF
 import time
 
 def generar_certificado_pdf(nombre, dni, puntaje):
-    # Configuración de fpdf2 para salida en bytes
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
     
@@ -31,6 +30,7 @@ def generar_certificado_pdf(nombre, dni, puntaje):
     pdf.ln(10)
     pdf.set_font("Helvetica", "", 14)
     pdf.set_text_color(0, 0, 0)
+    # Usamos un texto limpio para evitar líos de encoding
     texto_cert = f"Por haber aprobado satisfactoriamente la evaluacion IPCL MENFA 3.0 con {puntaje}/100 puntos."
     pdf.multi_cell(0, 10, txt=texto_cert, align='C')
     
@@ -40,8 +40,9 @@ def generar_certificado_pdf(nombre, dni, puntaje):
     pdf.cell(140, 5, "Fabricio Pizzolato", 0, 0, 'C')
     pdf.cell(140, 5, f"Mendoza, {time.strftime('%d/%m/%Y')}", 0, 1, 'C')
     
-    # Retorna los bytes directamente para Streamlit
-    return pdf.output()
+    # --- CORRECCIÓN CRÍTICA AQUÍ ---
+    # Convertimos explícitamente a bytes para que Streamlit no falle
+    return bytes(pdf.output())
 
 def evaluacion():
     st.header("🧠 Mesa de Examen: Competencias Operativas")
