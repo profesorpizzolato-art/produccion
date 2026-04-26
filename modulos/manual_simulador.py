@@ -249,9 +249,241 @@ def mostrar_manual():
                 "100. INTEGRIDAD: Operar bajo normas no para evitar multas, sino para proteger la vida, el ambiente y el recurso de Mendoza."
             ),
             "formula": "Seguridad = Prevision + Disciplina"
+        },
+         "25. Fenómenos de Flujo: Parafinas y Asfaltenos": {
+            "resumen": "Gestión de obstrucciones en climas fríos (Mendoza).",
+            "detalle": (
+                "1. PUNTO DE NUBE (Cloud Point): Temperatura a la cual empiezan a formarse cristales de parafina sólidos. Vital para el seteo de calentadores en invierno.\n"
+                "2. TRATAMIENTO QUÍMICO: Uso de dispersantes y solventes aromáticos. La inyección debe ser continua para evitar que la parafina se adhiera a las paredes del tubing.\n"
+                "3. SCRAPPING MECÁNICO: Uso de herramientas cortadoras bajadas con Wireline para limpiar el pozo sin necesidad de equipo de Pulling."
+            ),
+            "formula": "T_operacion > T_nube + 10°C"
+        },
+        "26. Sistemas de Extracción: Bombeo Electrosumergible (BES)": {
+            "resumen": "Producción de altos caudales y pozos profundos.",
+            "detalle": (
+                "1. ETAPAS DE LA BOMBA: Cada etapa (impulsor + difusor) aporta una cantidad de presión (head). A mayor cantidad de etapas, más profundidad puede manejar.\n"
+                "2. SENSOR DE FONDO: Mide presión y temperatura del motor. Un aumento de temperatura indica falta de enfriamiento (poco flujo) o sobrecarga eléctrica.\n"
+                "3. MANEJO DE GAS: El gas libre en la succión causa 'gas lock' o cavitación. Se soluciona con separadores de gas rotativos antes de la entrada a la bomba."
+            ),
+            "formula": "TDH = Prof_Vertical + Perdidas_Friccion + P_Cabeza"
+        },
+        "27. Tratamiento de Agua de Inyección": {
+            "resumen": "Recuperación Secundaria y Calidad de Agua.",
+            "detalle": (
+                "1. FILTRACIÓN: El agua debe estar libre de sólidos para no tapar los poros de la formación inyectora.\n"
+                "2. REMOCIÓN DE OXÍGENO: El oxígeno causa corrosión severa en las cañerías. Se elimina mediante torres de desaireación o secuestrantes químicos.\n"
+                "3. COMPATIBILIDAD: El agua inyectada no debe reaccionar con los minerales de la roca (arcillas hinchables) para evitar el daño de formación."
+            ),
+            "formula": "Indice_Inyectividad = Caudal / (P_Inyeccion - P_Reservorio)"
+        },
+        "28. Control de Pozos: El fenómeno del 'Kick'": {
+            "resumen": "Seguridad Crítica durante intervenciones.",
+            "detalle": (
+                "1. SURGENCIA (Kick): Entrada no deseada de fluido de formación al pozo. Se detecta por aumento de nivel en piletas o flujo con bombas apagadas.\n"
+                "2. CIERRE DE BOP: Procedimiento inmediato ante un kick para evitar un reventón (Blowout).\n"
+                "3. MÉTODO DEL PERFORADOR: Técnica para circular el gas hacia afuera del pozo de forma controlada, manteniendo la presión de fondo constante."
+            ),
+            "formula": "P_Fondo = P_Hidrostatica + P_Anular"
+        },
+        "29. Deshidratación de Crudo: Electrotécnicos": {
+            "resumen": "Tratadores de alta eficiencia.",
+            "detalle": (
+                "1. COALESCENCIA ELECTROSTÁTICA: Uso de campos eléctricos de alto voltaje (15kV - 30kV) para polarizar las gotas de agua y hacer que se junten más rápido.\n"
+                "2. TIEMPO DE RESIDENCIA: En Mendoza, crudos de 18-24° API requieren tiempos de retención mayores a 45 minutos para lograr un BSW < 0.5%.\n"
+                "3. EFECTO DE LA SAL: El agua remanente lleva sales (cloruros). El lavado con agua dulce (wash water) ayuda a diluir y extraer estas sales."
+            ),
+            "formula": "V_asentamiento = (Diferencia_Densidades * g * d^2) / (18 * viscosidad)"
+        },
+        "30. Dinámica de Pozos: Curvas IPR (Inflow Performance Relationship)": {
+            "resumen": "Relación entre presión de fondo y caudal de producción.",
+            "detalle": (
+                "1. MÉTODO DE VOGEL: Utilizado para reservorios donde hay gas libre (empuje por gas disuelto). La curva no es lineal.\n"
+                "2. EFECTO SKIN (Daño): Un Skin positivo indica que la formación cerca del pozo está tapada por lodos o finos, reduciendo la productividad.\n"
+                "3. OPTIMIZACIÓN: Al cruzar la IPR con la curva de levantamiento (VLP), el técnico determina el punto óptimo de operación de la bomba."
+            ),
+            "formula": r"Q/Q_{max} = 1 - 0.2(P_{wf}/P_r) - 0.8(P_{wf}/P_r)^2"
+        },
+        "31. Separación de Gas: Plantas de Ajuste de Punto de Rocío (Dew Point)": {
+            "resumen": "Eliminación de hidrocarburos pesados en corrientes de gas.",
+            "detalle": (
+                "1. EFECTO JOULE-THOMSON: Al expandir el gas bruscamente a través de una válvula JT, la temperatura cae drásticamente, condensando los líquidos.\n"
+                "2. CICLO DE REFRIGERACIÓN: Uso de propano externo para enfriar el gas y extraer gasolinas (LPG).\n"
+                "3. TORRES ESTABILIZADORAS: Separan los componentes livianos de los líquidos condensados para que el producto sea estable para transporte."
+            ),
+            "formula": "T_{final} = f(P_{entrada}, P_{salida}, \gamma_{gas})"
+        },
+        "32. Corrosión Atmosférica e Interna: Monitoreo Crítico": {
+            "resumen": "Degradación química de metales en instalaciones.",
+            "detalle": (
+                "1. CUPONES DE CORROSIÓN: Placas de metal testigo que se insertan en la cañería para medir la pérdida de peso por año (mpy).\n"
+                "2. CORROSIÓN POR CO2 (Sweet Corrosion): Forma ácido carbónico que genera picaduras (pitting) profundas.\n"
+                "3. CORROSIÓN MICROBIOLÓGICA (SRB): Bacterias que 'comen' hierro y generan H2S localmente, causando fallas catastróficas."
+            ),
+            "formula": "mpy = (534 \cdot Perdida\_Peso) / (Area \cdot Tiempo \cdot Densidad)"
+        },
+        "33. Instrumentación Avanzada: Lazos de Control PID": {
+            "resumen": "Automatización y estabilidad de procesos en planta.",
+            "detalle": (
+                "1. ACCIÓN PROPORCIONAL (P): Responde al error actual.\n"
+                "2. ACCIÓN INTEGRAL (I): Elimina el error residual acumulado en el tiempo.\n"
+                "3. ACCIÓN DERIVATIVA (D): Predice errores futuros según la velocidad del cambio. Vital para control de nivel en separadores pequeños."
+            ),
+            "formula": "Salida = K_p \cdot e(t) + K_i \int e(t)dt + K_d \frac{de}{dt}"
+        },
+        "34. Bombas de Cavidad Progresiva (PCP)": {
+            "resumen": "Producción de crudos viscosos y con arena.",
+            "detalle": (
+                "1. ESTATOR Y ROTOR: El estator es de elastómero (goma) y el rotor de acero cromado. La interferencia entre ambos genera el sello.\n"
+                "2. ELASTÓMEROS: Deben elegirse según el tipo de crudo (aromático o parafínico) para evitar que la goma se hinche o se degrade.\n"
+                "3. TORSIÓN DE VARILLAS: A diferencia del AIB, aquí las varillas rotan. Un torque excesivo puede desenroscar o cortar la sarta."
+            ),
+            "formula": "Q_{teorico} = 4 \cdot E \cdot D \cdot P \cdot RPM"
+        },
+        "35. Gestión de Tanques: Calibración y Aforo": {
+            "resumen": "Control de inventarios y transferencia de custodia.",
+            "detalle": (
+                "1. TABLA DE AFORO: Convierte cm de nivel en m3. Debe contemplar la deformación del tanque por el peso del líquido (flecha).\n"
+                "2. TECHO FLOTANTE: Reduce las pérdidas por evaporación y el riesgo de incendio al eliminar el espacio gaseoso.\n"
+                "3. AGUA LIBRE VS AGUA EMULSIONADA: La purga solo elimina el agua libre del fondo; la emulsionada requiere químicos y tiempo."
+            ),
+            "formula": "V_{neto} = V_{bruto} \cdot FCT \cdot FP"
+        },
+        "36. Seguridad de Procesos: Análisis de Capas de Protección (LOPA)": {
+            "resumen": "Prevención de eventos de baja probabilidad y alta consecuencia.",
+            "detalle": (
+                "1. BARRERAS PASIVAS: Diques de contención y muros cortafuego.\n"
+                "2. BARRERAS ACTIVAS: Válvulas ESD, PSV y sistemas de diluvio.\n"
+                "3. SIL (Safety Integrity Level): Nivel de confiabilidad de un sistema instrumentado de seguridad."
+            ),
+            "formula": "Riesgo = Frecuencia \cdot Consecuencia"
+        },
+        "37. Geomecánica y Estimulación Hidráulica (Fracking)": {
+            "resumen": "Intervención en reservorios no convencionales.",
+            "detalle": (
+                "1. PRESIÓN DE RUPTURA: Presión necesaria para vencer el esfuerzo mínimo de la roca y abrir una fractura.\n"
+                "2. AGENTE SOSTÉN (Proppant): Arena de alta resistencia que mantiene la fractura abierta cuando cesa la presión de bombeo.\n"
+                "3. MICRO-SÍSMICA: Monitoreo de los 'ruidos' de la roca para mapear hacia dónde creció la fractura."
+            ),
+            "formula": "P_{frac} = P_{friccion} + P_{hidrostatica} + P_{cabeza}"
+        },
+        "38. Sistemas de Gas Lift (Bombeo Neumático)": {
+            "resumen": "Inyección de gas para alivianar la columna de fluido.",
+            "detalle": (
+                "1. VÁLVULAS DE MANDRIL: Válvulas calibradas que abren a distintas presiones para permitir el paso de gas al tubing.\n"
+                "2. PUNTO DE INYECCIÓN: El gas se inyecta lo más profundo posible para maximizar la reducción de densidad.\n"
+                "3. INTERMITENTE VS CONTINUO: El intermitente se usa en pozos de baja productividad (acumula y empuja un bache)."
+            ),
+            "formula": "\Delta P = \rho_{fluido} \cdot g \cdot h"
+        },
+        "39. Calentadores de Fuego Directo e Indirecto": {
+            "resumen": "Preparación del crudo para separación y bombeo.",
+            "detalle": (
+                "1. BAÑO DE AGUA: En calentadores indirectos, el fuego calienta agua y esta calienta el serpentín del crudo (más seguro).\n"
+                "2. EFICIENCIA TÉRMICA: Una mala combustión (exceso de aire) desperdicia gas y genera depósitos de hollín en los tubos.\n"
+                "3. CONTROL DE LLAMA: El sistema 'Burner Management System' (BMS) corta el gas si detecta que la llama se apagó."
+            ),
+            "formula": "Q = m \cdot C_p \cdot (T_{salida} - T_{entrada})"
+        },
+        "40. Despacho de Crudo: Oleoductos y Estaciones de Bombeo": {
+            "resumen": "Transporte masivo de hidrocarburos.",
+            "detalle": (
+                "1. LÍNEA DE GRADIENTE HIDRÁULICO: Representa la caída de presión a lo largo del ducto debido a la fricción.\n"
+                "2. SOBREPRESIONES (Surge): Causadas por el cierre rápido de válvulas. Se protegen con sistemas de alivio de transitorios.\n"
+                "3. RASHIG RINGS / SCRAPERS: Limpieza interna periódica para mantener la capacidad de transporte."
+            ),
+            "formula": "h_f = f \cdot \frac{L}{D} \cdot \frac{v^2}{2g}"
+        },
+        "41. Análisis de Fallas en Varillas de Bombeo": {
+            "resumen": "Identificación de fatiga y fallas mecánicas en AIB.",
+            "detalle": (
+                "1. FATIGA POR TENSIÓN: Causa el 90% de las roturas. Se identifica por una superficie de fractura lisa con marcas de 'playa'.\n"
+                "2. CORROSIÓN-FATIGA: El H2S o CO2 acelera el proceso de rotura. Se previene con inhibidores y evitando el pandeo (buckling).\n"
+                "3. MARCAS DE LLAVE: Una mala manipulación con las llaves de potencia crea concentradores de tensión que inician la grieta."
+            ),
+            "formula": "Tension_Max = (Carga_Pulida / Area_Varilla)"
+        },
+        "42. Tecnología de Inyección de Polímeros (EOR)": {
+            "resumen": "Recuperación Terciaria para mejorar la eficiencia de barrido.",
+            "detalle": (
+                "1. VISCOSIFICACIÓN: El polímero aumenta la viscosidad del agua inyectada para que 'empuje' mejor el petróleo pesado.\n"
+                "2. RELACIÓN DE MOVILIDAD: El objetivo es que el agua no 'dedee' (fingering) a través del petróleo.\n"
+                "3. DEGRADACIÓN MECÁNICA: El polímero es sensible al cizallamiento en válvulas y bombas; debe manejarse con baja velocidad de flujo."
+            ),
+            "formula": "M = (k_w / \mu_w) / (k_o / \mu_o)"
+        },
+        "43. Medición Multifásica (Virtual Flow Metering)": {
+            "resumen": "Estimación de caudales sin separación física.",
+            "detalle": (
+                "1. PRINCIPIO: Uso de modelos matemáticos y sensores de presión/temperatura para deducir cuánto gas, agua y crudo fluye.\n"
+                "2. VENTAJAS: Reduce el costo de instalar grandes separadores de ensayo en locaciones remotas.\n"
+                "3. REDES NEURONALES: Los sistemas modernos aprenden del comportamiento histórico del pozo para ganar precisión."
+            ),
+            "formula": "Q_{total} = f(P_{anular}, P_{tubing}, \%Choke)"
+        },
+        "44. Estabilidad de Pozo y Ventana Operativa": {
+            "resumen": "Geomecánica aplicada para evitar colapsos.",
+            "detalle": (
+                "1. PRESIÓN DE POROS: La presión natural de los fluidos dentro de la roca.\n"
+                "2. GRADIENTE DE FRACTURA: El límite superior de presión antes de romper la formación de forma no deseada.\n"
+                "3. DENSIDAD DEL LODO: Debe mantenerse dentro de la 'ventana' para que el pozo no fluya (kick) ni se pierda circulación."
+            ),
+            "formula": "P_{pore} < P_{hidrostatica} < P_{fractura}"
+        },
+        "45. Deshidratación de Gas con Glicol (TEG)": {
+            "resumen": "Proceso de absorción para alcanzar especificación de venta.",
+            "detalle": (
+                "1. TORRE CONTACTORA: El glicol pobre 'cae' y absorbe el agua del gas que 'sube'.\n"
+                "2. REGENERACIÓN: El glicol rico (con agua) se calienta en el reboiler para evaporar el agua y reutilizar el glicol.\n"
+                "3. PUNTO DE ROCÍO DE GAS: El objetivo suele ser < 7 lb H2O / MMSCF para evitar hidratos en el gasoducto."
+            ),
+            "formula": "Eficiencia = f(Tasa_Glicol, Nro_Platos)"
+        },
+        "46. Gestión de Paros de Planta (Turnarounds)": {
+            "resumen": "Planificación de mantenimiento mayor.",
+            "detalle": (
+                "1. CAMINO CRÍTICO: Identificación de las tareas que, si se retrasan, postergan todo el arranque de la planta.\n"
+                "2. DESPRESURIZACIÓN Y PURGADO: El paso más crítico para la seguridad del personal de mantenimiento.\n"
+                "3. TRABAJOS EN CALIENTE: Protocolos estrictos de medición de explosividad (LEL) constantes."
+            ),
+            "formula": "Disponibilidad = (Tiempo_Operativo / Tiempo_Total) * 100"
+        },
+        "47. Caracterización de Crudos: Curva TBP": {
+            "resumen": "True Boiling Point y rendimiento de destilería.",
+            "detalle": (
+                "1. FRACCIONAMIENTO: Determinación de qué porcentaje de crudo se convertirá en Nafta, Gasoil o Residuos.\n"
+                "2. FACTOR DE CARACTERIZACIÓN (K): Indica si un crudo es más parafínico, nafténico o aromático.\n"
+                "3. CONTENIDO DE AZUFRE: Crucial para el precio de venta (crudos 'sweet' vs 'sour')."
+            ),
+            "formula": "K = (VARTB)^{1/3} / GE"
+        },
+        "48. Telemetría y Edge Computing": {
+            "resumen": "El futuro del control remoto en yacimientos inteligentes.",
+            "detalle": (
+                "1. IIoT (Internet Industrial de las Cosas): Sensores inalámbricos de bajo consumo que reportan cada 1 segundo.\n"
+                "2. EDGE COMPUTING: El procesamiento de datos ocurre en el pozo, no en la nube, permitiendo cierres de emergencia instantáneos.\n"
+                "3. PROTOCOLO MQTT: Estándar liviano para transmitir datos en zonas con mala señal de celular."
+            ),
+            "formula": "Latencia < Tiempo_Respuesta_Seguridad"
+        },
+        "49. Logística de Hidrocarburos: Baches y Planificación": {
+            "resumen": "Manejo de poliductos y transporte.",
+            "detalle": (
+                "1. INTERFASE: La zona de mezcla entre dos productos diferentes (ej. crudo liviano y pesado) en un mismo ducto.\n"
+                "2. PROGRAMACIÓN DE BOMBEO: Coordinación para que el producto llegue a la refinería justo cuando se necesita (Just in Time).\n"
+                "3. ALMACENAMIENTO ESTRATÉGICO: Gestión de stock para absorber paradas imprevistas en los yacimientos."
+            ),
+            "formula": "Vol_Interface = f(Diametro, Longitud, Reynolds)"
+        },
+        "50. Liderazgo en Gestión de la Seguridad Operacional (PSM)": {
+            "resumen": "Cultura de seguridad para el Técnico Líder.",
+            "detalle": (
+                "1. DISCIPLINA OPERATIVA: Hacer las tareas siempre de la misma forma, siguiendo el procedimiento, incluso cuando nadie mira.\n"
+                "2. GESTIÓN DEL ERROR HUMANO: Aceptar que el humano se equivoca y diseñar sistemas que perdonen el error (Poka-yoke).\n"
+                "3. LECCIONES APRENDIDAS: Analizar incidentes de otras plantas para evitar que ocurran en la propia (Memoria Institucional)."
+            ),
+            "formula": "Cultura = Comportamiento + Compromiso"
         }
-    }
-
     # --- 2. PESTAÑAS DE INTERFAZ ---
     tab_teoria, tab_utilitarios = st.tabs(["📖 Teoría y PDF", "🧮 Utilitarios y Tablas"])
 
@@ -269,69 +501,86 @@ def mostrar_manual():
         with col_pdf:
             st.write("**Certificación y Descarga**")
             
-            # --- FUNCIÓN GENERADORA DE PDF (DENTRO DEL BOTÓN PARA EVITAR ERRORES) ---
+# --- DENTRO DE LA FUNCIÓN mostrar_manual() ---
+
+        with col_pdf:
+            st.write("**Certificación y Descarga**")
+            
             def generar_pdf_pro():
                 pdf = FPDF()
                 pdf.add_page()
                 
+                # --- Encabezado Institucional ---
+                try:
+                    # Agregamos el logo al manual también
+                    pdf.image("assets/logo_menfa.png", x=10, y=10, w=30)
+                    pdf.ln(20)
+                except:
+                    pdf.ln(10)
+
                 # Sello de Certificación (Si aprobó con 80+)
-                if st.session_state.get('puntaje_examen', 0) >= 80:
+                puntaje_actual = st.session_state.get('puntaje_examen', 0)
+                if puntaje_actual >= 80:
                     pdf.set_font("Helvetica", "B", 12)
                     pdf.set_text_color(0, 128, 0)
-                    pdf.cell(0, 10, "ESTADO: USUARIO CERTIFICADO EN COMPETENCIAS OPERATIVAS", ln=True, align='C')
+                    pdf.cell(0, 10, f"ESTADO: USUARIO CERTIFICADO ({puntaje_actual}/100 PTS)", ln=True, align='C')
                     pdf.ln(5)
                 
                 pdf.set_font("Helvetica", "B", 16)
-                pdf.set_text_color(0, 51, 102)
+                pdf.set_text_color(0, 51, 102) # Azul Petróleo
                 pdf.cell(0, 10, "MANUAL TECNICO DE PRODUCCION IPCL 3.0", ln=True, align='C')
+                
                 pdf.set_font("Helvetica", "I", 10)
                 pdf.set_text_color(100, 100, 100)
-                pdf.cell(0, 10, "Menfa Capacitaciones - Instructor: F. Pizzolato", ln=True, align='C')
+                pdf.cell(0, 10, "Menfa Capacitaciones - Director: Fabricio Pizzolato", ln=True, align='C')
                 pdf.ln(10)
 
+                # --- Contenido Dinámico ---
                 for tit, info in teoria_petrolera.items():
+                    # Título de Sección
                     pdf.set_font("Helvetica", "B", 12)
-                    pdf.set_fill_color(230, 230, 230)
-                    pdf.set_text_color(0, 0, 0)
-                    pdf.cell(0, 10, tit, ln=True, fill=True)
+                    pdf.set_fill_color(243, 156, 18) # Naranja MENFA
+                    pdf.set_text_color(255, 255, 255)
+                    pdf.cell(0, 10, tit.encode('latin-1', 'ignore').decode('latin-1'), ln=True, fill=True)
+                    
+                    # Detalle (con limpieza de caracteres para evitar errores)
                     pdf.set_font("Helvetica", size=10)
-                    pdf.multi_cell(0, 7, info['detalle'].encode('latin-1', 'ignore').decode('latin-1'))
+                    pdf.set_text_color(0, 0, 0)
+                    texto_limpio = info['detalle'].encode('latin-1', 'ignore').decode('latin-1')
+                    pdf.multi_cell(0, 7, texto_limpio)
+                    
+                    # Fórmula en texto simple para el PDF
+                    pdf.set_font("Courier", "I", 9)
+                    pdf.cell(0, 8, f"Formula Ref: {info['formula']}", ln=True)
                     pdf.ln(5)
 
-                # Firmas
+                # --- Pie de Página con Firmas ---
                 pdf.ln(20)
                 y_f = pdf.get_y()
+                # Si el contenido es muy largo y la firma queda al borde, fpdf añade hoja sola
                 pdf.line(20, y_f, 80, y_f)
                 pdf.line(120, y_f, 180, y_f)
                 pdf.set_font("Helvetica", "B", 8)
                 pdf.text(35, y_f + 5, "Firma Alumno")
-                pdf.text(130, y_f + 5, "Firma F. Pizzolato")
+                pdf.text(135, y_f + 5, "Firma F. Pizzolato")
+                
                 return bytes(pdf.output())
 
             try:
-                btn_pdf = generar_pdf_pro()
+                # Generamos los bytes del PDF
+                btn_pdf_data = generar_pdf_pro()
+                
                 st.download_button(
-                    label="📥 Descargar Manual (PDF)",
-                    data=btn_pdf,
-                    file_name="Manual_Tecnico_Menfa.pdf",
+                    label="📥 Descargar Manual Completo (PDF)",
+                    data=btn_pdf_data,
+                    file_name=f"Manual_Tecnico_MENFA_{time.strftime('%Y%m%d')}.pdf",
                     mime="application/pdf",
-                    use_container_width=True
+                    use_container_width=True,
+                    key="btn_manual_pdf"
                 )
+                st.caption("⚠️ El manual incluye los 24 módulos técnicos actualizados.")
             except Exception as e:
-                st.error(f"Error PDF: {e}")
-
-    with tab_utilitarios:
-        col_c1, col_c2 = st.columns(2)
-        with col_c1:
-            st.write("**Conversor de Caudal**")
-            m3 = st.number_input("Metros Cúbicos/día:", value=10.0)
-            st.success(f"{m3} m³/d = **{round(m3 * 6.29, 2)} bpd**")
-        with col_c2:
-            st.write("**Referencia API**")
-            st.table({
-                "Tipo": ["Pesado", "Mediano", "Ligero"],
-                "Grados": ["10 - 22", "22 - 31", "> 31"]
-            })
+                st.error(f"Error al generar el manual: {e}")
 
     st.divider()
     st.caption("IPCL MENFA 3.0 - Mendoza, Argentina.")
