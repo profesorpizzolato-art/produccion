@@ -3,67 +3,59 @@ from fpdf import FPDF
 import time
 
 def generar_certificado_pdf(nombre, dni, puntaje):
-    # Configuramos fpdf2 en modo Landscape (Horizontal)
+    # Configuramos fpdf2 en modo Landscape
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
     
-    # --- 1. LOGO INSTITUCIONAL (Desde carpeta assets) ---
+    # --- 1. LOGO INSTITUCIONAL ---
     try:
-        # Buscamos la imagen por su nuevo nombre: 'logo_menfa.png'
-        # w=50: Le decimos que el ancho sea de 50mm. No importa que el archivo
-        # original sea gigante, fpdf2 lo redimensionará a este tamaño.
-        # x=123.5: Centrado milimétrico ( (297 ancho A4 - 50 ancho logo) / 2 )
-        # y=12: Margen superior.
+        # Mantenemos el logo centrado y con ancho de 50mm
         pdf.image("assets/logo_menfa.png", x=123.5, y=12, w=50) 
         
-        pdf.ln(48) # Espacio para que el texto empiece por debajo del logo redimensionado
+        # Aumentamos el salto de línea después del logo (de 48 a 60)
+        # Esto empuja todo el texto hacia abajo para que no se pise
+        pdf.ln(60) 
     except Exception as e:
-        # Si falla, dejamos el espacio para que el diseño no se rompa y avisamos
-        pdf.ln(45)
-        st.error(f"No se pudo cargar 'assets/logo_menfa.png'. Verificá la ruta. Error: {e}")
+        pdf.ln(50)
+        st.error(f"Error con el logo: {e}")
 
-    # --- 2. ESTÉTICA MENFA (MARCO) ---
-    pdf.set_draw_color(243, 156, 18) # Naranja MENFA
+    # --- 2. MARCO NARANJA ---
+    pdf.set_draw_color(243, 156, 18) 
     pdf.set_line_width(3)
     pdf.rect(10, 10, 277, 190)
     
-    
-    
-    
-    # --- 3. TEXTOS DEL CERTIFICADO ---
+    # --- 3. TEXTOS (Con interlineado ajustado) ---
     pdf.set_font("Helvetica", "B", 35)
     pdf.set_text_color(243, 156, 18)
-    pdf.cell(0, 18, "MENFA CAPACITACIONES", ln=True, align='C')
+    pdf.cell(0, 15, "MENFA CAPACITACIONES", ln=True, align='C')
     
-    pdf.set_font("Helvetica", "B", 25)
-    pdf.set_text_color(0, 59, 70) # Azul Petróleo
-    pdf.cell(0, 15, "CERTIFICADO DE APROBACION", ln=True, align='C')
+    pdf.set_font("Helvetica", "B", 22)
+    pdf.set_text_color(0, 59, 70) 
+    pdf.cell(0, 12, "CERTIFICADO DE APROBACION", ln=True, align='C')
     
-    # Nombre del alumno destacado
+    # Espacio extra antes del nombre del alumno
+    pdf.ln(15) 
+    
     pdf.set_font("Helvetica", "B", 35)
     pdf.set_text_color(20, 20, 20)
-    pdf.ln(12)
     pdf.cell(0, 20, nombre.upper(), ln=True, align='C')
     
-    # DNI
     pdf.set_font("Helvetica", "", 16)
     pdf.cell(0, 10, f"DNI: {dni}", ln=True, align='C')
     
-    # Detalle de aprobación
     pdf.ln(10)
     pdf.set_font("Helvetica", "", 14)
     pdf.set_text_color(0, 0, 0)
     texto_cert = f"Por haber aprobado satisfactoriamente la evaluacion IPCL MENFA 3.0 con {puntaje}/100 puntos."
     pdf.multi_cell(0, 10, txt=texto_cert, align='C')
     
-    # --- 4. FIRMAS (Posicionadas al final) ---
-    pdf.ln(18)
+    # --- 4. FIRMAS (Ajustadas para que no queden muy abajo) ---
+    pdf.ln(10)
     pdf.cell(140, 10, "__________________________", 0, 0, 'C')
     pdf.cell(140, 10, "__________________________", 0, 1, 'C')
     pdf.cell(140, 5, "Fabricio Pizzolato", 0, 0, 'C')
     pdf.cell(140, 5, f"Mendoza, Argentina - {time.strftime('%d/%m/%Y')}", 0, 1, 'C')
     
-    # --- 5. RETORNO DE BYTES (El método que te funcionó) ---
     return bytes(pdf.output())
 def evaluacion():
     st.header("🧠 Mesa de Examen: Competencias Operativas")
