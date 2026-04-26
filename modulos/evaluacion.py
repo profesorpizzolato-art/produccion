@@ -9,12 +9,8 @@ def generar_certificado_pdf(nombre, dni, puntaje):
     
     # --- 1. LOGO INSTITUCIONAL ---
     try:
-        # Mantenemos el logo centrado y con ancho de 50mm
         pdf.image("assets/logo_menfa.png", x=123.5, y=12, w=50) 
-        
-        # Aumentamos el salto de línea después del logo (de 48 a 60)
-        # Esto empuja todo el texto hacia abajo para que no se pise
-        pdf.ln(60) 
+        pdf.ln(58) # Espacio después del logo
     except Exception as e:
         pdf.ln(50)
         st.error(f"Error con el logo: {e}")
@@ -24,7 +20,7 @@ def generar_certificado_pdf(nombre, dni, puntaje):
     pdf.set_line_width(3)
     pdf.rect(10, 10, 277, 190)
     
-    # --- 3. TEXTOS (Con interlineado ajustado) ---
+    # --- 3. TÍTULOS ---
     pdf.set_font("Helvetica", "B", 35)
     pdf.set_text_color(243, 156, 18)
     pdf.cell(0, 15, "MENFA CAPACITACIONES", ln=True, align='C')
@@ -33,9 +29,9 @@ def generar_certificado_pdf(nombre, dni, puntaje):
     pdf.set_text_color(0, 59, 70) 
     pdf.cell(0, 12, "CERTIFICADO DE APROBACION", ln=True, align='C')
     
-    # Espacio extra antes del nombre del alumno
-    pdf.ln(15) 
+    pdf.ln(10) 
     
+    # --- 4. DATOS DEL ALUMNO ---
     pdf.set_font("Helvetica", "B", 35)
     pdf.set_text_color(20, 20, 20)
     pdf.cell(0, 20, nombre.upper(), ln=True, align='C')
@@ -43,18 +39,30 @@ def generar_certificado_pdf(nombre, dni, puntaje):
     pdf.set_font("Helvetica", "", 16)
     pdf.cell(0, 10, f"DNI: {dni}", ln=True, align='C')
     
-    pdf.ln(10)
+    pdf.ln(8)
     pdf.set_font("Helvetica", "", 14)
     pdf.set_text_color(0, 0, 0)
     texto_cert = f"Por haber aprobado satisfactoriamente la evaluacion IPCL MENFA 3.0 con {puntaje}/100 puntos."
     pdf.multi_cell(0, 10, txt=texto_cert, align='C')
     
-    # --- 4. FIRMAS (Ajustadas para que no queden muy abajo) ---
-    pdf.ln(10)
+    # --- 5. SECCIÓN DE FIRMAS ---
+    # Posicionamos las firmas un poco más abajo
+    pdf.ln(15) 
+    
+    # Columna Izquierda: Firma del Director
+    pdf.set_font("Helvetica", "B", 13)
     pdf.cell(140, 10, "__________________________", 0, 0, 'C')
+    # Columna Derecha: Fecha y Lugar
     pdf.cell(140, 10, "__________________________", 0, 1, 'C')
+    
+    # Nombres y Cargos
+    pdf.set_font("Helvetica", "B", 12)
     pdf.cell(140, 5, "Fabricio Pizzolato", 0, 0, 'C')
-    pdf.cell(140, 5, f"Mendoza, Argentina - {time.strftime('%d/%m/%Y')}", 0, 1, 'C')
+    pdf.cell(140, 5, "Mendoza, Argentina", 0, 1, 'C')
+    
+    pdf.set_font("Helvetica", "I", 10)
+    pdf.cell(140, 5, "Director Tecnico - MENFA", 0, 0, 'C')
+    pdf.cell(140, 5, f"Fecha de emision: {time.strftime('%d/%m/%Y')}", 0, 1, 'C')
     
     return bytes(pdf.output())
 def evaluacion():
