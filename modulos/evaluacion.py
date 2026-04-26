@@ -1,147 +1,158 @@
 import streamlit as st
-
-def evaluacion():
-    st.header("🧠 Evaluación de Competencias Operativas")
-    st.write("Examen técnico para la certificación en Operaciones de Campo y Planta.")
-
-    # --- 1. DATOS DEL ALUMNO ---
-    with st.container(border=True):
-        col1, col2 = st.columns(2)
-        with col1:
-            nombre = st.text_input("Nombre Completo del Alumno:")
-        with col2:
-            dni = st.text_input("DNI:")
-
-    # --- 2. EXAMEN (Banco de Preguntas) ---
-    st.divider()
-    score = 0
-
-    # Pregunta 1
-    st.markdown("### 1. Sistema de Extracción")
-    p1 = st.radio(
-        "Si observamos que un pozo tiene un **AIB (Aparato Independiente de Bombeo)**, ¿a qué sistema de extracción pertenece?",
-        ["Surgencia Natural", "Bombeo Mecánico", "Bombeo Electrosumergible (ESP)", "Plunger Lift"],
-        index=None
-    )
-    if p1 == "Bombeo Mecánico": score += 25
-
-    # Pregunta 2
-    st.markdown("### 2. Control de Planta")
-    p2 = st.radio(
-        "¿Cuál es el objetivo principal del Separador Trifásico en la PTC?",
-        ["Aumentar la presión del gas", "Separar el gas, el crudo y el agua de formación", "Calentar el petróleo para reducir viscosidad"],
-        index=None
-    )
-    if p2 == "Separar el gas, el crudo y el agua de formación": score += 25
-
-    # Pregunta 3
-    st.markdown("### 3. Ingeniería y Producción")
-    p3 = st.radio(
-        "En el análisis nodal, si la curva VLP se desplaza hacia arriba (aumento de contrapresión), ¿qué sucede con el caudal de producción?",
-        ["El caudal aumenta", "El caudal disminuye", "El caudal se mantiene constante"],
-        index=None
-    )
-    if p3 == "El caudal disminuye": score += 25
-
-    # Pregunta 4
-    st.markdown("### 4. Seguridad Operativa")
-    p4 = st.radio(
-        "¿Qué significan las siglas **ESD** en una sala de control de planta?",
-        ["Electric System Data", "Emergency Shutdown (Parada de Emergencia)", "Every Single Day"],
-        index=None
-    )
-    if p4 == "Emergency Shutdown (Parada de Emergencia)": score += 25
-
-    # --- 3. RESULTADOS ---
-    st.divider()
-    if st.button("Finalizar y Calificar", use_container_width=True):
-        if not nombre or not dni:
-            st.error("Por favor, ingrese sus datos antes de calificar.")
-        else:
-            st.subheader(f"Resultado para {nombre}")
-            if score >= 75:
-                st.balloons()
-                st.success(f"✅ APROBADO - Calificación: {score}/100")
-                st.info("Puede solicitar su certificado de asistencia a Menfa Capacitaciones.")
-            else:
-                st.error(f"❌ REPROBADO - Calificación: {score}/100")
-                st.warning("Se recomienda repasar los módulos de Planta e Ingeniería.")
-            
-            # Opción para "Imprimir" o guardar
-            st.button("Descargar Reporte de Examen (PDF)", disabled=True)
-            st.caption("Función de exportación PDF disponible en la versión Pro.")
-import streamlit as st
 from fpdf import FPDF
+import time
 
-def generar_certificado_pdf(nombre_alumno, puntaje):
+def generar_certificado_pdf(nombre_alumno, dni, puntaje):
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
     
-    # Marco exterior (Dorado/Azul Petróleo)
+    # --- Estética MENFA: Marco y Colores ---
+    pdf.set_draw_color(243, 156, 18) # Naranja MENFA (#f39c12)
+    pdf.set_line_width(3)
+    pdf.rect(10, 10, 277, 190) # Marco exterior
     pdf.set_draw_color(0, 59, 70) # Azul Petróleo
-    pdf.set_line_width(5)
-    pdf.rect(5, 5, 287, 200) 
+    pdf.set_line_width(1)
+    pdf.rect(12, 12, 273, 186) # Marco interior elegante
     
-    # Encabezado
-    pdf.set_font("Helvetica", "B", 30)
-    pdf.set_text_color(0, 59, 70)
+    # Encabezado con Identidad del Instituto
+    pdf.set_font("Helvetica", "B", 35)
+    pdf.set_text_color(243, 156, 18) # Naranja
     pdf.cell(0, 40, "MENFA CAPACITACIONES", ln=True, align='C')
     
-    pdf.set_font("Helvetica", "B", 40)
-    pdf.cell(0, 20, "CERTIFICADO DE APROBACION", ln=True, align='C')
-    pdf.ln(10)
+    pdf.set_font("Helvetica", "B", 25)
+    pdf.set_text_color(0, 59, 70) # Azul Petróleo
+    pdf.cell(0, 10, "CERTIFICADO DE APROBACION", ln=True, align='C')
+    pdf.ln(15)
     
-    # Cuerpo del texto
+    # Cuerpo del Certificado
     pdf.set_font("Helvetica", "", 18)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(0, 15, "Se otorga el presente certificado a:", ln=True, align='C')
+    pdf.cell(0, 10, "Se otorga el presente a:", ln=True, align='C')
     
-    pdf.set_font("Helvetica", "B", 35)
-    pdf.set_text_color(196, 163, 90) # Dorado
-    pdf.cell(0, 25, nombre_alumno.upper(), ln=True, align='C')
+    pdf.set_font("Helvetica", "B", 40)
+    pdf.set_text_color(20, 20, 20)
+    pdf.cell(0, 30, nombre_alumno.upper(), ln=True, align='C')
+    
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, f"DNI: {dni}", ln=True, align='C')
+    pdf.ln(10)
     
     pdf.set_font("Helvetica", "", 14)
-    pdf.set_text_color(0, 0, 0)
     contenido = (
-        f"Por haber completado y aprobado satisfactoriamente la simulacion operativa "
-        f"IPCL MENFA 3.0 con un puntaje de {puntaje}/100. "
-        "Demostrando competencias en Ingenieria de Produccion, Control de Procesos en Planta "
-        "y Seguridad Operativa bajo normas API y Res. 148."
+        f"Por haber aprobado satisfactoriamente la Evaluacion de Competencias Operativas "
+        f"en el simulador IPCL MENFA 3.0 con un puntaje de {puntaje}/100. "
+        "El titular demuestra conocimientos solidos en Procesos de Planta (PTC), "
+        "Ingenieria de Produccion, Sistemas de Extraccion y Seguridad Operativa."
     )
-    pdf.multi_cell(0, 10, txt=contenido, align='C')
+    pdf.multi_cell(0, 8, txt=contenido, align='C')
     
-    # Firmas
-    pdf.ln(20)
+    # Firmas y Ubicación
+    pdf.ln(25)
     pdf.set_font("Helvetica", "B", 12)
     pdf.cell(140, 10, "__________________________", 0, 0, 'C')
     pdf.cell(140, 10, "__________________________", 0, 1, 'C')
     pdf.cell(140, 5, "Fabricio Pizzolato", 0, 0, 'C')
     pdf.cell(140, 5, "Sello y Fecha", 0, 1, 'C')
-    pdf.set_font("Helvetica", "I", 8)
-    pdf.cell(140, 5, "Instructor Responsable", 0, 0, 'C')
-    pdf.cell(140, 5, "Mendoza, Argentina", 0, 1, 'C')
     
-    return bytes(pdf.output())
+    pdf.set_font("Helvetica", "I", 9)
+    pdf.cell(140, 5, "Director Tecnico - MENFA", 0, 0, 'C')
+    pdf.cell(140, 5, f"Mendoza, Argentina - {time.strftime('%d/%m/%Y')}", 0, 1, 'C')
+    
+    return pdf.output(dest='S').encode('latin-1')
 
-# --- DENTRO DE LA LÓGICA DE EVALUACIÓN ---
-# Supongamos que 'puntaje' es la variable del resultado final
-if 'examen_finalizado' in st.session_state and st.session_state.examen_finalizado:
-    puntaje = st.session_state.puntaje_final
+def mostrar_evaluacion():
+    st.header("🧠 Mesa de Examen: Competencias Operativas")
+    st.write("Complete el examen para obtener su certificación oficial.")
+
+    # 1. DATOS DEL ALUMNO
+    with st.container(border=True):
+        col1, col2 = st.columns(2)
+        with col1:
+            nombre = st.text_input("Nombre Completo del Alumno:", placeholder="Ej. Juan Perez")
+        with col2:
+            dni = st.text_input("DNI:", placeholder="Sin puntos")
+
+    if not nombre or not dni:
+        st.warning("⚠️ Debe ingresar sus datos para habilitar el examen.")
+        return
+
+    st.divider()
+    puntos = 0
+
+    # --- BANCO DE 10 PREGUNTAS ---
     
-    if puntaje >= 70:
-        st.success(f"🏆 ¡Felicitaciones! Has aprobado con {puntaje} puntos.")
-        
-        # Tomamos el nombre del alumno del st.session_state (donde hiciste el login)
-        nombre_usuario = st.session_state.get('nombre_alumno', 'Participante')
-        
-        pdf_cert = generar_certificado_pdf(nombre_usuario, puntaje)
-        
-        st.download_button(
-            label="🎓 Descargar mi Certificado Oficial",
-            data=pdf_cert,
-            file_name=f"Certificado_{nombre_usuario}.pdf",
-            mime="application/pdf"
-        )
-    else:
-        st.error(f"Puntaje: {puntaje}. Se requiere un mínimo de 70 para certificar.")
-        st.info("Te recomendamos revisar el Manual y volver a intentar el entrenamiento.")
+    # P1: AIB
+    st.markdown("#### 1. Sistema de Extracción")
+    r1 = st.radio("¿A qué sistema pertenece un pozo con AIB?", ["Natural", "Bombeo Mecánico", "ESP"], index=None)
+    if r1 == "Bombeo Mecánico": puntos += 10
+
+    # P2: Separador
+    st.markdown("#### 2. Procesos en Planta")
+    r2 = st.radio("Objetivo del Separador Trifásico:", ["Aumentar Presión", "Separar Gas, Crudo y Agua", "Filtrar Arena"], index=None)
+    if r2 == "Separar Gas, Crudo y Agua": puntos += 10
+
+    # P3: Nodal
+    st.markdown("#### 3. Ingeniería de Producción")
+    r3 = st.radio("Si la contrapresión aumenta en la línea de flujo:", ["El caudal baja", "El caudal sube", "No hay cambios"], index=None)
+    if r3 == "El caudal baja": puntos += 10
+
+    # P4: Seguridad
+    st.markdown("#### 4. Seguridad de Procesos")
+    r4 = st.radio("¿Qué significa la sigla ESD?", ["Data System", "Emergency Shutdown", "Electric Drive"], index=None)
+    if r4 == "Emergency Shutdown": puntos += 10
+
+    # P5: Calentadores
+    st.markdown("#### 5. Operación de Calentadores")
+    r5 = st.radio("Paso previo obligatorio antes del encendido del piloto:", ["Barrido de aire (Purge)", "Abrir gas principal", "Cerrar chimenea"], index=None)
+    if r5 == "Barrido de aire (Purge)": puntos += 10
+
+    # P6: BSW
+    st.markdown("#### 6. Calidad de Crudo")
+    r6 = st.radio("Si el BSW es alto (5%), ¿qué equipo de planta está fallando?", ["Bomba de transferencia", "Tratador Térmico / FWKO", "Compresor de gas"], index=None)
+    if r6 == "Tratador Térmico / FWKO": puntos += 10
+
+    # P7: Cavitación
+    st.markdown("#### 7. Mantenimiento")
+    r7 = st.radio("Sonido de 'piedras' en una bomba centrífuga indica:", ["Falla de motor", "Cavitación", "Exceso de aceite"], index=None)
+    if r7 == "Cavitación": puntos += 10
+
+    # P8: Manifold
+    st.markdown("#### 8. Maniobras de Válvulas")
+    r8 = st.radio("Regla de oro para cambiar un pozo de Grupo a Control:", ["Abrir primero Control, luego cerrar Grupo", "Cerrar primero Grupo, luego abrir Control"], index=None)
+    if r8 == "Abrir primero Control, luego cerrar Grupo": puntos += 10
+
+    # P9: H2S
+    st.markdown("#### 9. Riesgo Químico")
+    r9 = st.radio("Gas altamente tóxico y corrosivo en yacimientos:", ["CO2", "H2S (Ácido Sulfhídrico)", "Nitrógeno"], index=None)
+    if r9 == "H2S (Ácido Sulfhídrico)": puntos += 10
+
+    # P10: Gas Lift
+    st.markdown("#### 10. Sistemas Artificiales")
+    r10 = st.radio("El Gas Lift funciona mediante:", ["Inyección de gas para alivianar la columna", "Uso de una bomba de fondo"], index=None)
+    if r10 == "Inyección de gas para alivianar la columna": puntos += 10
+
+    # --- PROCESAMIENTO FINAL ---
+    st.divider()
+    if st.button("Finalizar Examen y Calificar", use_container_width=True):
+        st.session_state.examen_listo = True
+        st.session_state.puntos_finales = puntos
+
+    if st.session_state.get('examen_listo'):
+        p = st.session_state.puntos_finales
+        if p >= 70:
+            st.balloons()
+            st.success(f"✅ EXAMEN APROBADO: {p}/100")
+            
+            # Generar PDF
+            pdf_data = generar_certificado_pdf(nombre, dni, p)
+            
+            st.download_button(
+                label="🎓 DESCARGAR CERTIFICADO OFICIAL (PDF)",
+                data=pdf_data,
+                file_name=f"Certificado_MENFA_{nombre.replace(' ', '_')}.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+        else:
+            st.error(f"❌ REPROBADO: {p}/100. Se requiere 70 puntos para certificar.")
+            st.warning("Te recomendamos volver a practicar en los módulos de entrenamiento.")
