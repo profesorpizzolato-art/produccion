@@ -84,49 +84,36 @@ def evaluacion():
             st.error(f"❌ REPROBADO: {puntos}/100. Se requiere 70 puntos para certificar.")
 
 def generar_certificado_pdf(nombre, dni, puntaje):
-    # Usamos FPDF en modo horizontal (Landscape)
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
     
-    # --- Estética MENFA: Marco Naranja ---
-    pdf.set_draw_color(243, 156, 18) 
-    pdf.set_line_width(3)
-    pdf.rect(10, 10, 277, 190)
+    # ... (todo tu código de diseño de marcos, textos y firmas igual que antes) ...
     
-    # Encabezado
-    pdf.set_font("Helvetica", "B", 35)
-    pdf.set_text_color(243, 156, 18)
-    pdf.cell(0, 40, "MENFA CAPACITACIONES", ln=True, align='C')
+    # --- CAMBIO AQUÍ PARA FPDF2 ---
+    # Generamos el contenido del PDF como una cadena de bytes
+    pdf_bytes = pdf.output() 
     
-    pdf.set_font("Helvetica", "B", 25)
-    pdf.set_text_color(0, 59, 70) # Azul Petróleo
-    pdf.cell(0, 10, "CERTIFICADO DE APROBACION", ln=True, align='C')
+    # Si pdf.output() devuelve None o un objeto, forzamos la salida a bytes
+    if isinstance(pdf_bytes, str):
+        return pdf_bytes.encode('latin-1')
     
-    # Nombre del Alumno
-    pdf.set_font("Helvetica", "B", 35)
-    pdf.set_text_color(20, 20, 20)
-    pdf.ln(20)
-    pdf.cell(0, 20, nombre.upper(), ln=True, align='C')
-    
-    # DNI
-    pdf.set_font("Helvetica", "", 16)
-    pdf.cell(0, 10, f"DNI: {dni}", ln=True, align='C')
-    
-    # Texto de Logro
-    pdf.ln(10)
-    pdf.set_font("Helvetica", "", 14)
-    pdf.set_text_color(0, 0, 0)
-    # Eliminamos caracteres especiales o usamos un string simple para evitar errores de encoding
-    texto_cert = f"Por haber aprobado satisfactoriamente la evaluacion IPCL MENFA 3.0 con {puntaje}/100 puntos."
-    pdf.multi_cell(0, 10, txt=texto_cert, align='C')
-    
-    # Firmas
-    pdf.ln(20)
-    pdf.cell(140, 10, "__________________________", 0, 0, 'C')
-    pdf.cell(140, 10, "__________________________", 0, 1, 'C')
-    pdf.cell(140, 5, "Fabricio Pizzolato", 0, 0, 'C')
-    pdf.cell(140, 5, f"Mendoza, {time.strftime('%d/%m/%Y')}", 0, 1, 'C')
-    
-    # --- CORRECCIÓN CLAVE ---
-    # En fpdf2, output() sin argumentos devuelve los bytes directamente
-    return pdf.output()
+    return pdf_bytes
+
+# --- DENTRO DE TU FUNCIÓN evaluacion() ---
+if st.button("Finalizar Examen y Calificar", use_container_width=True):
+    if puntos >= 70:
+        st.balloons()
+        st.success(f"✅ EXAMEN APROBADO: {puntos}/100")
+        
+        # Generar los bytes del PDF
+        pdf_data = generar_certificado_pdf(nombre, dni, puntos)
+        
+        # Verificación de seguridad antes del botón
+        if pdf_data:
+            st.download_button(
+                label="🎓 DESCARGAR CERTIFICADO OFICIAL (PDF)",
+                data=pdf_data, # Aquí enviamos los bytes puros
+                file_name=f"Certificado_MENFA_{nombre.replace(' ', '_')}.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
