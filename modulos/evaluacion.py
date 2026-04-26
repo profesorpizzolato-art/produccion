@@ -84,38 +84,49 @@ def evaluacion():
             st.error(f"❌ REPROBADO: {puntos}/100. Se requiere 70 puntos para certificar.")
 
 def generar_certificado_pdf(nombre, dni, puntaje):
+    # Usamos FPDF en modo horizontal (Landscape)
     pdf = FPDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
     
-    # Marco Naranja MENFA
+    # --- Estética MENFA: Marco Naranja ---
     pdf.set_draw_color(243, 156, 18) 
     pdf.set_line_width(3)
     pdf.rect(10, 10, 277, 190)
     
+    # Encabezado
     pdf.set_font("Helvetica", "B", 35)
     pdf.set_text_color(243, 156, 18)
     pdf.cell(0, 40, "MENFA CAPACITACIONES", ln=True, align='C')
     
     pdf.set_font("Helvetica", "B", 25)
-    pdf.set_text_color(0, 59, 70)
+    pdf.set_text_color(0, 59, 70) # Azul Petróleo
     pdf.cell(0, 10, "CERTIFICADO DE APROBACION", ln=True, align='C')
     
+    # Nombre del Alumno
     pdf.set_font("Helvetica", "B", 35)
     pdf.set_text_color(20, 20, 20)
     pdf.ln(20)
     pdf.cell(0, 20, nombre.upper(), ln=True, align='C')
+    
+    # DNI
     pdf.set_font("Helvetica", "", 16)
     pdf.cell(0, 10, f"DNI: {dni}", ln=True, align='C')
     
+    # Texto de Logro
     pdf.ln(10)
     pdf.set_font("Helvetica", "", 14)
     pdf.set_text_color(0, 0, 0)
-    pdf.multi_cell(0, 10, txt=f"Por haber aprobado satisfactoriamente la evaluacion IPCL MENFA 3.0 con {puntaje}/100 puntos.", align='C')
+    # Eliminamos caracteres especiales o usamos un string simple para evitar errores de encoding
+    texto_cert = f"Por haber aprobado satisfactoriamente la evaluacion IPCL MENFA 3.0 con {puntaje}/100 puntos."
+    pdf.multi_cell(0, 10, txt=texto_cert, align='C')
     
+    # Firmas
     pdf.ln(20)
     pdf.cell(140, 10, "__________________________", 0, 0, 'C')
     pdf.cell(140, 10, "__________________________", 0, 1, 'C')
     pdf.cell(140, 5, "Fabricio Pizzolato", 0, 0, 'C')
     pdf.cell(140, 5, f"Mendoza, {time.strftime('%d/%m/%Y')}", 0, 1, 'C')
     
-    return pdf.output(dest='S').encode('latin-1')
+    # --- CORRECCIÓN CLAVE ---
+    # En fpdf2, output() sin argumentos devuelve los bytes directamente
+    return pdf.output()
