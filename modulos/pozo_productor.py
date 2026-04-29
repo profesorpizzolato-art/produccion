@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from modulos.levantamiento import evaluar_levantamiento
 from modulos.diseño_tecnico import calcular_especificaciones_bes, calcular_especificaciones_bm
+from modulos.dinamometro import dinamometro # Asegúrate de que tu archivo dinamometro.py tenga la función con parámetros
 
 def pozo_productor():
     st.title("Simulador de Pozo Productor")
@@ -30,7 +31,6 @@ def pozo_productor():
     st.markdown("---")
 
     # --- 2. CÁLCULOS INMEDIATOS ---
-    # Esto asegura que cada vez que muevas un slider, q se recalcula
     q = pi * (pr - pwf)
     
     st.subheader("Producción del Pozo")
@@ -45,7 +45,6 @@ def pozo_productor():
         sistema = resultado["sistema"]
         st.success(f"✅ Sistema recomendado: {sistema}")
         
-        # Gráfico IPR y Matriz uno al lado del otro para ahorrar espacio
         g1, g2 = st.columns(2)
         
         with g1:
@@ -61,11 +60,11 @@ def pozo_productor():
             fig_matriz = graficar_matriz(resultado["ip"])
             st.pyplot(fig_matriz)
 
-        # --- 4. ESPECIFICACIONES TÉCNICAS RECUPERADAS ---
+        # --- 4. ESPECIFICACIONES TÉCNICAS Y DIAGNÓSTICO ---
         st.markdown("---")
-        st.subheader("⚙️ Especificaciones Técnicas Detalladas")
-
+        
         if "ESP" in sistema or "BES" in sistema:
+            st.subheader("⚙️ Especificaciones Técnicas Detalladas")
             specs = calcular_especificaciones_bes(q, profundidad, agua)
             t1, t2, t3 = st.columns(3)
             t1.metric("Carga (TDH)", f"{specs['tdh']} ft")
@@ -73,10 +72,17 @@ def pozo_productor():
             t3.metric("Potencia", f"{specs['potencia']} HP")
 
         elif "Mecánico" in sistema:
+            # Dividimos en dos secciones: Especificaciones y luego la Carta
+            st.subheader("⚙️ Especificaciones Técnicas Detalladas")
             specs = calcular_especificaciones_bm(q, profundidad)
             t1, t2 = st.columns(2)
             t1.metric("Velocidad", f"{specs['spm']} SPM")
             t2.info(f"**Unidad sugerida:** {specs['unidad']}")
+            
+            st.markdown("---")
+            # --- AQUÍ AGREGAMOS EL DINAMÓMETRO ---
+            # Llamamos a la función pasando los datos actuales para que reaccione a los sliders
+            dinamometro(profundidad, agua, gor, q)
 
 def graficar_matriz(ip):
     fig, ax = plt.subplots(figsize=(5, 4))
