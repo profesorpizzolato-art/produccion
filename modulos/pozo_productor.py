@@ -2,27 +2,15 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 from modulos.levantamiento import evaluar_levantamiento
-# Al principio del archivo
 from modulos.diseño_tecnico import calcular_especificaciones_bes, calcular_especificaciones_bm
 
-if "BES" in sistema:
-    specs = calcular_especificaciones_bes(q, profundidad, agua)
-    st.write(f"**Carga Dinámica Total (TDH):** {specs['tdh']} ft")
-    st.write(f"**Número de etapas sugeridas:** {specs['etapas']}")
-    st.write(f"**Potencia motor requerida:** {specs['potencia']} HP")
-
-elif "Mecánico" in sistema:
-    specs = calcular_especificaciones_bm(q, profundidad)
-    st.write(f"**Velocidad sugerida:** {specs['spm']} SPM")
-    st.info(f"**Unidad recomendada:** {specs['unidad']}")
 def pozo_productor():
     st.title("Simulador de Pozo Productor")
     st.subheader("IPCL MENFA - Ingeniería de Producción")
 
+    # --- SECCIÓN 1: PARÁMETROS ---
     st.markdown("### Parámetros del reservorio")
-
     col1, col2, col3 = st.columns(3)
-
     with col1:
         pr = st.slider("Presión Reservorio (psi)", 1000, 5000, 3500)
     with col2:
@@ -30,7 +18,6 @@ def pozo_productor():
     with col3:
         pi = st.slider("Índice de Productividad (PI)", 0.1, 5.0, 1.5)
 
-    # Parámetros adicionales necesarios para la función evaluar_levantamiento
     st.markdown("### Datos de Fluido y Completación")
     c1, c2, c3 = st.columns(3)
     with c1:
@@ -42,78 +29,61 @@ def pozo_productor():
 
     st.markdown("---")
 
-    # Cálculo producción
+    # --- SECCIÓN 2: PRODUCCIÓN e IPR ---
     q = pi * (pr - pwf)
     st.subheader("Producción del Pozo")
     st.metric("Producción estimada (BPD)", round(q, 2))
 
-    # Gráfico IPR
     st.subheader("Curva IPR")
     pwf_range = np.linspace(0, pr, 50)
     q_ipr = pi * (pr - pwf_range)
-    
     fig, ax = plt.subplots()
     ax.plot(q_ipr, pwf_range)
     ax.set_xlabel("Producción (BPD)")
     ax.set_ylabel("Presión fondo fluyente (psi)")
-    ax.set_title("Curva IPR del pozo")
     ax.invert_yaxis()
     st.pyplot(fig)
 
+    # --- SECCIÓN 3: LEVANTAMIENTO ARTIFICIAL ---
     st.markdown("---")
-    st.subheader("Estado del pozo")
-
-    if q > 3000:
-        st.success("Pozo de alta productividad")
-    elif q > 1000:
-        st.warning("Producción media")
-    else:
-        st.error("Producción baja")
-
     st.subheader("🧠 Evaluación de Levantamiento Artificial")
-
-    # --- AQUÍ ESTABA EL ERROR DE INDENTACIÓN ---
-    # Todo esto debe estar dentro de pozo_productor()
     resultado = evaluar_levantamiento(q, pr, pwf, gor, agua, profundidad)
 
     if "error" in resultado:
         st.error(resultado["error"])
     else:
-        st.metric("Índice de Productividad (IP)", round(resultado["ip"], 2))
-        st.info(f"Zona: {resultado['zona']}")
-        st.success(f"Sistema recomendado: {resultado['sistema']}")
+        sistema = resultado["sistema"]
+        st.success(f"Sistema recomendado: {sistema}")
         
-        # Llamamos a la función de la matriz aquí mismo
-        fig_matriz = graficar_matriz(resultado["ip"], resultado["sistema"])
+        # Gráfico de la Matriz
+        fig_matriz = graficar_matriz(resultado["ip"], sistema)
         st.pyplot(fig_matriz)
+
+        # --- SECCIÓN 4: ESPECIFICACIONES TÉCNICAS (Lo nuevo) ---
+        st.markdown("---")
+        st.subheader("⚙️ Especificaciones Técnicas Detalladas")
+
+        if "BES" in sistema:
+            specs = calcular_especificaciones_bes(q, profundidad, agua)
+            col_a, col_b, col_c = st.columns(3)
+            col_a.metric("Carga (TDH)", f"{specs['tdh']} ft")
+            col_b.metric("Etapas", specs['etapas'])
+            col_c.metric("Potencia", f"{specs['potencia']} HP")
+
+        elif "Mecánico" in sistema:
+            specs = calcular_especificaciones_bm(q, profundidad)
+            col_a, col_b = st.columns(2)
+            col_a.metric("Velocidad", f"{specs['spm']} SPM")
+            col_b.info(f"**Unidad sugerida:** {specs['unidad']}")
 
 def graficar_matriz(ip, sistema_nombre):
     fig, ax = plt.subplots()
-
-    # ZONAS (tipo matriz) con colores
     ax.axvspan(0, 0.5, color='red', alpha=0.2)
     ax.axvspan(0.5, 1.5, color='yellow', alpha=0.2)
     ax.axvspan(1.5, 3, color='green', alpha=0.2)
-
-    # Líneas divisorias
-    ax.axvline(0.5, color='gray', linestyle='--')
-    ax.axvline(1.5, color='gray', linestyle='--')
-
-    # Punto del pozo
     ax.scatter(ip, 0.5, s=200, color='blue', edgecolor='white', zorder=5)
-
-    # Etiquetas
-    ax.set_title("Matriz de Selección de Levantamiento Artificial")
-    ax.set_xlabel("Índice de Productividad (IP)")
-    ax.set_yticks([])
+    ax.set_title("Matriz de Selección")
     ax.set_xlim(0, 3)
-
-    # Texto en zonas y datos
-    ax.text(0.25, 0.9, "Baja", ha='center')
-    ax.text(1.0, 0.9, "Media", ha='center')
-    ax.text(2.25, 0.9, "Alta", ha='center')
-    
+    ax.set_yticks([])
     ax.text(ip, 0.3, f"IP={ip:.2f}", ha='center', fontweight='bold')
-    ax.text(ip, 0.7, sistema_nombre, ha='center', color='darkblue')
-
     return fig
