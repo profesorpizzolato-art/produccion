@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from modulos.levantamiento import evaluar_levantamiento
 from modulos.diseño_tecnico import calcular_especificaciones_bes, calcular_especificaciones_bm
-from modulos.dinamometro import dinamometro # Asegúrate de que tu archivo dinamometro.py tenga la función con parámetros
+from modulos.dinamometro import dinamometro
 
 def pozo_productor():
     st.title("Simulador de Pozo Productor")
@@ -46,7 +46,6 @@ def pozo_productor():
         st.success(f"✅ Sistema recomendado: {sistema}")
         
         g1, g2 = st.columns(2)
-        
         with g1:
             pwf_range = np.linspace(0, pr, 50)
             q_ipr = pi * (pr - pwf_range)
@@ -72,7 +71,6 @@ def pozo_productor():
             t3.metric("Potencia", f"{specs['potencia']} HP")
 
         elif "Mecánico" in sistema:
-            # Dividimos en dos secciones: Especificaciones y luego la Carta
             st.subheader("⚙️ Especificaciones Técnicas Detalladas")
             specs = calcular_especificaciones_bm(q, profundidad)
             t1, t2 = st.columns(2)
@@ -80,9 +78,23 @@ def pozo_productor():
             t2.info(f"**Unidad sugerida:** {specs['unidad']}")
             
             st.markdown("---")
-            # --- AQUÍ AGREGAMOS EL DINAMÓMETRO ---
-            # Llamamos a la función pasando los datos actuales para que reaccione a los sliders
+            # Llamada al módulo de dinamómetro
             dinamometro(profundidad, agua, gor, q)
+
+        # --- 5. ESQUEMA DE PROCESO DE SUPERFICIE (P&ID) ---
+        st.markdown("---")
+        st.subheader("📋 Esquema de Proceso de Superficie (Planta)")
+        
+        with st.container():
+            st.write("Flujo del fluido desde boca de pozo hasta despacho:")
+            f1, f2, f3, f4, f5 = st.columns(5)
+            f1.info("**📥 Manifold**\n\nEntrada.")
+            f2.success("**🛢️ Separador**\n\nGas/Pet/Ag.")
+            f3.warning("**🔥 Calentador**\n\nViscosidad.")
+            f4.error("**💧 T. Cortador**\n\nAgua residual.")
+            f5.success("**🚛 Despacho**\n\nEntrega.")
+            
+            st.markdown("<div style='text-align: center; font-size: 24px;'> ➔ ➔ ➔ ➔ ➔ ➔ ➔ </div>", unsafe_allow_html=True)
 
 def graficar_matriz(ip):
     fig, ax = plt.subplots(figsize=(5, 4))
@@ -95,26 +107,3 @@ def graficar_matriz(ip):
     ax.set_yticks([])
     plt.tight_layout()
     return fig
-# --- 5. ESQUEMA DE PROCESO DE SUPERFICIE (P&ID Simplificado) ---
-        st.markdown("---")
-        st.subheader("📋 Esquema de Proceso de Superficie (Planta)")
-        
-        # Creamos una representación visual con columnas o un contenedor
-        with st.container():
-            st.write("Siga el camino del fluido desde la boca de pozo hasta el despacho:")
-            
-            # Usamos st.columns para simular el flujo horizontal
-            f1, f2, f3, f4, f5 = st.columns(5)
-            
-            f1.info("**📥 Manifold**\n\nColector de producción de múltiples pozos.")
-            f2.success("**🛢️ Separador**\n\nDivisión de Gas, Petróleo y Agua.")
-            f3.warning("**🔥 Calentador**\n\nReducción de viscosidad para tratamiento.")
-            f4.error("**💧 T. Cortador**\n\nSeparación final de agua residual.")
-            f5.success("**🚛 Despacho**\n\nMedición y entrega a oleoducto/camión.")
-
-            # Un pequeño gráfico de flechas o flujo simple con Markdown
-            st.markdown("""
-            <div style="text-align: center; font-size: 20px;">
-                ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ 
-            </div>
-            """, unsafe_allow_html=True)
