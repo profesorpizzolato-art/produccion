@@ -75,15 +75,61 @@ def pozo_productor():
             col_a, col_b = st.columns(2)
             col_a.metric("Velocidad", f"{specs['spm']} SPM")
             col_b.info(f"**Unidad sugerida:** {specs['unidad']}")
-
+            
 def graficar_matriz(ip, sistema_nombre):
-    fig, ax = plt.subplots()
-    ax.axvspan(0, 0.5, color='red', alpha=0.2)
-    ax.axvspan(0.5, 1.5, color='yellow', alpha=0.2)
-    ax.axvspan(1.5, 3, color='green', alpha=0.2)
-    ax.scatter(ip, 0.5, s=200, color='blue', edgecolor='white', zorder=5)
-    ax.set_title("Matriz de Selección")
+    # Ajustamos el tamaño de la figura para que no se vea "gigante" o mal dimensionada
+    fig, ax = plt.subplots(figsize=(6, 2)) 
+
+    # ZONAS
+    ax.axvspan(0, 0.5, color='red', alpha=0.2, label="Baja")
+    ax.axvspan(0.5, 1.5, color='yellow', alpha=0.2, label="Media")
+    ax.axvspan(1.5, 3, color='green', alpha=0.2, label="Alta")
+
+    # Punto del pozo
+    ax.scatter(ip, 0.5, s=100, color='blue', edgecolor='white', zorder=5)
+
+    # Configuración de ejes para que se vea como una "barra"
+    ax.set_title("Ubicación en Matriz de Productividad", fontsize=10)
     ax.set_xlim(0, 3)
+    ax.set_ylim(0, 1)
     ax.set_yticks([])
-    ax.text(ip, 0.3, f"IP={ip:.2f}", ha='center', fontweight='bold')
+    ax.set_xlabel("Índice de Productividad (IP)", fontsize=8)
+    
+    # Texto decorativo
+    ax.text(ip, 0.2, f"IP: {ip:.2f}", ha='center', fontsize=9, fontweight='bold')
+    
+    # Ajuste de layout para evitar bordes blancos innecesarios
+    plt.tight_layout()
     return fig
+
+    else:
+        sistema = resultado["sistema"]
+        st.success(f"✅ Sistema recomendado: {sistema}")
+        
+        # Usamos columnas para centrar el gráfico y que no ocupe toda la pantalla
+        col_graf1, col_graf2, col_graf3 = st.columns([1, 2, 1])
+        with col_graf2:
+            fig_matriz = graficar_matriz(resultado["ip"], sistema)
+            st.pyplot(fig_matriz)
+
+        st.markdown("---")
+        st.subheader("⚙️ Especificaciones Técnicas Detalladas")
+
+        # Verificamos si el sistema es ESP (BES)
+        if "ESP" in sistema or "BES" in sistema:
+            specs = calcular_especificaciones_bes(q, profundidad, agua)
+            
+            # Usamos st.container para agrupar visualmente
+            with st.container():
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Carga Dinámica (TDH)", f"{specs['tdh']} ft")
+                c2.metric("Etapas Sugeridas", specs['etapas'])
+                c3.metric("Potencia Motor", f"{specs['potencia']} HP")
+                
+                st.info(f"💡 Diseño optimizado para un caudal de {round(q, 1)} BPD.")
+
+        elif "Mecánico" in sistema or "Sucker Rod" in sistema:
+            specs = calcular_especificaciones_bm(q, profundidad)
+            c1, c2 = st.columns(2)
+            c1.metric("Velocidad de Bombeo", f"{specs['spm']} SPM")
+            c2.metric("Unidad de Superficie", specs['unidad'])
