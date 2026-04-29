@@ -2,7 +2,19 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 from modulos.levantamiento import evaluar_levantamiento
+# Al principio del archivo
+from modulos.diseño_tecnico import calcular_especificaciones_bes, calcular_especificaciones_bm
 
+if "BES" in sistema:
+    specs = calcular_especificaciones_bes(q, profundidad, agua)
+    st.write(f"**Carga Dinámica Total (TDH):** {specs['tdh']} ft")
+    st.write(f"**Número de etapas sugeridas:** {specs['etapas']}")
+    st.write(f"**Potencia motor requerida:** {specs['potencia']} HP")
+
+elif "Mecánico" in sistema:
+    specs = calcular_especificaciones_bm(q, profundidad)
+    st.write(f"**Velocidad sugerida:** {specs['spm']} SPM")
+    st.info(f"**Unidad recomendada:** {specs['unidad']}")
 def pozo_productor():
     st.title("Simulador de Pozo Productor")
     st.subheader("IPCL MENFA - Ingeniería de Producción")
