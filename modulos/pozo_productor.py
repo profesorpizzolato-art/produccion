@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from modulos.levantamiento import evaluar_levantamiento
 from modulos.diseño_tecnico import calcular_especificaciones_bes, calcular_especificaciones_bm
 from modulos.dinamometro import dinamometro
+# Importamos la conexión con la planta
+from modulos.equipos_planta import mostrar_equipos_planta
 
 def pozo_productor():
     st.title("Simulador de Pozo Productor")
@@ -78,23 +80,13 @@ def pozo_productor():
             t2.info(f"**Unidad sugerida:** {specs['unidad']}")
             
             st.markdown("---")
-            # Llamada al módulo de dinamómetro
+            # Diagnóstico de fondo dinámico
             dinamometro(profundidad, agua, gor, q)
 
-        # --- 5. ESQUEMA DE PROCESO DE SUPERFICIE (P&ID) ---
+        # --- 5. INTEGRACIÓN CON PLANTA DE TRATAMIENTO ---
         st.markdown("---")
-        st.subheader("📋 Esquema de Proceso de Superficie (Planta)")
-        
-        with st.container():
-            st.write("Flujo del fluido desde boca de pozo hasta despacho:")
-            f1, f2, f3, f4, f5 = st.columns(5)
-            f1.info("**📥 Manifold**\n\nEntrada.")
-            f2.success("**🛢️ Separador**\n\nGas/Pet/Ag.")
-            f3.warning("**🔥 Calentador**\n\nViscosidad.")
-            f4.error("**💧 T. Cortador**\n\nAgua residual.")
-            f5.success("**🚛 Despacho**\n\nEntrega.")
-            
-            st.markdown("<div style='text-align: center; font-size: 24px;'> ➔ ➔ ➔ ➔ ➔ ➔ ➔ </div>", unsafe_allow_html=True)
+        # Llamamos a la lógica de planta pasando la producción actual
+        mostrar_equipos_planta(q_pozo=q, bsw_pozo=agua)
 
 def graficar_matriz(ip):
     fig, ax = plt.subplots(figsize=(5, 4))
