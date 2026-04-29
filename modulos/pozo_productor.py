@@ -71,3 +71,41 @@ resultado = evaluar_levantamiento(q, pr, pwf, gor, agua, profundidad)
         st.metric("Índice de Productividad (IP)", round(resultado["ip"], 2))
         st.info(f"Zona: {resultado['zona']}")
         st.success(f"Sistema recomendado: {resultado['sistema']}")
+import matplotlib.pyplot as plt
+
+def graficar_matriz(ip):
+    fig, ax = plt.subplots()
+
+    # ZONAS (tipo matriz)
+    ax.axvspan(0, 0.5, alpha=0.2)
+    ax.axvspan(0.5, 1.5, alpha=0.2)
+    ax.axvspan(1.5, 3, alpha=0.2)
+
+    # Líneas divisorias
+    ax.axvline(0.5)
+    ax.axvline(1.5)
+
+    # Punto del pozo
+    ax.scatter(ip, 0.5, s=150)
+
+    # Etiquetas
+    ax.set_title("Matriz de Selección de Levantamiento Artificial")
+    ax.set_xlabel("Índice de Productividad (IP)")
+    ax.set_yticks([])
+
+    # Texto en zonas
+    ax.text(0.1, 0.6, "Baja", fontsize=10)
+    ax.text(0.8, 0.6, "Media", fontsize=10)
+    ax.text(2.0, 0.6, "Alta", fontsize=10)
+
+    ax.set_xlim(0, 3)
+
+    return fig
+    if "error" not in resultado:
+    fig = graficar_matriz(resultado["ip"])
+    st.pyplot(fig)
+    ax.axvspan(0, 0.5, color='red', alpha=0.2)
+ax.axvspan(0.5, 1.5, color='yellow', alpha=0.2)
+ax.axvspan(1.5, 3, color='green', alpha=0.2)
+ax.text(ip, 0.3, f"IP={ip:.2f}", ha='center')
+ax.text(ip, 0.8, resultado["sistema"], ha='center')
