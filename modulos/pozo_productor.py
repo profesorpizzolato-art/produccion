@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
-
+from modulos.levantamiento import evaluar_levantamiento
 def pozo_productor():
 
     st.title("Simulador de Pozo Productor")
@@ -61,3 +61,13 @@ def pozo_productor():
 
     else:
         st.error("Producción baja")
+    st.subheader("🧠 Evaluación de Levantamiento Artificial")
+
+resultado = evaluar_levantamiento(q, pr, pwf, gor, agua, profundidad)
+
+    if "error" in resultado:
+        st.error(resultado["error"])
+    else:
+        st.metric("Índice de Productividad (IP)", round(resultado["ip"], 2))
+        st.info(f"Zona: {resultado['zona']}")
+        st.success(f"Sistema recomendado: {resultado['sistema']}")
