@@ -95,3 +95,26 @@ def graficar_matriz(ip):
     ax.set_yticks([])
     plt.tight_layout()
     return fig
+# --- 5. ESQUEMA DE PROCESO DE SUPERFICIE (P&ID Simplificado) ---
+        st.markdown("---")
+        st.subheader("📋 Esquema de Proceso de Superficie (Planta)")
+        
+        # Creamos una representación visual con columnas o un contenedor
+        with st.container():
+            st.write("Siga el camino del fluido desde la boca de pozo hasta el despacho:")
+            
+            # Usamos st.columns para simular el flujo horizontal
+            f1, f2, f3, f4, f5 = st.columns(5)
+            
+            f1.info("**📥 Manifold**\n\nColector de producción de múltiples pozos.")
+            f2.success("**🛢️ Separador**\n\nDivisión de Gas, Petróleo y Agua.")
+            f3.warning("**🔥 Calentador**\n\nReducción de viscosidad para tratamiento.")
+            f4.error("**💧 T. Cortador**\n\nSeparación final de agua residual.")
+            f5.success("**🚛 Despacho**\n\nMedición y entrega a oleoducto/camión.")
+
+            # Un pequeño gráfico de flechas o flujo simple con Markdown
+            st.markdown("""
+            <div style="text-align: center; font-size: 20px;">
+                ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ ➔ 
+            </div>
+            """, unsafe_allow_html=True)
