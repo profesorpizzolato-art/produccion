@@ -8,7 +8,6 @@ def pozo_productor():
     st.title("Simulador de Pozo Productor")
     st.subheader("IPCL MENFA - Ingeniería de Producción")
 
-    # --- SECCIÓN 1: PARÁMETROS ---
     st.markdown("### Parámetros del reservorio")
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -29,107 +28,65 @@ def pozo_productor():
 
     st.markdown("---")
 
-    # --- SECCIÓN 2: PRODUCCIÓN e IPR ---
+    # Cálculos base
     q = pi * (pr - pwf)
     st.subheader("Producción del Pozo")
     st.metric("Producción estimada (BPD)", round(q, 2))
 
-    st.subheader("Curva IPR")
+    # Gráfico IPR
     pwf_range = np.linspace(0, pr, 50)
     q_ipr = pi * (pr - pwf_range)
-    fig, ax = plt.subplots()
-    ax.plot(q_ipr, pwf_range)
-    ax.set_xlabel("Producción (BPD)")
-    ax.set_ylabel("Presión fondo fluyente (psi)")
-    ax.invert_yaxis()
-    st.pyplot(fig)
+    fig_ipr, ax_ipr = plt.subplots(figsize=(8, 4))
+    ax_ipr.plot(q_ipr, pwf_range, color='darkred', lw=2)
+    ax_ipr.set_xlabel("Producción (BPD)")
+    ax_ipr.set_ylabel("Presión (psi)")
+    ax_ipr.invert_yaxis()
+    ax_ipr.grid(True, alpha=0.3)
+    st.pyplot(fig_ipr)
 
-    # --- SECCIÓN 3: LEVANTAMIENTO ARTIFICIAL ---
     st.markdown("---")
     st.subheader("🧠 Evaluación de Levantamiento Artificial")
+    
     resultado = evaluar_levantamiento(q, pr, pwf, gor, agua, profundidad)
 
     if "error" in resultado:
         st.error(resultado["error"])
     else:
         sistema = resultado["sistema"]
-        st.success(f"Sistema recomendado: {sistema}")
-        
-        # Gráfico de la Matriz
-        fig_matriz = graficar_matriz(resultado["ip"], sistema)
-        st.pyplot(fig_matriz)
-
-        # --- SECCIÓN 4: ESPECIFICACIONES TÉCNICAS (Lo nuevo) ---
-        st.markdown("---")
-        st.subheader("⚙️ Especificaciones Técnicas Detalladas")
-
-        if "BES" in sistema:
-            specs = calcular_especificaciones_bes(q, profundidad, agua)
-            col_a, col_b, col_c = st.columns(3)
-            col_a.metric("Carga (TDH)", f"{specs['tdh']} ft")
-            col_b.metric("Etapas", specs['etapas'])
-            col_c.metric("Potencia", f"{specs['potencia']} HP")
-
-        elif "Mecánico" in sistema:
-            specs = calcular_especificaciones_bm(q, profundidad)
-            col_a, col_b = st.columns(2)
-            col_a.metric("Velocidad", f"{specs['spm']} SPM")
-            col_b.info(f"**Unidad sugerida:** {specs['unidad']}")
-            
-def graficar_matriz(ip, sistema_nombre):
-    # Ajustamos el tamaño de la figura para que no se vea "gigante" o mal dimensionada
-    fig, ax = plt.subplots(figsize=(6, 2)) 
-
-    # ZONAS
-    ax.axvspan(0, 0.5, color='red', alpha=0.2, label="Baja")
-    ax.axvspan(0.5, 1.5, color='yellow', alpha=0.2, label="Media")
-    ax.axvspan(1.5, 3, color='green', alpha=0.2, label="Alta")
-
-    # Punto del pozo
-    ax.scatter(ip, 0.5, s=100, color='blue', edgecolor='white', zorder=5)
-
-    # Configuración de ejes para que se vea como una "barra"
-    ax.set_title("Ubicación en Matriz de Productividad", fontsize=10)
-    ax.set_xlim(0, 3)
-    ax.set_ylim(0, 1)
-    ax.set_yticks([])
-    ax.set_xlabel("Índice de Productividad (IP)", fontsize=8)
-    
-    # Texto decorativo
-    ax.text(ip, 0.2, f"IP: {ip:.2f}", ha='center', fontsize=9, fontweight='bold')
-    
-    # Ajuste de layout para evitar bordes blancos innecesarios
-    plt.tight_layout()
-    return fig
-
-    else:
-        sistema = resultado["sistema"]
         st.success(f"✅ Sistema recomendado: {sistema}")
         
-        # Usamos columnas para centrar el gráfico y que no ocupe toda la pantalla
-        col_graf1, col_graf2, col_graf3 = st.columns([1, 2, 1])
-        with col_graf2:
-            fig_matriz = graficar_matriz(resultado["ip"], sistema)
+        # Matriz de productividad
+        col_m1, col_m2, col_m3 = st.columns([1, 2, 1])
+        with col_m2:
+            fig_matriz = graficar_matriz(resultado["ip"])
             st.pyplot(fig_matriz)
 
         st.markdown("---")
         st.subheader("⚙️ Especificaciones Técnicas Detalladas")
 
-        # Verificamos si el sistema es ESP (BES)
+        # Lógica de especificaciones
         if "ESP" in sistema or "BES" in sistema:
             specs = calcular_especificaciones_bes(q, profundidad, agua)
-            
-            # Usamos st.container para agrupar visualmente
-            with st.container():
-                c1, c2, c3 = st.columns(3)
-                c1.metric("Carga Dinámica (TDH)", f"{specs['tdh']} ft")
-                c2.metric("Etapas Sugeridas", specs['etapas'])
-                c3.metric("Potencia Motor", f"{specs['potencia']} HP")
-                
-                st.info(f"💡 Diseño optimizado para un caudal de {round(q, 1)} BPD.")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Carga (TDH)", f"{specs['tdh']} ft")
+            c2.metric("Etapas", specs['etapas'])
+            c3.metric("Potencia", f"{specs['potencia']} HP")
 
-        elif "Mecánico" in sistema or "Sucker Rod" in sistema:
+        elif "Mecánico" in sistema:
             specs = calcular_especificaciones_bm(q, profundidad)
             c1, c2 = st.columns(2)
-            c1.metric("Velocidad de Bombeo", f"{specs['spm']} SPM")
-            c2.metric("Unidad de Superficie", specs['unidad'])
+            c1.metric("Velocidad", f"{specs['spm']} SPM")
+            c2.info(f"**Unidad sugerida:** {specs['unidad']}")
+
+def graficar_matriz(ip):
+    fig, ax = plt.subplots(figsize=(6, 2))
+    ax.axvspan(0, 0.5, color='red', alpha=0.2)
+    ax.axvspan(0.5, 1.5, color='yellow', alpha=0.2)
+    ax.axvspan(1.5, 3.0, color='green', alpha=0.2)
+    ax.scatter(ip, 0.5, s=150, color='blue', edgecolor='white', zorder=5)
+    ax.set_xlim(0, 3)
+    ax.set_ylim(0, 1)
+    ax.set_yticks([])
+    ax.set_xlabel("IP")
+    plt.tight_layout()
+    return fig
