@@ -8,7 +8,7 @@ def pozo_productor():
     st.title("Simulador de Pozo Productor")
     st.subheader("IPCL MENFA - Ingeniería de Producción")
 
-    # --- ENTRADAS DE DATOS (Sidebar para dejar limpia la pantalla principal) ---
+    # --- SIDEBAR: ENTRADA DE DATOS ---
     with st.sidebar:
         st.header("Configuración del Pozo")
         pr = st.slider("Presión Reservorio (psi)", 1000, 5000, 3500)
@@ -28,8 +28,7 @@ def pozo_productor():
 
     with tab1:
         st.subheader("Rendimiento del Reservorio")
-        col_m1, col_m2 = st.columns(2)
-        col_m1.metric("Producción Estimada", f"{round(q, 2)} BPD")
+        st.metric("Producción Estimada", f"{round(q, 2)} BPD")
         
         # Gráfico IPR
         pwf_range = np.linspace(0, pr, 50)
@@ -44,7 +43,7 @@ def pozo_productor():
 
         if "error" not in resultado:
             st.divider()
-            st.write("**Matriz de Selección de Levantamiento**")
+            st.write("**Ubicación en Matriz de Productividad**")
             fig_matriz = graficar_matriz(resultado["ip"])
             st.pyplot(fig_matriz)
 
@@ -55,19 +54,28 @@ def pozo_productor():
         else:
             sistema = resultado["sistema"]
             st.success(f"✅ Sistema Recomendado: {sistema}")
-            
+            st.divider()
+
+            # --- RECUPERACIÓN DE LA LÓGICA DE EXTRACCIÓN ---
             if "ESP" in sistema or "BES" in sistema:
+                # Llamamos a tu módulo de diseño técnico para BES
                 specs = calcular_especificaciones_bes(q, profundidad, agua)
-                c1, c2, c3 = st.columns(3)
-                c1.metric("Carga (TDH)", f"{specs['tdh']} ft")
-                c2.metric("Etapas Bomba", specs['etapas'])
-                c3.metric("Potencia", f"{specs['potencia']} HP")
-            
-            elif "Mecánico" in sistema:
+                col_a, col_b, col_c = st.columns(3)
+                col_a.metric("Carga (TDH)", f"{specs['tdh']} ft")
+                col_b.metric("Etapas Sugeridas", specs['etapas'])
+                col_c.metric("Potencia Motor", f"{specs['potencia']} HP")
+                st.info("Configuración optimizada para alto caudal y profundidad.")
+
+            elif "Mecánico" in sistema or "Sucker Rod" in sistema:
+                # Llamamos a tu módulo de diseño técnico para Mecánico
                 specs = calcular_especificaciones_bm(q, profundidad)
-                c1, c2 = st.columns(2)
-                c1.metric("Velocidad", f"{specs['spm']} SPM")
-                c2.info(f"**Unidad:** {specs['unidad']}")
+                col_a, col_b = st.columns(2)
+                col_a.metric("Velocidad", f"{specs['spm']} SPM")
+                col_b.metric("Unidad de Superficie", specs['unidad'])
+                st.info("Recomendado para pozos de productividad media/baja.")
+
+            else:
+                st.warning(f"Diseño detallado para {sistema} aún en desarrollo.")
 
     with tab3:
         st.subheader("Estimación de Rentabilidad")
@@ -80,15 +88,9 @@ def pozo_productor():
         c_eco1, c_eco2 = st.columns(2)
         c_eco1.metric("Ingreso Diario", f"USD {round(ingreso_bruto, 2):,}")
         
-        # Color dinámico para la ganancia
         delta_color = "normal" if ganancia_neta > 0 else "inverse"
         c_eco2.metric("Ganancia Neta", f"USD {round(ganancia_neta, 2):,}", 
                       delta=f"{round(ganancia_neta, 2)}", delta_color=delta_color)
-
-        if ganancia_neta < 0:
-            st.error("⚠️ El pozo no es rentable bajo estas condiciones.")
-        else:
-            st.success("✔️ Operación rentable.")
 
 def graficar_matriz(ip):
     fig, ax = plt.subplots(figsize=(6, 1.5))
