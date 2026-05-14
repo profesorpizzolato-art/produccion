@@ -212,8 +212,8 @@ def main_app():
         from modulos.ingenieria import mostrar_ingenieria
         mostrar_ingenieria()
     elif actual == "⚙️ Ingeniería de Producción":
-    from modulos.ingenieria_produccion import mostrar_ingenieria_produccion
-    mostrar_ingenieria_produccion()    
+        from modulos.ingenieria_produccion import mostrar_ingenieria_produccion
+        mostrar_ingenieria_produccion()    
     elif actual == "🖥️ Monitoreo SCADA":
         from modulos.scada import show
         show()
