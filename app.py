@@ -159,6 +159,7 @@ def main_app():
         "🏭 Planta de Proceso",
         "📦 Equipos de Planta",
         "📈 Ingeniería",
+        "⚙️ Ingeniería de Producción",
         "🖥️ Monitoreo SCADA",
         "📋 Gestión y Reportes",
         "🛠️ Mantenimiento e Integridad",
@@ -210,6 +211,9 @@ def main_app():
     elif actual == "📈 Ingeniería":
         from modulos.ingenieria import mostrar_ingenieria
         mostrar_ingenieria()
+    elif actual == "⚙️ Ingeniería de Producción":
+    from modulos.ingenieria_produccion import mostrar_ingenieria_produccion
+    mostrar_ingenieria_produccion()    
     elif actual == "🖥️ Monitoreo SCADA":
         from modulos.scada import show
         show()
