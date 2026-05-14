@@ -1,4 +1,8 @@
 import streamlit as st
+import pandas as pd
+import plotly.express as px
+import random
+
 def mostrar_alerta_seguridad():
     alertas = [
         "🛡️ RES. 148: Verifique que los recintos de tanques estén limpios y con válvulas de drenaje cerradas.",
@@ -7,9 +11,12 @@ def mostrar_alerta_seguridad():
         "🔒 LOTO: Recuerde que el candado de seguridad es personal e intransferible."
     ]
     st.sidebar.info(random.choice(alertas))
+
 def dashboard_principal():
+    # --- INICIALIZACIÓN DE ALERTAS ---
+    mostrar_alerta_seguridad()
+
     # --- FUNCIÓN AUXILIAR DE NAVEGACIÓN ---
-    # Esto asegura que el sidebar y el contenido cambien al mismo tiempo
     def navegar_a(nombre_area):
         st.session_state.area_actual = nombre_area
         st.rerun()
@@ -39,7 +46,7 @@ def dashboard_principal():
             navegar_a("🏭 Planta de Proceso")
     with col5:
         if st.button("📈 Ingeniería (IPR-VLP)", use_container_width=True, key="btn_ing"):
-            navegar_a("📈 Ingeniería")
+            navegar_a("⚙️ Ingeniería de Producción")
     with col6:
         if st.button("🧮 Fórmulas Petroleras", use_container_width=True, key="btn_form"):
             navegar_a("🧠 Evaluación")
@@ -54,7 +61,6 @@ def dashboard_principal():
         if st.button("📘 Manual del Simulador", use_container_width=True, key="btn_manual"):
             st.info("Accediendo al repositorio de documentos técnicos...")
     with col9:
-        # Lógica de Seguridad: Botón dinámico según el Rol
         if st.session_state.rol == "instructor":
             if st.button("⚙️ PANEL INSTRUCTOR: Fallas", use_container_width=True, key="btn_fallas"):
                 navegar_a("📋 Gestión y Reportes")
@@ -76,9 +82,40 @@ def dashboard_principal():
 
     st.markdown("---")
 
-    # --- MONITOREO DE MENDOZA ---
-    st.subheader("Estado General del Campo (Cuenca Cuyana)")
+    # --- NUEVA SECCIÓN: ANÁLISIS DE PARTICIPACIÓN ---
+    st.subheader("📊 Análisis de Producción del Yacimiento")
+    
+    # Datos dinámicos conectados al módulo de Ingeniería
+    prod_alumno = st.session_state.get('prod_estimada', 150.0)
+    vrr = st.session_state.get('vrr_sistema', 1.0)
+    
+    df_part = pd.DataFrame({
+        "Sistema": ["AIB (Mecánico)", "BES (Control Alumno)", "PCP", "Gas Lift", "Surgencia"],
+        "Producción": [450, prod_alumno, 300, 250, 400]
+    })
+    
+    c_chart, c_metrics = st.columns([2, 1])
+    
+    with c_chart:
+        fig = px.pie(df_part, values='Producción', names='Sistema', hole=0.4,
+                     color_discrete_sequence=["#FF8C00", "#5A5A5A", "#A9A9A9", "#FFA500", "#2F4F4F"])
+        fig.update_layout(showlegend=True, height=350, margin=dict(t=0, b=0, l=0, r=0))
+        st.plotly_chart(fig, use_container_width=True)
+        
+    with c_metrics:
+        total_m3 = df_part["Producción"].sum()
+        st.metric("Total Yacimiento", f"{total_m3:,.1f} m3/d", delta=f"{vrr:.2f} VRR")
+        st.write("**Estado de Inyección:**")
+        if vrr < 1.0:
+            st.warning("⚠️ VRR Insuficiente")
+        else:
+            st.success("✅ VRR Óptimo")
+
+    # --- MONITOREO DE MENDOZA (CUENCA CUYANA) ---
+    st.subheader("Estado General del Campo")
     mA, mB, mC = st.columns(3)
-    mA.metric("Producción Total", "1850 BPD", "+12 BPD")
-    mB.metric("Presión de Separador", "120 psi", "-2 psi")
+    
+    # Conversión simple para mostrar ambas unidades si se desea
+    mA.metric("Producción Total", f"{total_m3:,.1f} m3/d", f"{total_m3 * 6.29:,.0f} BPD")
+    mB.metric("Presión de Separador", f"{120 * vrr:.1f} psi", f"{vrr - 1.0:.2f} Delta")
     mC.metric("Pozos en Operación", "6", "Activos")
