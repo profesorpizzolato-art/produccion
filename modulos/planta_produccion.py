@@ -34,16 +34,18 @@ def aplicar_estilos_industriales():
             margin: 0 4px;
         }
         
-        /* Tarjetas de Equipos de la Planta */
-        .equipo-card {
-            background-color: #1e293b;
-            padding: 15px;
+        /* Contenedor adaptativo para el plano interactivo */
+        .svg-container {
+            width: 100%;
+            overflow-x: auto;
+            background-color: #0b132b;
             border-radius: 8px;
-            min-height: 110px;
+            padding: 10px;
+            border: 1px solid #1e293b;
         }
         </style>
         """,
-        unsafe_allow_html=True  # ✔️ Corregido a unsafe_allow_html
+        unsafe_allow_html=True
     )
 
 
@@ -66,9 +68,80 @@ def planta_produccion():
     col_proceso, col_control = st.columns([3, 1])
 
     with col_proceso:
-        st.subheader("Esquema de Flujo (P&ID Simplificado)")
+        st.subheader("Plano de Proceso Interactivo (Gemelo Digital)")
         
-        # REPLICACIÓN DE LA IMAGEN 2: Línea de proceso estilizada
+        # --- RENDERIZADO DEL DIAGRAMA VECTORIAL (SVG) ---
+        # Definición de variables dinámicas y lógicas de alerta para el plano
+        p_sep = st.session_state.presion_sep
+        t_horno = st.session_state.temp_calentador
+        p_gas = p_sep * 0.37
+        
+        box_sep_color = "#ef4444" if p_sep > 180 else "#22c55e"
+        box_horno_color = "#ef4444" if t_horno > 80 else "#f97316"
+        
+        # Estructura del plano mapeada por coordenadas fijas
+        svg_code = f"""
+        <div class="svg-container">
+        <svg viewBox="0 0 850 500" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <rect width="850" height="500" rx="10" fill="#0b1224"/>
+            
+            <path d="M 50,150 L 150,150" stroke="#38bdf8" stroke-width="3" fill="none" />
+            <path d="M 100,150 L 100,320 L 150,320" stroke="#38bdf8" stroke-width="3" fill="none" />
+            <path d="M 230,320 L 260,320 L 260,170 L 280,170" stroke="#38bdf8" stroke-width="3" fill="none" />
+            
+            <path d="M 210,150 L 280,150" stroke="#22c55e" stroke-width="3" fill="none" />
+            
+            <path d="M 340,130 L 340,100 L 440,100 L 440,120" stroke="#38bdf8" stroke-width="3" fill="none" />
+            <path d="M 340,170 L 340,240 L 210,240 L 210,400 L 240,400" stroke="#f97316" stroke-width="3" fill="none" />
+            
+            <path d="M 500,150 L 660,150 L 660,170" stroke="#38bdf8" stroke-width="3" fill="none" />
+            
+            <path d="M 340,420 L 480,420 L 480,360 L 510,360" stroke="#f97316" stroke-width="3" fill="none" />
+            <path d="M 570,360 L 680,360 L 680,400" stroke="#f97316" stroke-width="3" fill="none" />
+            
+            <path d="M 720,150 L 780,150 L 780,450" stroke="#22c55e" stroke-width="3" fill="none" />
+            <path d="M 680,460 L 680,480 L 780,480" stroke="#3b82f6" stroke-width="3" fill="none" />
+            <path d="M 620,240 L 780,240" stroke="#eab308" stroke-width="3" fill="none" stroke-dasharray="5,5" />
+            
+            <rect x="150" y="125" width="60" height="50" rx="5" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+            <text x="180" y="155" fill="white" font-size="11" font-family="Arial" font-weight="bold" text-anchor="middle">Entrada</text>
+            
+            <rect x="280" y="120" width="120" height="60" rx="8" fill="#1e293b" stroke="{box_sep_color}" stroke-width="3"/>
+            <text x="340" y="145" fill="white" font-size="12" font-family="Arial" font-weight="bold" text-anchor="middle">Separador V-01</text>
+            <text x="340" y="165" fill="#94a3b8" font-size="11" font-family="Arial" text-anchor="middle">{p_sep} psi</text>
+            
+            <rect x="420" y="120" width="80" height="55" rx="5" fill="#2d3748" stroke="#38bdf8" stroke-width="2"/>
+            <text x="460" y="145" fill="white" font-size="10" font-family="Arial" font-weight="bold" text-anchor="middle">Trampa</text>
+            <text x="460" y="160" fill="white" font-size="10" font-family="Arial" text-anchor="middle">Scrubber</text>
+            
+            <rect x="150" y="295" width="80" height="50" rx="5" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="190" y="320" fill="white" font-size="10" font-family="Arial" font-weight="bold" text-anchor="middle">Compresor</text>
+            <text x="190" y="335" fill="#38bdf8" font-size="9" font-family="Arial" text-anchor="middle">{p_gas:.1f} psi</text>
+            
+            <rect x="240" y="385" width="100" height="60" rx="8" fill="#1e293b" stroke="{box_horno_color}" stroke-width="3"/>
+            <text x="290" y="415" fill="white" font-size="12" font-family="Arial" font-weight="bold" text-anchor="middle">Horno</text>
+            <text x="290" y="435" fill="#f97316" font-size="11" font-family="Arial" text-anchor="middle">{t_horno} °C</text>
+            
+            <circle cx="540" cy="360" r="25" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+            <text x="540" cy="364" fill="white" font-size="11" font-family="Arial" font-weight="bold" text-anchor="middle">Bomba</text>
+            
+            <rect x="610" y="170" width="100" height="80" rx="15" fill="#2d3748" stroke="#3b82f6" stroke-width="2"/>
+            <text x="660" y="215" fill="white" font-size="11" font-family="Arial" font-weight="bold" text-anchor="middle">Desgasificador</text>
+            
+            <rect x="640" y="380" width="80" height="80" rx="5" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+            <text x="680" y="415" fill="white" font-size="11" font-family="Arial" font-weight="bold" text-anchor="middle">Columna</text>
+            <text x="680" y="435" fill="white" font-size="10" font-family="Arial" text-anchor="middle">Estabilizadora</text>
+            
+            <text x="50" y="135" fill="#38bdf8" font-size="11" font-family="Arial" font-weight="bold">Entrada de Gas</text>
+            <text x="780" y="135" fill="#22c55e" font-size="11" font-family="Arial" font-weight="bold" text-anchor="end">Salida Petróleo</text>
+            <text x="780" y="495" fill="#3b82f6" font-size="11" font-family="Arial" font-weight="bold" text-anchor="end">Salida de Agua</text>
+            <text x="615" y="270" fill="#eab308" font-size="10" font-family="Arial">Hacia Tanques</text>
+        </svg>
+        </div>
+        """
+        st.components.v1.html(svg_code, height=520)
+        
+        # Línea de proceso resumida (Breadcrumb) abajo para referencia corta
         st.markdown(
             """
             <div class="flow-container">
@@ -83,54 +156,14 @@ def planta_produccion():
                 <span class="flow-step">🚛 Despacho</span>
             </div>
             """,
-            unsafe_allow_html=True  # ✔️ Corregido
+            unsafe_allow_html=True
         )
-        
-        # REPLICACIÓN DE LA IMAGEN 1: Bloques visuales de planta dinámica
-        st.write("**Simulación de Planta de Proceso en Tiempo Real**")
-        p1, p2, p3 = st.columns(3)
-        
-        with p1:
-            st.markdown(
-                f"""<div class="equipo-card" style="border-left: 5px solid #eab308;">
-                <h5 style="margin:0; color:white;">Entrada de Gas 💨</h5>
-                <p style="color:#94a3b8; font-size:13px; margin-top:8px;">Presión: {st.session_state.presion_sep * 0.37:.1f} psi<br>Válvula: Abierta</p>
-                </div>""", unsafe_allow_html=True
-            )
-            
-        with p2:
-            # Color de borde dinámico según nivel de alarma
-            sep_color = "#ef4444" if st.session_state.presion_sep > 180 else "#22c55e"
-            st.markdown(
-                f"""<div class="equipo-card" style="border-left: 5px solid {sep_color};">
-                <h5 style="margin:0; color:white;">Separador V-01 🛢️</h5>
-                <p style="color:#94a3b8; font-size:13px; margin-top:8px;">Presión: {st.session_state.presion_sep} psi<br>Eficiencia: 98.4%</p>
-                </div>""", unsafe_allow_html=True
-            )
-            
-        with p3:
-            st.markdown(
-                f"""<div class="equipo-card" style="border-left: 5px solid #3b82f6;">
-                <h5 style="margin:0; color:white;">Desgasificador 🧪</h5>
-                <p style="color:#94a3b8; font-size:13px; margin-top:8px;">Temp Crudo: {st.session_state.temp_calentador} °C<br>Vacío: -2.1 psi</p>
-                </div>""", unsafe_allow_html=True
-            )
-            
-        st.write("") # Espaciador
 
         # Métricas de Proceso estándar abajo
         m1, m2, m3 = st.columns(3)
         m1.metric("Presión Separador", f"{st.session_state.presion_sep} psi", "Normal" if st.session_state.presion_sep <= 180 else "ALTA")
         m2.metric("Temperatura Crudo", f"{st.session_state.temp_calentador} °C", "Óptima")
         m3.metric("Caudal de Entrada", "1850 BPD", "+12 BPD")
-
-        # Gráfico de Niveles en Tanques
-        st.write("**Niveles de Tanques de Almacenamiento (TK-101 / TK-102)**")
-        niveles = pd.DataFrame({
-            'Tanque': ['TK-01 (Crudo)', 'TK-02 (Agua)', 'TK-03 (Aux)'],
-            'Nivel (%)': [75, 20, 45]
-        })
-        st.bar_chart(niveles.set_index('Tanque'))
 
     with col_control:
         st.subheader("🎮 Operación")
@@ -187,7 +220,6 @@ def mostrar_plantas_proceso():
     with tabs[0]:
         st.subheader("Separador Trifásico V-01")
         
-        # Inyectamos el flujo resumido también acá para contexto del alumno
         st.markdown(
             """
             <div class="flow-container" style="padding:10px; margin-bottom:15px;">
@@ -196,7 +228,7 @@ def mostrar_plantas_proceso():
                 <span class="flow-step" style="font-size:13px; opacity:0.5;">🔥 Calentador</span>
             </div>
             """,
-            unsafe_allow_html=True  # ✔️ Corregido
+            unsafe_allow_html=True
         )
         
         c1, c2 = st.columns(2)
