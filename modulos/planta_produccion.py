@@ -43,7 +43,7 @@ def aplicar_estilos_industriales():
         }
         </style>
         """,
-        unsafe_allowed_html=True
+        unsafe_allow_html=True  # ✔️ Corregido a unsafe_allow_html
     )
 
 
@@ -83,7 +83,7 @@ def planta_produccion():
                 <span class="flow-step">🚛 Despacho</span>
             </div>
             """,
-            unsafe_allowed_html=True
+            unsafe_allow_html=True  # ✔️ Corregido
         )
         
         # REPLICACIÓN DE LA IMAGEN 1: Bloques visuales de planta dinámica
@@ -95,7 +95,7 @@ def planta_produccion():
                 f"""<div class="equipo-card" style="border-left: 5px solid #eab308;">
                 <h5 style="margin:0; color:white;">Entrada de Gas 💨</h5>
                 <p style="color:#94a3b8; font-size:13px; margin-top:8px;">Presión: {st.session_state.presion_sep * 0.37:.1f} psi<br>Válvula: Abierta</p>
-                </div>""", unsafe_allowed_html=True
+                </div>""", unsafe_allow_html=True
             )
             
         with p2:
@@ -105,7 +105,7 @@ def planta_produccion():
                 f"""<div class="equipo-card" style="border-left: 5px solid {sep_color};">
                 <h5 style="margin:0; color:white;">Separador V-01 🛢️</h5>
                 <p style="color:#94a3b8; font-size:13px; margin-top:8px;">Presión: {st.session_state.presion_sep} psi<br>Eficiencia: 98.4%</p>
-                </div>""", unsafe_allowed_html=True
+                </div>""", unsafe_allow_html=True
             )
             
         with p3:
@@ -113,7 +113,7 @@ def planta_produccion():
                 f"""<div class="equipo-card" style="border-left: 5px solid #3b82f6;">
                 <h5 style="margin:0; color:white;">Desgasificador 🧪</h5>
                 <p style="color:#94a3b8; font-size:13px; margin-top:8px;">Temp Crudo: {st.session_state.temp_calentador} °C<br>Vacío: -2.1 psi</p>
-                </div>""", unsafe_allowed_html=True
+                </div>""", unsafe_allow_html=True
             )
             
         st.write("") # Espaciador
@@ -196,7 +196,7 @@ def mostrar_plantas_proceso():
                 <span class="flow-step" style="font-size:13px; opacity:0.5;">🔥 Calentador</span>
             </div>
             """,
-            unsafe_allowed_html=True
+            unsafe_allow_html=True  # ✔️ Corregido
         )
         
         c1, c2 = st.columns(2)
