@@ -1,28 +1,126 @@
 import streamlit as st
 import pandas as pd
+import time
 
+# ==========================================
+# 0. ESTILOS CSS PERSONALIZADOS (UI INDUSTRIAL)
+# ==========================================
+def aplicar_estilos_industriales():
+    st.markdown(
+        """
+        <style>
+        /* Contenedor del P&ID Simplificado (Línea de Proceso) */
+        .flow-container {
+            background-color: #0b132b; /* Azul noche oscuro */
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid #1c2541;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .flow-step {
+            color: #48cae4; /* Azul brillante */
+            font-weight: bold;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .flow-arrow {
+            color: #06d6a0; /* Verde agua para dirección del flujo */
+            font-weight: bold;
+            margin: 0 4px;
+        }
+        
+        /* Tarjetas de Equipos de la Planta */
+        .equipo-card {
+            background-color: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 110px;
+        }
+        </style>
+        """,
+        unsafe_allowed_html=True
+    )
+
+
+# ==========================================
+# 1. MÓDULO: PLANTA DE PRODUCCIÓN (PTC)
+# ==========================================
 def planta_produccion():
+    aplicar_estilos_industriales()
+    
     st.header("🏭 Planta de Tratamiento de Crudo (PTC) - Control Central")
     st.write("Monitoreo de Tren de Separación, Calentamiento y Deshidratación.")
 
-    # --- 1. ESTADO DE LA PLANTA (Session State para interactividad) ---
+    # --- Session State para interactividad ---
     if 'presion_sep' not in st.session_state:
         st.session_state.presion_sep = 120.0
     if 'temp_calentador' not in st.session_state:
         st.session_state.temp_calentador = 65.0
 
-    # --- 2. LAYOUT PRINCIPAL ---
+    # --- LAYOUT PRINCIPAL ---
     col_proceso, col_control = st.columns([3, 1])
 
     with col_proceso:
         st.subheader("Esquema de Flujo (P&ID Simplificado)")
         
-        # Representación visual del flujo
-        st.info("📥 Manifold de Entrada ➔ 🛢️ Separador Trifásico ➔ 🔥 Calentador ➔ 💧 Tanque Cortador ➔ 🚛 Despacho")
+        # REPLICACIÓN DE LA IMAGEN 2: Línea de proceso estilizada
+        st.markdown(
+            """
+            <div class="flow-container">
+                <span class="flow-step">🕹️ Manifold de Entrada</span>
+                <span class="flow-arrow">➔</span>
+                <span class="flow-step">🛢️ Separador Trifásico</span>
+                <span class="flow-arrow">➔</span>
+                <span class="flow-step">🔥 Calentador</span>
+                <span class="flow-arrow">➔</span>
+                <span class="flow-step">💧 Tanque Cortador</span>
+                <span class="flow-arrow">➔</span>
+                <span class="flow-step">🚛 Despacho</span>
+            </div>
+            """,
+            unsafe_allowed_html=True
+        )
         
-        # Métricas de Proceso en tiempo real
+        # REPLICACIÓN DE LA IMAGEN 1: Bloques visuales de planta dinámica
+        st.write("**Simulación de Planta de Proceso en Tiempo Real**")
+        p1, p2, p3 = st.columns(3)
+        
+        with p1:
+            st.markdown(
+                f"""<div class="equipo-card" style="border-left: 5px solid #eab308;">
+                <h5 style="margin:0; color:white;">Entrada de Gas 💨</h5>
+                <p style="color:#94a3b8; font-size:13px; margin-top:8px;">Presión: {st.session_state.presion_sep * 0.37:.1f} psi<br>Válvula: Abierta</p>
+                </div>""", unsafe_allowed_html=True
+            )
+            
+        with p2:
+            # Color de borde dinámico según nivel de alarma
+            sep_color = "#ef4444" if st.session_state.presion_sep > 180 else "#22c55e"
+            st.markdown(
+                f"""<div class="equipo-card" style="border-left: 5px solid {sep_color};">
+                <h5 style="margin:0; color:white;">Separador V-01 🛢️</h5>
+                <p style="color:#94a3b8; font-size:13px; margin-top:8px;">Presión: {st.session_state.presion_sep} psi<br>Eficiencia: 98.4%</p>
+                </div>""", unsafe_allowed_html=True
+            )
+            
+        with p3:
+            st.markdown(
+                f"""<div class="equipo-card" style="border-left: 5px solid #3b82f6;">
+                <h5 style="margin:0; color:white;">Desgasificador 🧪</h5>
+                <p style="color:#94a3b8; font-size:13px; margin-top:8px;">Temp Crudo: {st.session_state.temp_calentador} °C<br>Vacío: -2.1 psi</p>
+                </div>""", unsafe_allowed_html=True
+            )
+            
+        st.write("") # Espaciador
+
+        # Métricas de Proceso estándar abajo
         m1, m2, m3 = st.columns(3)
-        m1.metric("Presión Separador", f"{st.session_state.presion_sep} psi", "Normal")
+        m1.metric("Presión Separador", f"{st.session_state.presion_sep} psi", "Normal" if st.session_state.presion_sep <= 180 else "ALTA")
         m2.metric("Temperatura Crudo", f"{st.session_state.temp_calentador} °C", "Óptima")
         m3.metric("Caudal de Entrada", "1850 BPD", "+12 BPD")
 
@@ -53,7 +151,7 @@ def planta_produccion():
         if st.button("🚨 ACTIVAR ESD", use_container_width=True):
             st.error("PLANTA BLOQUEADA. Válvulas de entrada cerradas.")
 
-    # --- 3. SECCIÓN TÉCNICA: EFICIENCIA DE SEPARACIÓN ---
+    # --- SECCIÓN TÉCNICA ---
     st.divider()
     with st.expander("📊 Análisis de Eficiencia de Separación"):
         col_a, col_b = st.columns(2)
@@ -65,14 +163,18 @@ def planta_produccion():
             st.write("**Calidad del Agua (Drenaje)**")
             st.write("- Hidrocarburos en agua: 15 ppm")
             st.write("- Sólidos en suspensión: 10 mg/l")
-import streamlit as st
-import time
 
+
+# ==========================================
+# 2. MÓDULO: CENTRO DE CONTROL (PLANTAS MULTIPESTAÑA)
+# ==========================================
 def mostrar_plantas_proceso():
+    aplicar_estilos_industriales()
+    
     st.header("🏭 Centro de Control: Plantas de Proceso")
     st.write("Gestión integral de los equipos de separación, tratamiento y despacho.")
 
-    # Agrupamos los módulos que definimos antes en pestañas
+    # Pestañas principales
     tabs = st.tabs([
         "🌀 Separación", 
         "📊 Puente de Gas",
@@ -84,6 +186,19 @@ def mostrar_plantas_proceso():
     # --- PESTAÑA 1: SEPARADORES ---
     with tabs[0]:
         st.subheader("Separador Trifásico V-01")
+        
+        # Inyectamos el flujo resumido también acá para contexto del alumno
+        st.markdown(
+            """
+            <div class="flow-container" style="padding:10px; margin-bottom:15px;">
+                <span class="flow-step" style="font-size:13px;">📥 Manifold</span> <span class="flow-arrow">➔</span>
+                <span class="flow-step" style="font-size:14px; color:#06d6a0; background-color:#1e293b; padding:2px 8px; border-radius:4px;">🛢️ Separador Trifásico (Ubicación Actual)</span> <span class="flow-arrow">➔</span>
+                <span class="flow-step" style="font-size:13px; opacity:0.5;">🔥 Calentador</span>
+            </div>
+            """,
+            unsafe_allowed_html=True
+        )
+        
         c1, c2 = st.columns(2)
         presion = c1.slider("Presión de Control (psi):", 20, 100, 45, key="sep_p")
         nivel = c2.slider("Nivel de Interfase (%):", 0, 100, 50, key="sep_n")
@@ -100,7 +215,6 @@ def mostrar_plantas_proceso():
         h_diff = col_g1.number_input("Presión Diferencial (InH2O):", 0, 100, 40)
         p_est = col_g2.number_input("Presión Estática (psia):", 20, 200, 50)
         
-        # Cálculo de caudal simplificado para el alumno
         caudal_gas = (h_diff * p_est)**0.5 * 15.5
         st.metric("Caudal de Gas Calculado", f"{caudal_gas:.2f} m3/std")
         
