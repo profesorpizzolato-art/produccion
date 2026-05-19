@@ -3,6 +3,7 @@ from fpdf import FPDF
 import time  
 import datetime
 import pandas as pd
+import os
 def mostrar_manual(): 
     # ==========================================
     # 1. EL GRAN DICCIONARIO TÉCNICO (50 PUNTOS)
