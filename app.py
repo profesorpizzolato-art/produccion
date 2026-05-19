@@ -1,8 +1,6 @@
 import streamlit as st
 import sys
 import os
-import streamlit as st
-from manual_simulador import mostrar_manual
 
 # 1. CONFIGURACIÓN INICIAL
 st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
@@ -11,7 +9,13 @@ st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
 sys.path.append(os.path.join(os.path.dirname(__file__), "modulos"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "motor"))
 
-# 3. IMPORTACIONES DE NUBE (Con manejo de errores para que la app no muera si falla la red)
+# 3. IMPORTACIONES DE MÓDULOS INTERNOS
+# Nota: Asegurate de que el archivo manual_simulador.py esté subido a GitHub en minúsculas.
+try:
+    from manual_simulador import mostrar_manual
+except ModuleNotFoundError:
+    st.error("⚠️ No se encontró el archivo 'manual_simulador.py'. Verificá que esté subido a la raíz de GitHub con ese nombre exacto.")
+
 try:
     from modulos.nube import leer_estado_actual, enviar_falla, resetear_planta, conectar_db
 except Exception as e:
@@ -27,80 +31,28 @@ if 'area_actual' not in st.session_state:
 
 # --- FUNCIONES DE ACCESO Y SEGURIDAD ---
 def login():
-    # 1. ESTILOS: Posicionamiento absoluto para "pisar" la imagen
     st.markdown("""
     <style>
-    /* Fondo oscuro para toda la página */
     .stApp { background-color: #0e1117; }
-
-    /* Contenedor principal */
-    .contenedor-login {
-        position: relative;
-        width: 100%;
-        max-width: 500px; /* Ajustamos al ancho de la imagen */
-        margin: auto;
-    }
-
-    /* Estilo de los inputs para que sean transparentes y calcen en los cuadros */
-    .stTextInput input {
-        background-color: rgba(0,0,0,0) !important; /* Transparente total */
-        color: white !important;
-        border: none !important;
-        font-size: 16px !important;
-        height: 42px !important;
-    }
-
-    /* Ubicación exacta del Usuario */
-    div[data-key="u_pizzolato"] {
-        position: absolute;
-        top: 435px; /* Ajustar este número si no cae justo */
-        left: 65px;
-        width: 310px;
-        z-index: 10;
-    }
-
-    /* Ubicación exacta de la Contraseña */
-    div[data-key="p_pizzolato"] {
-        position: absolute;
-        top: 490px; /* Ajustar este número si no cae justo */
-        left: 65px;
-        width: 310px;
-        z-index: 10;
-    }
-
-    /* Ubicación exacta del Botón */
-    div[data-key="btn_pizzolato"] {
-        position: absolute;
-        top: 550px;
-        left: 65px;
-        width: 310px;
-        z-index: 10;
-    }
-
-    /* Ocultar etiquetas de Streamlit */
+    .contenedor-login { position: relative; width: 100%; max-width: 500px; margin: auto; }
+    .stTextInput input { background-color: rgba(0,0,0,0) !important; color: white !important; border: none !important; font-size: 16px !important; height: 42px !important; }
+    div[data-key="u_pizzolato"] { position: absolute; top: 435px; left: 65px; width: 310px; z-index: 10; }
+    div[data-key="p_pizzolato"] { position: absolute; top: 490px; left: 65px; width: 310px; z-index: 10; }
+    div[data-key="btn_pizzolato"] { position: absolute; top: 550px; left: 65px; width: 310px; z-index: 10; }
     label { display: none !important; }
-    
-    /* Hacer el botón de Streamlit invisible para que se vea el naranja de abajo */
-    div[data-key="btn_pizzolato"] button {
-        background: transparent !important;
-        border: none !important;
-        color: transparent !important;
-        height: 45px !important;
-    }
+    div[data-key="btn_pizzolato"] button { background: transparent !important; border: none !important; color: transparent !important; height: 45px !important; }
     </style>
     """, unsafe_allow_html=True)
 
-    # 2. ESTRUCTURA: Ponemos la imagen y encima los campos
     st.markdown('<div class="contenedor-login">', unsafe_allow_html=True)
-    
-    # Imagen de fondo (la que ya tiene los cuadros dibujados)
-    st.image("assets/login_menfa.png", use_container_width=True)
+    try:
+        st.image("assets/login_menfa.png", use_container_width=True)
+    except:
+        st.warning("Falta cargar el asset: assets/login_menfa.png")
 
-    # Inputs con llaves (keys) específicas para que el CSS los encuentre
     u = st.text_input("U", key="u_pizzolato")
     p = st.text_input("P", type="password", key="p_pizzolato")
     
-    # Botón invisible sobre el botón naranja de la imagen
     if st.button("INGRESAR", key="btn_pizzolato", use_container_width=True):
         if u == "admin" and p == "menfa2026":
             st.session_state.ingresado = True
@@ -116,7 +68,6 @@ def login():
     st.markdown('</div>', unsafe_allow_html=True)
 
 def verificar_emergencias_remotas():
-    """Función que bloquea al alumno si hay una falla activa en Firebase"""
     try:
         estado = leer_estado_actual()
         if estado and estado.get("activo"):
@@ -132,7 +83,6 @@ def verificar_emergencias_remotas():
         pass
 
 # --- PANEL DEL INSTRUCTOR (F. PIZZOLATO) ---
-
 def modulo_instructor_pizzolato():
     st.title("👨‍🏫 Comando Maestro - Menfa 3.0")
     col1, col2 = st.columns(2)
@@ -147,151 +97,24 @@ def modulo_instructor_pizzolato():
             resetear_planta()
             st.success("Planta reseteada")
 
-# --- NUEVO MÓDULO OPERATIVO: TAREAS DEL RECORREDOR ---
-
+# --- PANEL AUXILIAR DEL RECORREDOR (INTERNO) ---
 def mostrar_modulo_produccion_recorredor():
-    import pandas as pd
     import time
-
-    st.title("🏭 Módulo de Producción Petrolera y Tareas del Recorredor")
-    st.caption("Software de Simulación y Capacitación - IPCL MENFA")
-
-    # Pestañas del módulo basándonos en el manual técnico
-    tab1, tab2, tab3 = st.tabs([
-        "🌿 Proceso en Batería y Recorrida", 
-        "🤖 Simulación de Señales SCADA (4-20mA)", 
-        "📋 Evaluación de Seguridad y Operación"
-    ])
-
-    # ==========================================
-    # PESTAÑA 1: PROCESO Y RECORRIDA
-    # ==========================================
+    st.title("🏭 Módulo Operativo de Respaldo")
+    tab1, tab2 = st.tabs(["🎛️ Operación de Colector", "🤖 Lazo SCADA"])
     with tab1:
-        st.header("Flujo del Fluido y Operaciones en Batería")
-        st.write(
-            "La función principal de una batería es reunir la producción de un grupo de pozos "
-            "para separar el gas, el agua y el petróleo, además de almacenar y medir caudales."
-        )
-        
-        # Simulación visual del Manifold de ingreso
-        st.subheader("🎛️ Operación del Manifold de Ingreso (Colector)")
-        st.info(
-            "**Regla Operativa:** La apertura y cierre de válvulas debe practicarse de forma "
-            "simultánea (abrir primero, luego cerrar) de manera gradual para evitar golpes de ariete."
-        )
-        
-        pozo_seleccionado = st.selectbox("Seleccionar Pozo para Ensayar:", ["Pozo Productor MENFA-01", "Pozo Productor MENFA-02", "Pozo Productor MENFA-03"])
-        linea_derivacion = st.radio("Derivar flujo hacia:", ["Línea General (Producción Total)", "Separador de Ensayo (Control Individual)"])
-        
-        if st.button("Ejecutar Maniobra de Válvulas"):
-            with st.spinner("Cambiando configuración en el colector..."):
-                time.sleep(1.5)
-                st.success(f"Maniobra exitosa. El {pozo_seleccionado} ahora está derivado a {linea_derivacion}.")
-                st.warning("🔄 Recuerda revisar el circuito de flujo para comprobar la eficacia de la maniobra realizada.")
-
-        st.markdown("---")
-        st.subheader("⚙️ Equipos Principales y Línea de Tratamiento")
-        
-        with st.expander("1. Separadores y Gravitación"):
-            st.write("La disociación gas-líquido en el interior del separador se produce principalmente por **efecto de gravitación**, separando los fluidos por diferencia de densidad.")
-        
-        with st.expander("2. Deshidratación del Gas e Hidratos"):
-            st.write("El vapor de agua en el gas disminuye la eficiencia y, en invierno, provoca obstrucciones por congelamiento o formación de **hidratos** (compuestos sólidos con apariencia de hielo). Se requiere el uso de torres de absorción a glicol.")
-
-        with st.expander("3. Transferencia de Custodia (Unidad LACT)"):
-            st.write("El líquido acondicionado se almacena y transfiere a oleoductos mediante unidades de Transferencia Automática de Producción en Custodia (LACT).")
-
-    # ==========================================
-    # PESTAÑA 2: SIMULACIÓN SCADA
-    # ==========================================
+        st.subheader("Manifold de Ingreso Local")
+        pozo = st.selectbox("Seleccionar Pozo:", ["Pozo MENFA-01", "Pozo MENFA-02"])
+        if st.button("Traspasar Pozo"):
+            st.success(f"{pozo} Conmutado con éxito.")
     with tab2:
-        st.header("Conversión Analógica a Digital (Lógica del PLC/RTU)")
-        st.write(
-            "Los sistemas SCADA e instrumentos de campo utilizan el estándar industrial de **4-20 miliamperios (mA)** "
-            "para transmitir variables físicas de forma eléctrica hacia la RTU o PLC."
-        )
-        st.info("💡 **Dato del Manual:** Cuando la variable está en 0, circula un mínimo de 4mA para verificar que el circuito eléctrico esté sano.")
-
-        # Configuración del instrumento simulado
-        rango_max_presion = st.number_input("Rango Máximo del Transmisor de Presión (PT) en Kg/cm²:", min_value=1.0, max_value=100.0, value=10.0)
-        presion_actual = st.slider("Presión Actual en Campo (Kg/cm²):", min_value=0.0, max_value=float(rango_max_presion), value=float(rango_max_presion*0.4), step=0.1)
-
-        # Cálculos de conversión basados en las fórmulas de cuentas y mA
-        factor_ma = (presion_actual / rango_max_presion) * 16 + 4
-        cuentas_plc = int((presion_actual / rango_max_presion) * (4000 - 800) + 800)
-
-        # Renderizar en tres columnas visuales
-        col1, col2, col3 = st.columns(3)
-        col1.metric(label="Presión Física", value=f"{presion_actual:.2f} Kg/cm²")
-        col2.metric(label="Señal de Corriente", value=f"{factor_ma:.2f} mA")
-        col3.metric(label="Cuentas en RTU/PLC", value=f"{cuentas_plc} pts")
-
-        # Gráfico dinámico de simulación de alarma SCADA
-        st.subheader("🚨 Lógica de Control de Alarmas (Set Points)")
-        set_point_alto = rango_max_presion * 0.8
-        
-        st.write(f"**Set Point de Alarma Alta:** {set_point_alto:.1f} Kg/cm²")
-        
-        if presion_actual >= set_point_alto:
-            st.error(f"⚠️ CONDICIÓN DE ALARMA: 'Alto Nivel / Presión en Instalación'. Notificando al Servidor SCADA central. Requiere reconocimiento del operador.")
-        else:
-            st.success("🟢 Operación normal de campo. Variables dentro de parámetros normales.")
-
-    # ==========================================
-    # PESTAÑA 3: EVALUACIÓN DE RECORREDOR
-    # ==========================================
-    with tab3:
-        st.header("Examen Técnico de Normas Operativas y de Seguridad")
-        st.write("Test de evaluación para personal ingresante y técnicos de producción.")
-
-        puntaje = 0
-        
-        # Pregunta 1
-        p1 = st.radio(
-            "1. ¿Qué se deduce si un instrumento de campo reporta una corriente de 0 mA de forma lineal?",
-            ["Que la variable medida está exactamente en cero.", 
-             "Que existe una anomalía o rotura en el circuito eléctrico (ya que el cero equivale a 4mA).", 
-             "Que el PLC está saturado."]
-        )
-        if p1 == "Que existe una anomalía o rotura en el circuito eléctrico (ya que el cero equivale a 4mA).":
-            puntaje += 1.0
-
-        # Pregunta 2
-        p2 = st.radio(
-            "2. Ante una duda en la ejecución de una maniobra operativa compleja en los pozos, ¿cuál es la acción correcta?",
-            ["Proceder con cautela basándose en la experiencia previa.",
-             "Preguntar la cantidad de veces que sea necesario al supervisor, aunque parezca molesto.",
-             "Dejar la maniobra pendiente para el cambio de turno."]
-        )
-        if p2 == "Preguntar la cantidad de veces que sea necesario al supervisor, aunque parezca molesto.":
-            puntaje += 1.0
-
-        # Pregunta 3
-        p3 = st.radio(
-            "3. Si un recorredor presenta fatiga intensa o somnolencia severa durante su turno de conducción, ¿qué indica el procedimiento?",
-            ["Consumir café o energizantes y circular a menor velocidad.",
-             "Continuar la marcha para no retrasar el parte diario.",
-             "Detener la conducción, hablar de forma franca con el supervisor y solicitar el relevo inmediato del día."]
-        )
-        if p3 == "Detener la conducción, hablar de forma franca con el supervisor y solicitar el relevo inmediato del día.":
-            puntaje += 1.0
-
-        # Botón de evaluar
-        if st.button("Calificar Evaluación Técnico-Operativa"):
-            porcentaje = (puntaje / 3.0) * 100
-            if porcentaje >= 100:
-                st.balloons()
-                st.success(f"🎯 Calificación: {porcentaje:.1f}%. ¡Aprobado! El alumno incorpora plenamente los procedimientos de seguridad y cultura operativa.")
-            else:
-                st.warning(f"⚠️ Calificación: {porcentaje:.1f}%. Se sugiere repasar los capítulos de 'Señales Eléctricas' y 'Normas de Seguridad Humana' del manual.")
+        st.metric("Señal patrón", "12.00 mA")
 
 # --- APP PRINCIPAL (CON TODOS LOS MÓDULOS) ---
-
 def main_app():
     if st.session_state.rol == "alumno":
         verificar_emergencias_remotas()
 
-    # RESTAURACIÓN TOTAL DE OPCIONES
     opciones_menu = [
         "🏠 Dashboard", 
         "🛢️ Operaciones de Campo",
@@ -371,8 +194,13 @@ def main_app():
         from modulos.entrenamiento import mostrar_entrenamiento
         mostrar_entrenamiento()
     elif actual == "📘 Manual":
-        mostrar_modulo_produccion_recorredor()
-        mostrar_modulo_manual_simulador()
+        # 🎯 ¡REEMPLAZO DIRECTO ACÁ!
+        # Levantamos la función importada de tu archivo externo que contiene las 4 pestañas:
+        # Manual de 50 Puntos, Operaciones en Batería, Señales SCADA y Examen Técnico.
+        try:
+            mostrar_manual()
+        except NameError:
+            st.warning("La función 'mostrar_manual' no se pudo ejecutar porque falló la importación inicial.")
 
 # --- EJECUCIÓN ---
 def main():
