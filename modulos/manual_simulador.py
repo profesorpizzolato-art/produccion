@@ -4,6 +4,7 @@ import time
 import datetime
 import pandas as pd
 import os
+
 def mostrar_manual(): 
     # ==========================================
     # 1. EL GRAN DICCIONARIO TÉCNICO (50 PUNTOS)
@@ -150,7 +151,7 @@ def mostrar_manual():
     # ------------------------------------------
     with tab1:
         st.header("Manual Técnico de Producción e Integridad 3.0")
-        st.caption("Estructura Pedagógica y Material de Consulta — IPCL MENFA")
+        st.caption("Estructura Pedagógica y Material de Consulta - IPCL MENFA")
 
         tema_seleccionado = st.selectbox("Seleccionar Capítulo de Estudio:", list(teoria_petrolera.keys()))
         info_tema = teoria_petrolera[tema_seleccionado]
@@ -167,6 +168,19 @@ def mostrar_manual():
         st.subheader("📥 Exportación y Certificación del Alumno")
         st.write("Generá el documento PDF oficial del manual con fines de auditoría o estudio.")
 
+        def normalizar_texto(texto):
+            """Limpia de raíz guiones largos, comillas tipográficas y caracteres Unicode complejos"""
+            if not texto:
+                return ""
+            reemplazos = {
+                "—": "-", "–": "-", "“": '"', "”": '"', "‘": "'", "’": "'",
+                "á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u",
+                "Á": "A", "É": "E", "Í": "I", "Ó": "O", "Ú": "U", "ñ": "n", "Ñ": "N"
+            }
+            for original, nuevo in reemplazos.items():
+                texto = texto.replace(original, nuevo)
+            return texto.encode('latin-1', 'ignore').decode('latin-1')
+
         def generar_pdf_pro():
             pdf = FPDF()
             pdf.add_page()
@@ -181,7 +195,8 @@ def mostrar_manual():
             if puntaje_actual >= 80:
                 pdf.set_font("Helvetica", "B", 11)
                 pdf.set_text_color(0, 128, 0)
-                pdf.cell(0, 10, f"ESTADO: OPERADOR CERTIFICADO ({puntaje_actual}/100 PTS)", ln=True, align='C')
+                estado_txt = normalizar_texto(f"ESTADO: OPERADOR CERTIFICADO ({puntaje_actual}/100 PTS)")
+                pdf.cell(0, 10, estado_txt, ln=True, align='C')
                 pdf.ln(5)
             
             pdf.set_font("Helvetica", "B", 16)
@@ -190,26 +205,28 @@ def mostrar_manual():
             
             pdf.set_font("Helvetica", "I", 10)
             pdf.set_text_color(100, 100, 100)
-            pdf.cell(0, 10, "Menfa Capacitaciones — Director Técnico: Fabricio Pizzolato", ln=True, align='C')
+            director_txt = normalizar_texto("Menfa Capacitaciones - Director Tecnico: Fabricio Pizzolato")
+            pdf.cell(0, 10, director_txt, ln=True, align='C')
             pdf.ln(10)
 
             for tit, info in teoria_petrolera.items():
                 pdf.set_font("Helvetica", "B", 11)
                 pdf.set_fill_color(243, 156, 18)
                 pdf.set_text_color(255, 255, 255)
-                tit_limpio = tit.encode('latin-1', 'ignore').decode('latin-1')
+                
+                tit_limpio = normalizar_texto(tit)
                 pdf.cell(0, 8, tit_limpio, ln=True, fill=True)
                 pdf.ln(2)
                 
                 pdf.set_font("Helvetica", size=9)
                 pdf.set_text_color(0, 0, 0)
-                detalle_limpio = info['detalle'].encode('latin-1', 'ignore').decode('latin-1')
+                detalle_limpio = normalizar_texto(info['detalle'])
                 pdf.multi_cell(0, 5, detalle_limpio)
                 pdf.ln(1)
                 
                 pdf.set_font("Courier", "I", 8)
                 pdf.set_text_color(80, 80, 80)
-                formula_limpia = info['formula'].replace('\\', '').encode('latin-1', 'ignore').decode('latin-1')
+                formula_limpia = normalizar_texto(info['formula'].replace('\\', ''))
                 pdf.cell(0, 6, f"Ecuacion/Referencia: {formula_limpia}", ln=True)
                 pdf.ln(4)
 
@@ -223,10 +240,12 @@ def mostrar_manual():
             pdf.line(120, y_f, 180, y_f)
             pdf.set_font("Helvetica", "B", 8)
             pdf.set_text_color(0, 0, 0)
-            pdf.text(35, y_f + 5, "Firma del Alumno Evaluado")  
-            pdf.text(135, y_f + 5, "Firma de Autoría: F. Pizzolato")
             
-            return pdf.output(dest='S').encode('latin-1')
+            pdf.text(35, y_f + 5, normalizar_texto("Firma del Alumno Evaluado"))  
+            pdf.text(135, y_f + 5, normalizar_texto("Firma de Autoria: F. Pizzolato"))
+            
+            # Ajuste de salida seguro en bytes crudos para evitar conflictos en la nube
+            return bytes(pdf.output(dest='S'))
 
         try:
             btn_pdf_data = generar_pdf_pro()
@@ -334,4 +353,4 @@ def mostrar_manual():
                 st.warning(f"⚠️ Calificación: {porcentaje:.1f}%. Se sugiere repasar los capítulos de 'Señales Eléctricas' y 'Normas de Seguridad Humana' del manual.")
 
     st.divider()
-    st.caption("IPCL MENFA 3.0 — Mendoza, Argentina.")
+    st.caption("IPCL MENFA 3.0 - Mendoza, Argentina.")
