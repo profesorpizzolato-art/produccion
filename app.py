@@ -1,6 +1,8 @@
 import streamlit as st
 import sys
 import os
+import streamlit as st
+from manual_simulador import mostrar_manual
 
 # 1. CONFIGURACIÓN INICIAL
 st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
@@ -369,8 +371,8 @@ def main_app():
         from modulos.entrenamiento import mostrar_entrenamiento
         mostrar_entrenamiento()
     elif actual == "📘 Manual":
-        # Acoplamiento nativo de la lógica del recorredor y teoría del manual de campo
         mostrar_modulo_produccion_recorredor()
+        mostrar_modulo_manual_simulador()
 
 # --- EJECUCIÓN ---
 def main():
