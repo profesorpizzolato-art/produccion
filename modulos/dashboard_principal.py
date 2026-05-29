@@ -29,11 +29,12 @@ def dashboard_principal():
     st.subheader("📍 Gestión de Campo")
     col1, col2, col3 = st.columns(3)
     with col1:
-        if st.button("🛢️ Pozo Productor", use_container_width=True, key="btn_pozo"):
-            navegar_a("🛢️ Pozo Productor")
+        # CORREGIDO: Apunta exactamente a la opción de tu app.py
+        if st.button("🛢️ operaciones de campo", use_container_width=True, key="btn_pozo"):
+            navegar_a("🛢️ Operaciones de Campo")
     with col2:
         if st.button("🗺️ Mapa del Campo", use_container_width=True, key="btn_mapa"):
-            navegar_a("🗺️ Mapa del Campo")
+            navegando_a = navegar_a("🗺️ Mapa del Campo")
     with col3:
         if st.button("📊 Campo Petrolero", use_container_width=True, key="btn_campo"):
             navegar_a("📊 Campo Petrolero")
@@ -46,20 +47,23 @@ def dashboard_principal():
             navegar_a("🏭 Planta de Proceso")
     with col5:
         if st.button("📈 Ingeniería (IPR-VLP)", use_container_width=True, key="btn_ing"):
-            navegar_a("⚙️ Ingeniería de Producción")
+            navegar_a("📈 Ingeniería")
     with col6:
+        # CORREGIDO: Redirige de forma óptima a "⚙️ Ingeniería de Producción" (o cambialo por "📈 Ingeniería" si lo preferís)
         if st.button("🧮 Fórmulas Petroleras", use_container_width=True, key="btn_form"):
-            navegar_a("🧠 Evaluación")
+            navegar_a("⚙️ Ingeniería de Producción")
 
     # --- FILA 3: ENTRENAMIENTO Y EVALUACIÓN ---
     st.subheader("🧠 Entrenamiento y Evaluación")
     col7, col8, col9 = st.columns(3)
     with col7:
+        # CORREGIDO: Entrenamiento Operativo ahora te lleva a su sección correspondiente
         if st.button("⚠ Entrenamiento Operativo", use_container_width=True, key="btn_entren"):
-            navegar_a("🧠 Evaluación")
+            navegar_a("🎯 Entrenamiento Operativo")
     with col8:
+        # CORREGIDO: Manual del Simulador ahora te lleva directo a la pestaña de documentación de app.py
         if st.button("📘 Manual del Simulador", use_container_width=True, key="btn_manual"):
-            st.info("Accediendo al repositorio de documentos técnicos...")
+            navegar_a("📘 Manual")
     with col9:
         if st.session_state.rol == "instructor":
             if st.button("⚙️ PANEL INSTRUCTOR: Fallas", use_container_width=True, key="btn_fallas"):
@@ -85,7 +89,6 @@ def dashboard_principal():
     # --- NUEVA SECCIÓN: ANÁLISIS DE PARTICIPACIÓN ---
     st.subheader("📊 Análisis de Producción del Yacimiento")
     
-    # Datos dinámicos conectados al módulo de Ingeniería
     prod_alumno = st.session_state.get('prod_estimada', 150.0)
     vrr = st.session_state.get('vrr_sistema', 1.0)
     
@@ -115,7 +118,6 @@ def dashboard_principal():
     st.subheader("Estado General del Campo")
     mA, mB, mC = st.columns(3)
     
-    # Conversión simple para mostrar ambas unidades si se desea
     mA.metric("Producción Total", f"{total_m3:,.1f} m3/d", f"{total_m3 * 6.29:,.0f} BPD")
     mB.metric("Presión de Separador", f"{120 * vrr:.1f} psi", f"{vrr - 1.0:.2f} Delta")
     mC.metric("Pozos en Operación", "6", "Activos")
