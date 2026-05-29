@@ -10,7 +10,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "modulos"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "motor"))
 
 # 3. IMPORTACIONES DE MÓDULOS INTERNOS
-# Nota: Asegurate de que el archivo manual_simulador.py esté subido a GitHub en minúsculas.
 try:
     from manual_simulador import mostrar_manual
 except ModuleNotFoundError:
@@ -20,6 +19,12 @@ try:
     from modulos.nube import leer_estado_actual, enviar_falla, resetear_planta, conectar_db
 except Exception as e:
     st.error(f"Error de conexión a la nube: {e}")
+
+# 📦 IMPORTACIÓN DEL NUEVO MÓDULO DE FÓRMULAS
+try:
+    from modulos.formulas_produccion import formulas_produccion
+except ModuleNotFoundError:
+    st.error("⚠️ No se encontró el archivo 'formulas_produccion.py' en la carpeta 'modulos'.")
 
 # 4. INICIALIZACIÓN DEL ESTADO DE SESIÓN
 if 'ingresado' not in st.session_state: 
@@ -115,6 +120,7 @@ def main_app():
     if st.session_state.rol == "alumno":
         verificar_emergencias_remotas()
 
+    # 🛠️ AGREGAMOS LA RUTA INVISIBLE AL MENÚ PARA QUE EL DASHBOARD PUEDA REDIRIGIR ACÁ
     opciones_menu = [
         "🏠 Dashboard", 
         "🛢️ Operaciones de Campo",
@@ -124,6 +130,7 @@ def main_app():
         "📦 Equipos de Planta",
         "📈 Ingeniería",
         "⚙️ Ingeniería de Producción",
+        "🧮 Fórmulas de Producción Petrolera", # <-- Sumada para dar soporte al botón
         "🖥️ Monitoreo SCADA",
         "📋 Gestión y Reportes",
         "🛠️ Mantenimiento e Integridad",
@@ -176,8 +183,12 @@ def main_app():
         from modulos.ingenieria import mostrar_ingenieria
         mostrar_ingenieria()
     elif actual == "⚙️ Ingeniería de Producción":
+        # 🟢 TU MÓDULO QUEDA COMPLETAMENTE INTACTO ACÁ
         from modulos.ingenieria_produccion import mostrar_ingenieria_produccion
         mostrar_ingenieria_produccion()    
+    elif actual == "🧮 Fórmulas de Producción Petrolera":
+        # 🧮 NUEVO ENRUTAMIENTO: Llama directo al módulo matemático puro
+        formulas_produccion()
     elif actual == "🖥️ Monitoreo SCADA":
         from modulos.scada import show
         show()
@@ -194,9 +205,6 @@ def main_app():
         from modulos.entrenamiento import mostrar_entrenamiento
         mostrar_entrenamiento()
     elif actual == "📘 Manual":
-        # 🎯 ¡REEMPLAZO DIRECTO ACÁ!
-        # Levantamos la función importada de tu archivo externo que contiene las 4 pestañas:
-        # Manual de 50 Puntos, Operaciones en Batería, Señales SCADA y Examen Técnico.
         try:
             mostrar_manual()
         except NameError:
