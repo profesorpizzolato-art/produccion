@@ -29,12 +29,11 @@ def dashboard_principal():
     st.subheader("📍 Gestión de Campo")
     col1, col2, col3 = st.columns(3)
     with col1:
-        # CORREGIDO: Apunta exactamente a la opción de tu app.py
         if st.button("🛢️ operaciones de campo", use_container_width=True, key="btn_pozo"):
             navegar_a("🛢️ Operaciones de Campo")
     with col2:
         if st.button("🗺️ Mapa del Campo", use_container_width=True, key="btn_mapa"):
-            navegando_a = navegar_a("🗺️ Mapa del Campo")
+            navegar_a("🗺️ Mapa del Campo") # <-- Corregido: Removida asignación fantasma
     with col3:
         if st.button("📊 Campo Petrolero", use_container_width=True, key="btn_campo"):
             navegar_a("📊 Campo Petrolero")
@@ -49,7 +48,7 @@ def dashboard_principal():
         if st.button("📈 Ingeniería (IPR-VLP)", use_container_width=True, key="btn_ing"):
             navegar_a("📈 Ingeniería")
     with col6:
-        # CORREGIDO: Redirige de forma óptima a "⚙️ Ingeniería de Producción" (o cambialo por "📈 Ingeniería" si lo preferís)
+        # 🎯 ¡VINCULACIÓN LOGRADA! Apunta al nuevo módulo de extracción artificial
         if st.button("🧮 Fórmulas Petroleras", use_container_width=True, key="btn_form"):
             navegar_a("⚙️ Ingeniería de Producción")
 
@@ -57,11 +56,9 @@ def dashboard_principal():
     st.subheader("🧠 Entrenamiento y Evaluación")
     col7, col8, col9 = st.columns(3)
     with col7:
-        # CORREGIDO: Entrenamiento Operativo ahora te lleva a su sección correspondiente
         if st.button("⚠ Entrenamiento Operativo", use_container_width=True, key="btn_entren"):
             navegar_a("🎯 Entrenamiento Operativo")
     with col8:
-        # CORREGIDO: Manual del Simulador ahora te lleva directo a la pestaña de documentación de app.py
         if st.button("📘 Manual del Simulador", use_container_width=True, key="btn_manual"):
             navegar_a("📘 Manual")
     with col9:
