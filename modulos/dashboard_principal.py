@@ -50,7 +50,7 @@ def dashboard_principal():
     with col6:
         # 🎯 ¡VINCULACIÓN LOGRADA! Apunta al nuevo módulo de extracción artificial
         if st.button("🧮 Fórmulas Petroleras", use_container_width=True, key="btn_form"):
-            navegar_a("⚙️ Ingeniería de Producción")
+            navegar_a("🧮 Fórmulas de Producción Petrolera")
 
     # --- FILA 3: ENTRENAMIENTO Y EVALUACIÓN ---
     st.subheader("🧠 Entrenamiento y Evaluación")
