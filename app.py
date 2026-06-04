@@ -26,13 +26,27 @@ try:
 except ModuleNotFoundError:
     st.error("⚠️ No se encontró el archivo 'formulas_produccion.py' en la carpeta 'modulos'.")
 
-# 4. INICIALIZACIÓN DEL ESTADO DE SESIÓN
+# 🧠 INTERCONEXIÓN TÉCNICA: IMPORTACIÓN DEL MOTOR DE SIMULACIÓN FISICOMATEMÁTICO
+try:
+    from motor.motor_simulacion import MotorSimulacion
+except ModuleNotFoundError:
+    # Por si acaso aún no se movió a la carpeta 'motor' según la nueva arquitectura
+    try:
+        from modulos.motor_simulación import MotorSimulacion
+    except ModuleNotFoundError:
+        st.error("⚠️ No se encontró 'motor_simulacion.py'. Revisá las rutas del Core.")
+
+# 4. INICIALIZACIÓN DEL ESTADO DE SESIÓN (PERSISTENCIA GLOBAL)
 if 'ingresado' not in st.session_state: 
     st.session_state.ingresado = False
 if 'rol' not in st.session_state: 
     st.session_state.rol = "alumno"
 if 'area_actual' not in st.session_state: 
     st.session_state.area_actual = "🏠 Dashboard"
+
+# 🚀 INYECCIÓN DEL MOTOR CENTRAL: Se ejecuta una sola vez al arrancar la app
+if 'motor' not in st.session_state and 'MotorSimulacion' in locals():
+    st.session_state.motor = MotorSimulacion()
 
 # --- FUNCIONES DE ACCESO Y SEGURIDAD ---
 def login():
@@ -80,6 +94,11 @@ def verificar_emergencias_remotas():
             st.error(f"🚨 EMG_LNZ OPR")
             st.header(estado['falla'])
             st.warning(estado['descripcion'])
+            
+            # Sincronizar la falla de la nube con el motor físico local
+            if 'motor' in st.session_state:
+                st.session_state.motor.disparar_evento_instructor("GOLPE_DE_GAS")
+                
             respuesta = st.text_area("Procedimiento de Maniobra:")
             if st.button("Enviar Respuesta"):
                 st.success("Respuesta enviada. Esperando normalización.")
@@ -87,7 +106,7 @@ def verificar_emergencias_remotas():
     except:
         pass
 
-# --- PANEL DEL INSTRUCTOR (F. PIZZOLATO) ---
+# --- PANEL DEL INSTRUCTOR ---
 def modulo_instructor_pizzolato():
     st.title("👨‍🏫 Comando Maestro - Menfa 3.0")
     col1, col2 = st.columns(2)
@@ -95,16 +114,24 @@ def modulo_instructor_pizzolato():
         falla = st.selectbox("Inyectar Falla:", ["Fuga de H2S", "Cavitación", "BSW Alto", "ESD Activada"])
         detalles = st.text_area("Descripción del síntoma:")
         if st.button("🔴 LANZAR EMERGENCIA"):
+            # Enviar a la nube (para sistemas remotos)
             enviar_falla(falla, detalles)
-            st.toast("Falla enviada")
+            # Modificar el motor local de forma inmediata si se está probando en la misma máquina
+            if 'motor' in st.session_state:
+                if falla == "ESD Activada":
+                    st.session_state.motor.activar_esd()
+                else:
+                    st.session_state.motor.disparar_evento_instructor("GOLPE_DE_GAS")
+            st.toast("Falla enviada e inyectada en el motor")
     with col2:
         if st.button("🟢 NORMALIZAR PLANTA"):
             resetear_planta()
-            st.success("Planta reseteada")
+            if 'motor' in st.session_state:
+                st.session_state.motor.reset_planta()
+            st.success("Planta reseteada en entorno local y nube")
 
-# --- PANEL AUXILIAR DEL RECORREDOR (INTERNO) ---
+# --- PANEL AUXILIAR DEL RECORREDOR ---
 def mostrar_modulo_produccion_recorredor():
-    import time
     st.title("🏭 Módulo Operativo de Respaldo")
     tab1, tab2 = st.tabs(["🎛️ Operación de Colector", "🤖 Lazo SCADA"])
     with tab1:
@@ -113,14 +140,20 @@ def mostrar_modulo_produccion_recorredor():
         if st.button("Traspasar Pozo"):
             st.success(f"{pozo} Conmutado con éxito.")
     with tab2:
-        st.metric("Señal patrón", "12.00 mA")
+        # Aquí podemos leer una variable dinámica real del motor en vez de un string fijo
+        if 'motor' in st.session_state:
+            presion_real = st.session_state.motor.estado["separador"]["presion"]
+            # Convertir presión a rango 4-20 mA como ejemplo didáctico de instrumentación
+            ma = 4.0 + (presion_real / 160.0) * 16.0
+            st.metric("Señal patrón Transmisor Presión", f"{ma:.2f} mA")
+        else:
+            st.metric("Señal patrón", "12.00 mA")
 
 # --- APP PRINCIPAL (CON TODOS LOS MÓDULOS) ---
 def main_app():
     if st.session_state.rol == "alumno":
         verificar_emergencias_remotas()
 
-    # 🛠️ AGREGAMOS LA RUTA INVISIBLE AL MENÚ PARA QUE EL DASHBOARD PUEDA REDIRIGIR ACÁ
     opciones_menu = [
         "🏠 Dashboard", 
         "🛢️ Operaciones de Campo",
@@ -130,7 +163,7 @@ def main_app():
         "📦 Equipos de Planta",
         "📈 Ingeniería",
         "⚙️ Ingeniería de Producción",
-        "🧮 Fórmulas de Producción Petrolera", # <-- Sumada para dar soporte al botón
+        "🧮 Fórmulas de Producción Petrolera",
         "🖥️ Monitoreo SCADA",
         "📋 Gestión y Reportes",
         "🛠️ Mantenimiento e Integridad",
@@ -158,8 +191,12 @@ def main_app():
             st.session_state.clear()
             st.rerun()
 
-    # --- MOTOR DE ENRUTAMIENTO ---
+    # --- MOTOR DE ENRUTAMIENTO (Inyección automática del motor a cada vista) ---
     actual = st.session_state.area_actual
+
+    # Ejecutar ciclo de actualización física antes de renderizar la vista seleccionada
+    if 'motor' in st.session_state:
+        st.session_state.motor.actualizar_ciclo()
 
     if actual == "🏠 Dashboard":
         from modulos.dashboard_principal import dashboard_principal
@@ -183,11 +220,9 @@ def main_app():
         from modulos.ingenieria import mostrar_ingenieria
         mostrar_ingenieria()
     elif actual == "⚙️ Ingeniería de Producción":
-        # 🟢 TU MÓDULO QUEDA COMPLETAMENTE INTACTO ACÁ
         from modulos.ingenieria_produccion import mostrar_ingenieria_produccion
         mostrar_ingenieria_produccion()    
     elif actual == "🧮 Fórmulas de Producción Petrolera":
-        # 🧮 NUEVO ENRUTAMIENTO: Llama directo al módulo matemático puro
         formulas_produccion()
     elif actual == "🖥️ Monitoreo SCADA":
         from modulos.scada import show
