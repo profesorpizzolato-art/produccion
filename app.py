@@ -26,15 +26,15 @@ try:
 except ModuleNotFoundError:
     st.error("⚠️ No se encontró el archivo 'formulas_produccion.py' en la carpeta 'modulos'.")
 
-# 🧠 INTERCONEXIÓN TÉCNICA: IMPORTACIÓN DEL MOTOR DE SIMULACIÓN FISICOMATEMÁTICO
+# 🧠 INTERCONEXIÓN TÉCNICA: IMPORTACIÓN DEL MOTOR DESDE LA CARPETA 'MODULOS' (SIN ACENTOS)
 try:
-    from motor.motor_simulacion import MotorSimulacion
+    # Como 'modulos' ya está incorporado al sys.path, Python busca el archivo directamente
+    from motor_simulacion import MotorSimulacion
 except ModuleNotFoundError:
-    # Por si acaso aún no se movió a la carpeta 'motor' según la nueva arquitectura
     try:
-        from modulos.motor_simulación import MotorSimulacion
+        from modulos.motor_simulacion import MotorSimulacion
     except ModuleNotFoundError:
-        st.error("⚠️ No se encontró 'motor_simulacion.py'. Revisá las rutas del Core.")
+        st.error("⚠️ No se encontró 'motor_simulacion.py'. Verificá las rutas físicas en tu repositorio de GitHub.")
 
 # 4. INICIALIZACIÓN DEL ESTADO DE SESIÓN (PERSISTENCIA GLOBAL)
 if 'ingresado' not in st.session_state: 
@@ -44,7 +44,7 @@ if 'rol' not in st.session_state:
 if 'area_actual' not in st.session_state: 
     st.session_state.area_actual = "🏠 Dashboard"
 
-# 🚀 INYECCIÓN DEL MOTOR CENTRAL: Se ejecuta una sola vez al arrancar la app
+# 🚀 INYECCIÓN DEL MOTOR CENTRAL: Inicialización segura en st.session_state
 if 'motor' not in st.session_state and 'MotorSimulacion' in locals():
     st.session_state.motor = MotorSimulacion()
 
@@ -95,9 +95,9 @@ def verificar_emergencias_remotas():
             st.header(estado['falla'])
             st.warning(estado['descripcion'])
             
-            # Sincronizar la falla de la nube con el motor físico local
+            # Sincronizar la falla de la nube con el motor físico local usando el método del commit
             if 'motor' in st.session_state:
-                st.session_state.motor.disparar_evento_instructor("GOLPE_DE_GAS")
+                st.session_state.motor.simular_golpe_de_gas()
                 
             respuesta = st.text_area("Procedimiento de Maniobra:")
             if st.button("Enviar Respuesta"):
@@ -114,14 +114,12 @@ def modulo_instructor_pizzolato():
         falla = st.selectbox("Inyectar Falla:", ["Fuga de H2S", "Cavitación", "BSW Alto", "ESD Activada"])
         detalles = st.text_area("Descripción del síntoma:")
         if st.button("🔴 LANZAR EMERGENCIA"):
-            # Enviar a la nube (para sistemas remotos)
             enviar_falla(falla, detalles)
-            # Modificar el motor local de forma inmediata si se está probando en la misma máquina
             if 'motor' in st.session_state:
                 if falla == "ESD Activada":
                     st.session_state.motor.activar_esd()
                 else:
-                    st.session_state.motor.disparar_evento_instructor("GOLPE_DE_GAS")
+                    st.session_state.motor.simular_golpe_de_gas()
             st.toast("Falla enviada e inyectada en el motor")
     with col2:
         if st.button("🟢 NORMALIZAR PLANTA"):
@@ -140,12 +138,15 @@ def mostrar_modulo_produccion_recorredor():
         if st.button("Traspasar Pozo"):
             st.success(f"{pozo} Conmutado con éxito.")
     with tab2:
-        # Aquí podemos leer una variable dinámica real del motor en vez de un string fijo
-        if 'motor' in st.session_state:
+        if 'motor' in st.session_state and hasattr(st.session_state.motor, 'estado'):
             presion_real = st.session_state.motor.estado["separador"]["presion"]
-            # Convertir presión a rango 4-20 mA como ejemplo didáctico de instrumentación
             ma = 4.0 + (presion_real / 160.0) * 16.0
             st.metric("Señal patrón Transmisor Presión", f"{ma:.2f} mA")
+        elif 'motor' in st.session_state:
+            # Compatibilidad con las variables directas de tu motor actual en GitHub
+            presion_real = st.session_state.motor.presion
+            ma = 4.0 + (presion_real / 160.0) * 16.0
+            st.metric("Señal patrón Transmisor Presión (Modo Directo)", f"{ma:.2f} mA")
         else:
             st.metric("Señal patrón", "12.00 mA")
 
@@ -191,12 +192,16 @@ def main_app():
             st.session_state.clear()
             st.rerun()
 
-    # --- MOTOR DE ENRUTAMIENTO (Inyección automática del motor a cada vista) ---
+    # --- MOTOR DE ENRUTAMIENTO (Actualización de físicas en background) ---
     actual = st.session_state.area_actual
 
-    # Ejecutar ciclo de actualización física antes de renderizar la vista seleccionada
+    # Ejecución adaptada a los métodos reales del commit en tu GitHub (Evita el AttributeError)
     if 'motor' in st.session_state:
-        st.session_state.motor.actualizar_ciclo()
+        if hasattr(st.session_state.motor, 'actualizar_ciclo'):
+            st.session_state.motor.actualizar_ciclo()
+        else:
+            # Llama al método existente que calcula fluctuaciones aleatorias en tu código de hace 2 meses
+            _ = st.session_state.motor.obtain_datos() if hasattr(st.session_state.motor, 'obtain_datos') else st.session_state.motor.obtener_datos()
 
     if actual == "🏠 Dashboard":
         from modulos.dashboard_principal import dashboard_principal
