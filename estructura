@@ -1,64 +1,43 @@
-simulador-menfa
+simulador-menú/
 │
-app.py
-requirements.txt
-README.md
+├── aplicacion.py                 # Punto de entrada (Configura st.session_state del motor)
+├── requisitos.txt
+├── LÉAME.md
 │
-assets
-│   logo_menfa.png
+├── activos/
+│   └── logo_menfa.png
 │
-modulos
-│   __ init__.py
-│   dashboard_principal.py
-│   pozo_productor.py
-│   planta_produccion.py
-│   diagrama_planta.py
-│   formulas_produccion.py
-│   ipr_vlp.py
-│   bomba_mecanica.py
-│   dinamometro.py
-│   gestion_supervisor_prod.py
-
-acciones_supervisor.py
-alarmas.py
-alarmas_scada.py
-banco_preguntas.py
-bomba_mecanica.py
-campo_petrolero.py
-certificado.py
-checklist_operativo.py
-choke_control.py
-control_perdidas.py
-corte_agua.py
-dashboard.py
-dashboard_principal.py
-diagrama_planta.py
-dinamometro.py
-eficiencia_separador.py
-entrenamiento_operativo.py
-eventos_operativos.py
-flujo_multifasico.py
-formulas_produccion.py
-gestion_company_man.py
-gestion_supervisor_prod.py
-instrucciones_simulador.py
-ipr_vlp.py
-manifold_avanzado.py
-mapa_campo.py
-modelo_pozo.py
-modelo_reservorio.py
-motor_simulacion.py
-panel_operador.py
-planta_produccion.py
-pozo_productor.py
-presiones_pozo.py
-protocolos_intervencion.py
-reporte_novedades.py
-scada.py
-scada_avanzado.py
-scada_planta.py
-simulacion_produccion.py
-simulador_fallas.py
-tendencias.py
-    evaluacion.py
-│   certificado.py
+└── módulos/
+    ├── __init__.py
+    │
+    ├── core/                     # EL CEREBRO (El estado vivo)
+    │   ├── __init__.py
+    │   ├── motor_simulacion.py   # Centraliza TODO el estado del campo y planta
+    │   └── modelos/
+    │       ├── modelo_pozo.py
+    │       └── modelo_reservorio.py
+    │
+    ├── ingenieria/               # CÁLCULOS Y FÓRMULAS (Lógica pura)
+    │   ├── formulas_produccion.py
+    │   ├── ipr_vlp.py
+    │   ├── flujo_multifasico.py
+    │   ├── dinamometro.py
+    │   └── eficiencia_separador.py
+    │
+    ├── vistas_operativas/        # INTERFACES QUE VE EL ALUMNO (Leen/Escriben al Motor)
+    │   ├── dashboard_principal.py
+    │   ├── mapa_campo.py
+    │   ├── pozo_productor.py
+    │   ├── bomba_mecanica.py
+    │   ├── manifold_avanzado.py
+    │   ├── planta_produccion.py
+    │   └── scada.py              # Consolida scada_avanzado y scada_planta
+    │
+    ├── entrenamiento_control/    # EVENTOS, PARADAS Y EVALUACIÓN
+    │   ├── panel_instructor.py   # Comando maestro / Lanzar fallas
+    │   ├── simulador_fallas.py
+    │   ├── checklist_operativo.py
+    │   └── evaluacion.py          # Incluye banco_preguntas y reporte_novedades
+    │
+    └── reportes/
+        └── certificado.py
