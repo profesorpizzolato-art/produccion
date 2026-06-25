@@ -161,6 +161,7 @@ def main_app():
         "🗺️ Mapa del Campo", 
         "📊 Campo Petrolero",
         "🏭 Planta de Proceso",
+        "🔬 Laboratorio de Crudo",
         "📦 Equipos de Planta",
         "📈 Ingeniería",
         "⚙️ Ingeniería de Producción",
@@ -218,6 +219,9 @@ def main_app():
     elif actual == "🏭 Planta de Proceso":
         from modulos.planta_produccion import planta_produccion
         planta_produccion()
+    elif actual == "🔬 Laboratorio de Crudo":  # <--- INYECTAR ESTE NUEVO BLOQUE MODULAR
+        from modulos.laboratorio import mostrar_laboratorio_crudo
+        mostrar_laboratorio_crudo()    
     elif actual == "📦 Equipos de Planta":
         from modulos.equipos_planta import mostrar_equipos_planta
         mostrar_equipos_planta()
