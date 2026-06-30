@@ -23,8 +23,11 @@ def conectar_db():
         if "private_key" in key_dict:
             key_dict["private_key"] = key_dict["private_key"].replace("\\n", "\n")
             
+        # 🔍 CORRECCIÓN: Definimos la variable en español para que coincida abajo
         credenciales = service_account.Credentials.from_service_account_info(key_dict)
-        return firestore.Client(credentials=credentials)
+        
+        # 🎯 Usamos 'credenciales' de manera idéntica
+        return firestore.Client(credentials=credenciales)
     except Exception as e:
         st.error(f"Error de conexión crítica: {e}")
         raise e
