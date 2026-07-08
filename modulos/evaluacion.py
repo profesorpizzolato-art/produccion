@@ -178,7 +178,7 @@ def evaluacion():
                       ["Abrir primero Control, luego cerrar Grupo", "Cerrar Grupo y esperar 30 minutos", "Abrir Grupo antes de cerrar la línea de bypass", "Cerrar la válvula de retención"], key="r8_ev")
         
         r9 = st.radio("**9. ¿Qué compuesto químico gaseoso altamente letal se asocia al crudo agrio y bloquea el sistema respiratorio humano destruyendo el olfato?**", 
-                      ["CO2", "H2S (Ácido Sulfhídrico)", "Metano puro", "Sulfato de bario"], key="r9_ev")
+                      ["CO2", "H2S(Ácido Sulfhídrico)", "Metano puro", "Sulfato de bario"], key="r9_ev")
         
         r10 = st.radio("**10. ¿Cuál es el principio operativo básico del sistema de levantamiento artificial por Gas Lift (Planta de Inyección)?**", 
                        ["Aumentar el peso del crudo", "Inyección de gas para aliviar la columna hidrostática en el tubing", "Sellar las perforaciones de fondo", "Generar vacío mecánico"], key="r10_ev")
