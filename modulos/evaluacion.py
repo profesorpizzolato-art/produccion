@@ -41,7 +41,7 @@ def generar_certificado_pdf(nombre, dni, puntaje):
     pdf.ln(8)
     pdf.set_font("Helvetica", "", 14)
     pdf.set_text_color(0, 0, 0)
-    texto_cert = f"Por haber aprobado satisfactoriamente la evaluación IPCL MENFA 3.0 con {puntaje}/240 puntos."
+    texto_cert = f"Por haber aprobado satisfactoriamente la evaluación IPCL MENFA 3.0 con {puntaje}/180 puntos."
     pdf.multi_cell(0, 10, txt=texto_cert, align='C')
     
     # --- 5. SECCIÓN DE FIRMAS ---
@@ -94,9 +94,9 @@ def evaluacion():
         st.divider()
         puntos = st.session_state.puntos_finales
         
-        if puntos >= 168: 
+        if puntos >= 126: 
             st.balloons()
-            st.success(f"🎉 ¡FELICITACIONES! EXAMEN APROBADO: {puntos} / 240 puntos.")
+            st.success(f"🎉 ¡FELICITACIONES! EXAMEN APROBADO: {puntos} / 180 puntos.")
             
             pdf_data = generar_certificado_pdf(nombre, dni, puntos)
             st.download_button(
@@ -108,7 +108,7 @@ def evaluacion():
                 key="btn_descarga_cert"
             )
         else:
-            st.error(f"❌ REPROBADO: {puntos} / 240 puntos. Se requiere un mínimo de 168 puntos (70%) para certificar.")
+            st.error(f"❌ REPROBADO: {puntos} / 180 puntos. Se requiere un mínimo de 126 puntos (70%) para certificar.")
         
         if st.session_state.bitacora_errores:
             st.subheader("📋 Desvíos Operativos Detectados en Simulador")
@@ -121,7 +121,33 @@ def evaluacion():
         st.text_area("Análisis escrito por el Operador (Tendencias de SCADA, control químico y preventivo):", key="debate_alumno_prod")
         return
 
-    # --- PANTALLES DE EXAMEN ACTIVO ---
+    # --- BIBLIOTECA TÉCNICA DE REFERENCIA ---
+    with st.expander("📚 BIBLIOTECA TÉCNICA DE REFERENCIA (Manual de Operaciones MENFA 3.0)", expanded=False):
+        st.markdown("### 🎛️ 1. Formulación Hidráulica: Ecuación de NPSH y Cavitación")
+        st.write("Para garantizar que una bomba centrífuga no sufra daños catastróficos por cavitación, el operador en consola debe monitorear constantemente que el **NPSH Disponible** ($NPSH_D$) en el sistema sea mayor al **NPSH Requerido** ($NPSH_R$):")
+        st.latex(r"NPSH_D = P_{succ\_abs} - P_{vapor\_abs}")
+        st.markdown("""
+        * Si $NPSH_D \le NPSH_R$, las burbujas de vapor implotarán al entrar al impulsor, arrancando el acero por fatiga mecánica micro-local.
+        * **Acción correctiva:** Estrangular la descarga desplaza el punto operativo reduciendo drásticamente el $NPSH_R$.
+        """)
+        
+        st.write("---")
+        st.markdown("### 🧪 2. Dinámica Química de Emulsiones (Ley de Stokes)")
+        st.write("La velocidad de separación gravitacional de las gotas de agua dentro de un Tratador Térmico responde a la Ley de Stokes:")
+        st.latex(r"v = \frac{2 \cdot g \cdot r^2 \cdot (\rho_{agua} - \rho_{crudo})}{9 \cdot \mu}")
+        st.markdown("""
+        * **Criterio de Control:** Para acelerar la velocidad de decantación ($v$), el operador debe aumentar la temperatura para reducir la viscosidad ($\mu$) o inyectar desemulsionante para aumentar el radio de la gota ($r$).
+        """)
+        
+        st.write("---")
+        st.markdown("### ☣️ 3. Umbrales de Exposición Letal por $H_2S$")
+        st.table([
+            {"Concentración (ppm)": "0.1 - 5 ppm", "Efecto Fisiológico": "Olor a huevo podrido. Umbral de percepción.", "Acción Requerida": "Monitoreo preventivo."},
+            {"Concentración (ppm)": "10 ppm", "Efecto Fisiológico": "Límite Máximo de Exposición Permisible (TWA) para 8 hs.", "Acción Requerida": "Evacuación si no hay ventilación."},
+            {"Concentración (ppm)": "100 ppm", "Efecto Fisiológico": "Parálisis inmediata del nervio olfativo. Deja de oler.", "Acción Requerida": "🚨 Evacuación inmediata con uso de ERA."},
+        ])
+
+    # --- PANTALLAS DE EXAMEN ACTIVO ---
     tab1, tab2 = st.tabs(["📝 Bloque 1: Ingeniería y Conceptos Fundamentales", "🎛️ Bloque 2: Casos de Campo y Diagnóstico SCADA"])
 
     with tab1:
@@ -152,37 +178,49 @@ def evaluacion():
                       ["Abrir primero Control, luego cerrar Grupo", "Cerrar Grupo y esperar 30 minutos", "Abrir Grupo antes de cerrar la línea de bypass", "Cerrar la válvula de retención"], key="r8_ev")
         
         r9 = st.radio("**9. ¿Qué compuesto químico gaseoso altamente letal se asocia al crudo agrio y bloquea el sistema respiratorio humano destruyendo el olfato?**", 
-                      ["$\text{CO}_2$", "$\text{H}_2\text{S}$ (Ácido Sulfhídrico)", "Metano puro", "Sulfato de bario"], key="r9_ev")
+                      ["CO2", "H2S (Ácido Sulfhídrico)", "Metano puro", "Sulfato de bario"], key="r9_ev")
         
         r10 = st.radio("**10. ¿Cuál es el principio operativo básico del sistema de levantamiento artificial por Gas Lift (Planta de Inyección)?**", 
                        ["Aumentar el peso del crudo", "Inyección de gas para aliviar la columna hidrostática en el tubing", "Sellar las perforaciones de fondo", "Generar vacío mecánico"], key="r10_ev")
+
+        r15 = st.radio("**11. ¿Qué fenómeno ocurre en una línea de flujo bifásico cuando el gas empuja al líquido en forma de tapones o baches violentos, generando transitorios de alta presión?**",
+                       ["Flujo Anular", "Flujo Slug (Baches de líquido)", "Flujo Estratificado Liso", "Flujo de Burbujas Dispersas"], key="r15_ev")
+
+        r16 = st.radio("**12. Al operar un compresor alternativo de gas, ¿cuál es la función de los tanques amortiguadores (*Pulsation Dampeners*) colocados en la succión y descarga?**",
+                       ["Separar el BSW remanente", "Aumentar la relación de compresión isotérmica", "Atenuar las ondas de pulsación y vibraciones mecánicas generadas por el movimiento recíprocante del pistón", "Enfriar el gas mediante expansión Joule-Thomson"], key="r16_ev")
+
+        r17 = st.radio("**13. Si el lazo de control de presión de un separador (PV) se descalibra y la válvula de control se cierra por completo (*Fail Close*), ¿cuál es la secuencia de alarmas en el SCADA?**",
+                       ["Caída de presión, LSL y posterior parada por ESD", "PSH (Alerta de Presión Alta), PSHH (Presión Muy Alta Alta) y disparo automático de la válvula de seguridad por SIS", "Aumento instantáneo del BSW en el tratador", "Disparo térmico del motor de transferencia de crudo"], key="r17_ev")
+
+        r18 = st.radio("**14. ¿Qué parámetro químico mide la agresividad corrosiva del agua de producción asociada que ataca el acero al carbono por picaduras (*pitting*) en los oleoductos?**",
+                       ["Concentración de Cloruros y presencia de bacterias sulfato-reductoras (BSR)", "Porcentaje de parafinas disueltas", "Grados API del crudo estabilizado", "Índice de refracción del metano"], key="r18_ev")
 
     with tab2:
         st.markdown("### Casos de Estudio y Análisis bajo Presión")
         
         st.info("**Caso A: Crisis de Deshidratación (BSW)**\n\nEl deshidratador electrostático procesa $1200\\text{ m}^3/\\text{d}$. El BSW sube del **15% al 42%** por el pozo MENFA-02. El transformador tiene picos de cortocircuito por alta salinidad.")
-        r11 = st.radio("**11. ¿Cuál es la primera intervención en sala de control?**", 
+        r11 = st.radio("**15. ¿Cuál es la primera intervención en sala de control?**", 
                        ["A) Incrementar el voltaje del campo eléctrico.", "B) Desviar fluidos al Test Tank, ajustar inyección de desemulsionante y abrir purga de agua al 100%."], key="r11_ev")
         
         st.info("**Caso B: Parámetros Termodinámicos de Bombeo**\n\nUna bomba centrífuga transfiere crudo a $65^\\circ\\text{C}$ desde un tanque a nivel de $1.2\\text{ m}$. Presión en succión: $0.75\\text{ bar}$ abs. Presión de vapor del crudo: $0.68\\text{ bar}$ abs. NPSH requerido por la bomba: $1.5\\text{ m}$. Emite ruido a metralla.")
-        r12 = st.radio("**12. ¿Cuál es el diagnóstico e intervención de ingeniería?**", 
+        r12 = st.radio("**16. ¿Cuál es el diagnóstico e intervención de ingeniería?**", 
                        ["A) Cavitación por NPSH Disponible insuficiente ($0.07\\text{ bar} \\approx 0.7\\text{ m} < 1.5\\text{ m}$). Se debe estrangular la descarga para reducir el caudal y bajar el NPSH requerido.", "B) El impulsor tiene acumulación de parafinas. Inyectar fluido caliente."], key="r12_ev")
         
         st.info("**Caso C: Emergencia Química Crítica**\n\nFuga de gas en la brida de entrada del separador. El sensor de la trinchera marca paso de $2\\text{ ppm}$ a **$140\\text{ ppm}$ en 30 segundos**. Viento soplando del Este (E) hacia el Oeste (O).")
-        r13 = st.radio("**13. ¿Cuál es la ruta de evacuación y plan de contingencia inmediata?**", 
+        r13 = st.radio("**17. ¿Cuál es la ruta de evacuación y plan de contingencia inmediata?**", 
                        ["A) Declarar Emergencia. Evacuar al personal hacia el ESTE (viento arriba) y exigir el uso obligatorio de Equipo de Respiración Autónomo (ERA).", "B) Enviar al recorredor con máscara de filtro de carbón común al Oeste para cerrar la válvula de bloqueo manual."], key="r13_ev")
         
         st.info("**Caso D: Secuencia Lógica de Alarmas**\n\nLa planta sufre una ESD general. La pantalla de eventos (SOE) del PLC registra en milisegundos: 1. PSHH-305 (Presión Alta Gas Compresor), 2. LSHH-201 (Nivel Alto Separador), 3. Cierre de válvula general de entrada.")
-        r14 = st.radio("**14. ¿Cuál es el 'First Out' real que causó la parada?**", 
+        r14 = st.radio("**18. ¿Cuál es el 'First Out' real que causó la parada?**", 
                        ["A) Una falla en la bomba de transferencia de líquido provocó el nivel alto en la vasija.", "B) La restricción u obstrucción en la línea del compresor (PSHH-305) generó contrapresión en el sistema, colapsando la separación física."], key="r14_ev")
 
-    # --- CONTROL DE ENTREGA Y CORRECCIÓN (100% EN PYTHON SEGURO) ---
+    # --- CONTROL DE ENTREGA Y CORRECCIÓN ---
     st.divider()
     if st.button("PROCESAR Y ENTREGAR MESA DE EXAMEN", use_container_width=True):
         puntos_acumulados = 0
         bitacora = []
         
-        # --- CORRECCIÓN BLOQUE TÉCNICO (10 puntos c/u - Total: 100) ---
+        # --- CORRECCIÓN BLOQUE TÉCNICO (10 puntos c/u) ---
         if r1 == "Bombeo Mecánico": puntos_acumulados += 10
         if r2 == "Separar Gas, Crudo y Agua": puntos_acumulados += 10
         if r3 == "El caudal baja y la presión de línea aguas arriba del bloqueo se incrementa": puntos_acumulados += 10
@@ -191,30 +229,27 @@ def evaluacion():
         if r6 == "Tratador Térmico / FWKO": puntos_acumulados += 10
         if r7 == "Cavitación": puntos_acumulados += 10
         if r8 == "Abrir primero Control, luego cerrar Grupo": puntos_acumulados += 10
-        if r9 == "$\text{H}_2\text{S}$ (Ácido Sulfhídrico)": puntos_acumulados += 10
+        if r9 == "H2S (Ácido Sulfhídrico)": puntos_acumulados += 10
         if r10 == "Inyección de gas para aliviar la columna hidrostática en el tubing": puntos_acumulados += 10
+        if r15 == "Flujo Slug (Baches de líquido)": puntos_acumulados += 10
+        if r16 == "Atenuar las ondas de pulsación y vibraciones mecánicas generadas por el movimiento recíprocante del pistón": puntos_acumulados += 10
+        if r17 == "PSH (Alerta de Presión Alta), PSHH (Presión Muy Alta Alta) y disparo automático de la válvula de seguridad por SIS": puntos_acumulados += 10
+        if r18 == "Concentración de Cloruros y presencia de bacterias sulfato-reductoras (BSR)": puntos_acumulados += 10
         
-        # --- CORRECCIÓN BLOQUE ESCENARIOS AVANZADOS (35 puntos c/u - Total: 140) ---
-        if "B)" in r11: 
-            puntos_acumulados += 35
-        else: 
-            bitacora.append("Caso 1 (BSW): Intentar aumentar el voltaje con agua libre en el deshidratador acelera el cortocircuito del transformador.")
+        # --- CORRECCIÓN BLOQUE ESCENARIOS AVANZADOS (10 puntos c/u) ---
+        if "B)" in r11: puntos_acumulados += 10
+        else: bitacora.append("Caso 1 (BSW): Intentar aumentar el voltaje con agua libre acelera el corto del transformador.")
             
-        if "A)" in r12: 
-            puntos_acumulados += 35
-        else: 
-            bitacora.append("Caso 2 (Cavitación): No corregir la relación de NPSH destruye mecánicamente el impulsor por microimplosiones.")
+        if "A)" in r12: puntos_acumulados += 10
+        else: bitacora.append("Caso 2 (Cavitación): No corregir el NPSH destruye el impulsor por microimplosiones.")
             
-        if "A)" in r13: 
-            puntos_acumulados += 35
+        if "A)" in r13: puntos_acumulados += 10
         else: 
-            bitacora.append("Caso 3 (H2S): Mandar personal viento abajo (Oeste) o sin equipo autónomo (ERA) ante 140 ppm es una acción fatal.")
-            st.session_state.motor.simular_golpe_de_gas() # Inyección física al motor
+            bitacora.append("Caso 3 (H2S): Mandar personal viento abajo (Oeste) o sin ERA ante 140 ppm es fatal.")
+            st.session_state.motor.simular_golpe_de_gas()
             
-        if "B)" in r14: 
-            puntos_acumulados += 35
-        else: 
-            bitacora.append("Caso 4 (ESD): Confundir la alarma de nivel con la causa raíz bloquea el diagnóstico preventivo de las líneas de gas.")
+        if "B)" in r14: puntos_acumulados += 10
+        else: bitacora.append("Caso 4 (ESD): Confundir la alarma de nivel con la causa raíz bloquea el diagnóstico preventivo.")
 
         # Persistencia en Session State y Rerun Seguro
         st.session_state.puntos_finales = puntos_acumulados
