@@ -1,77 +1,42 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import random
-from datetime import datetime
 
 def show():
-    st.header("🖥️ Sistema de Monitoreo SCADA - PTC Menfa")
-    st.write(f"⏱️ **Tiempo Real:** {datetime.now().strftime('%H:%M:%S')} | **Estado del Servidor:** ONLINE")
+    st.title("🖥️ Monitoreo SCADA y Centro de Alarmas")
 
-    # --- 1. LÓGICA DE SENSORES ---
-    if 'presion_manifold' not in st.session_state:
-        st.session_state.presion_manifold = 145.0
-    
-    # Simulación de fluctuación
-    st.session_state.presion_manifold += random.uniform(-0.5, 0.5)
+    if 'motor' not in st.session_state:
+        st.error("⚠️ Motor de simulación no encontrado.")
+        return
 
-    # --- 2. VISTA DE PLANTA (KPIs) ---
-    col1, col2, col3, col4 = st.columns(4)
-    
-    p = st.session_state.presion_manifold
-    if p > 150:
-        col1.metric("P-Manifold", f"{p:.1f} psi", "ALTA", delta_color="inverse")
-    else:
-        col1.metric("P-Manifold", f"{p:.1f} psi", "Normal")
+    motor = st.session_state.motor
+    motor.actualizar_ciclo()
 
-    col2.metric("Nivel Separador V-01", "68%", "Estable")
-    col3.metric("Temp. E-01", "62.4 °C", "Óptima")
-    col4.metric("Voltaje Bombas", "380V", "Fase OK")
+    # --- MONITOREO DE VARIABLES PRINCIPALES ---
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("P-Manifold (Dinamica)", f"{motor.p_manifold} psi", delta=f"{round(motor.p_manifold - 145.0, 1)} psi vs Base")
+    c2.metric("P-Separador V-01", f"{motor.presion_v01} psi")
+    c3.metric("Temp. Horno (TSH-202)", f"{motor.temp_horno} °C")
+    c4.metric("BSW Laboratorio", f"{motor.bsw} %")
 
-    # --- 3. PANEL DE ALARMAS (HMI) ---
     st.divider()
-    st.subheader("🚨 Registro de Alarmas Activas")
+
+    # --- TABLA INTERACTIVA DE ALARMAS (ACK / CLEAR) ---
+    st.subheader("🚨 Panel Interactivo de Alarmas de Planta")
     
-    if p > 150:
-        st.error("⚠️ **CRITICAL:** High Pressure in Inlet Manifold - Check SDV-101")
-    
-    data_alarmas = {
-        "Tag": ["LSH-101", "TSH-202", "PSH-105"],
-        "Descripción": ["Nivel Alto Tanque 1", "Alta Temp Calentador", "Baja Presión Instrumentos"],
-        "Prioridad": ["Media", "Alta", "Baja"],
-        "Estado": ["ACK", "ACTIVA", "CLEAR"]
-    }
-    df_alarmas = pd.DataFrame(data_alarmas)
-
-    # Función de color corregida para Pandas moderno
-    def color_prioridad(val):
-        if val == 'Alta': return 'background-color: #e74c3c; color: white'
-        if val == 'Media': return 'background-color: #f39c12; color: white'
-        return 'background-color: #27ae60; color: white'
-
-    # Aplicamos el estilo usando .map() en lugar de .applymap()
-    st.dataframe(
-        df_alarmas.style.map(color_prioridad, subset=['Prioridad']),
-        use_container_width=True,
-        hide_index=True
-    )
-
-    # --- 4. TENDENCIAS (TRENDS) ---
-    st.divider()
-    st.subheader("📈 Tendencias de Proceso (Últimos 60s)")
-    
-    chart_data = pd.DataFrame(
-        np.random.randn(20, 2) + [145, 60],
-        columns=['Presión (psi)', 'Temp (°C)']
-    )
-    st.line_chart(chart_data)
-
-    # --- 5. CONTROL REMOTO ---
-    with st.expander("🛠️ Comandos de Operación Remota"):
-        c_a, c_b = st.columns(2)
-        with c_a:
-            if st.button("🔄 Resetear Alarmas", use_container_width=True):
-                st.toast("Reiniciando panel de alarmas...")
-        with c_b:
-            if st.button("🔓 Abrir Bypass Entrada", use_container_width=True):
-                st.warning("Operación de Bypass en curso.")
+    for code, info in motor.alarmas.items():
+        col_code, col_desc, col_estado, col_accion = st.columns([1, 2, 1, 1])
+        
+        col_code.write(f"**{code}** ({info['tag']})")
+        col_desc.write(info['descripcion'])
+        
+        # Formato visual según estado de la alarma
+        if info['estado'] == "ACTIVA":
+            col_estado.error("🔴 ACTIVA")
+            if col_accion.button(f"Reconocer ({code})", key=f"btn_{code}"):
+                motor.reconocer_alarma(code)
+                st.rerun()
+        elif info['estado'] == "ACK":
+            col_estado.warning("🟡 ACK (Reconocida)")
+            col_accion.info("En Observación")
+        else:
+            col_estado.success("🟢 CLEAR (Normal)")
+            col_accion.write("—")
