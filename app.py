@@ -211,7 +211,13 @@ def main_app():
             planta_produccion()
         elif actual == "🔬 Laboratorio de Crudo":
             from modulos.laboratorio import mostrar_laboratorio_crudo
-            mostrar_laboratorio_crudo()    
+            if 'motor' in st.session_state:
+                bsw_val = getattr(st.session_state.motor, 'bsw', 0.4)
+                rvp_val = getattr(st.session_state.motor, 'rvp', 65.0)
+                q_val = getattr(st.session_state.motor, 'caudal_base', 450.0)
+                mostrar_laboratorio_crudo(bsw_motor=bsw_val, rvp_motor=rvp_val, caudal_motor=q_val)
+            else:
+                mostrar_laboratorio_crudo()    
         elif actual == "📦 Equipos de Planta":
             from modulos.equipos_planta import mostrar_equipos_planta
             # Extraemos valores dinámicos del motor si están disponibles
