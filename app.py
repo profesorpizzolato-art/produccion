@@ -214,7 +214,13 @@ def main_app():
             mostrar_laboratorio_crudo()    
         elif actual == "📦 Equipos de Planta":
             from modulos.equipos_planta import mostrar_equipos_planta
-            mostrar_equipos_planta()
+            # Extraemos valores dinámicos del motor si están disponibles
+            if 'motor' in st.session_state:
+                q_act = getattr(st.session_state.motor, 'caudal_base', 450.0)
+                bsw_act = getattr(st.session_state.motor, 'bsw', 1.0)
+                mostrar_equipos_planta(q_pozo=q_act, bsw_pozo=bsw_act)
+            else:
+                mostrar_equipos_planta()
         elif actual == "📈 Ingeniería":
             from modulos.ingenieria import mostrar_ingenieria
             mostrar_ingenieria()
