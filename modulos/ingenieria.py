@@ -152,7 +152,7 @@ def mostrar_ingenieria():
           height=400,
       )
       st.plotly_chart(fig_dec, use_container_width=True)
-      npv_acum = np.trapz(q_t, t) * 365
+      npv_acum = np.trapezoid(q_t, t) * 365
       st.metric("Producción Acumulada Estimada", f"{npv_acum/1e6:.2f} MMbbl")
 
   # ---------------------------------------------------------
