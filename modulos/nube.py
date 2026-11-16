@@ -1,12 +1,12 @@
 import streamlit as st
 import json
 import base64
-from google.cloud import firestore  
+from google.cloud import firestore    
 from google.oauth2 import service_account
 
 def conectar_db():
     try:
-        # 1. Obtenemos el string Base64 desde los Secrets
+        # 1. Obtenemos el string Base64 desde los Secrets de Streamlit
         b64_str = st.secrets["gcp_service_account"]["content_b64"]
         
         # 2. Limpiamos cualquier carácter basura (comillas, espacios)
@@ -23,13 +23,12 @@ def conectar_db():
         if "private_key" in key_dict:
             key_dict["private_key"] = key_dict["private_key"].replace("\\n", "\n")
             
-        # 🔍 CORRECCIÓN: Definimos la variable en español para que coincida abajo
+        # Generamos las credenciales y el cliente de Firestore
         credenciales = service_account.Credentials.from_service_account_info(key_dict)
-        
-        # 🎯 Usamos 'credenciales' de manera idéntica
         return firestore.Client(credentials=credenciales)
+        
     except Exception as e:
-        st.error(f"Error de conexión crítica: {e}")
+        st.error(f"Error de conexión crítica con Firestore: {e}")
         raise e
 
 def enviar_falla(nombre_falla, descripcion):
@@ -37,9 +36,9 @@ def enviar_falla(nombre_falla, descripcion):
     # Al lanzar una falla nueva, seteamos 'respuesta' vacía para limpiar registros anteriores
     db.collection("simulador").document("sala_emergencia").set({
         "falla": nombre_falla,
-        "descripcion": descripcion,
+        "descripción": descripcion,
         "activo": True,
-        "respuesta": "", 
+        "respuesta": "",
         "timestamp": firestore.SERVER_TIMESTAMP
     })
 
@@ -47,8 +46,10 @@ def leer_estado_actual():
     try:
         db = conectar_db()
         doc = db.collection("simulador").document("sala_emergencia").get()
-        return doc.to_dict()
-    except:
+        if doc.exists:
+            return doc.to_dict()
+        return None
+    except Exception:
         return None
 
 def resetear_planta():
@@ -59,14 +60,14 @@ def resetear_planta():
         "respuesta": ""
     }, merge=True)
 
-# ✨ NUEVA FUNCIÓN: Guarda en Firestore lo que escribe el alumno
 def guardar_respuesta_alumno(respuesta_texto):
     try:
         db = conectar_db()
+        # Guardamos la respuesta del alumno utilizando merge=True para no pisar la falla activa
         db.collection("simulador").document("sala_emergencia").set({
             "respuesta": respuesta_texto,
             "timestamp_respuesta": firestore.SERVER_TIMESTAMP
-        }, merge=True) # merge=True es clave para NO borrar la falla ni la descripción actual
+        }, merge=True)
         return True
     except Exception as e:
         st.error(f"Error al guardar respuesta del alumno: {e}")
