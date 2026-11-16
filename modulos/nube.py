@@ -72,3 +72,14 @@ def guardar_respuesta_alumno(respuesta_texto):
     except Exception as e:
         st.error(f"Error al guardar respuesta del alumno: {e}")
         return False
+def calificar_respuesta_alumno(estado_calificacion):
+    try:
+        db = conectar_db()
+        db.collection("simulador").document("sala_emergencia").set({
+            "calificacion": estado_calificacion,
+            "timestamp_calificacion": firestore.SERVER_TIMESTAMP
+        }, merge=True)
+        return True
+    except Exception as e:
+        st.error(f"Error al guardar la calificación: {e}")
+        return False
