@@ -110,8 +110,63 @@ def verificar_emergencias_remotas():
         st.sidebar.caption(f"Status Nube: Desconectado ({e})")
 
 # --- PANEL DEL INSTRUCTOR ---
+from streamlit_autorefresh import st_autorefresh
+
+# --- PANEL DEL INSTRUCTOR ---
 def modulo_instructor_pizzolato():
     st.title("👨‍🏫 Comando Maestro - Menfa 3.0")
+    
+    # 🔄 Configurar auto-refresco cada 3 segundos
+    st_autorefresh(interval=3000, key="auto_refresco_instructor")
+    
+    # 🔍 Consultamos el estado actual en la nube
+    if callable(leer_estado_actual):
+        estado_nube = leer_estado_actual()
+        if estado_nube:
+            falla_activa = estado_nube.get("activo", False)
+            respuesta_alumno = estado_nube.get("respuesta", "")
+            calificacion_actual = estado_nube.get("calificacion", "")
+            
+            with st.container():
+                st.subheader("📊 Monitoreo de Emergencia Activa")
+                if falla_activa:
+                    st.warning(f"⚠️ **Falla en curso:** {estado_nube.get('falla', 'N/A')} — *{estado_nube.get('descripción', '')}*")
+                else:
+                    st.success("🟢 Sistema Normalizado. No hay emergencias activas.")
+                
+                # Visualización de la respuesta y botones de calificación
+                st.markdown("### 📥 Respuesta del Alumno:")
+                if respuesta_alumno and respuesta_alumno.strip() != "":
+                    st.success("¡El alumno ha enviado su procedimiento de maniobra!")
+                    st.info(f"**Procedimiento redactado:**\n\n{respuesta_alumno}")
+                    
+                    # Estado de la calificación actual
+                    if calificacion_actual == "Aprobado":
+                        st.success("⭐ **Estado:** Calificado como **APROBADO** por el instructor.")
+                    elif calificacion_actual == "Rechazado":
+                        st.error("❌ **Estado:** Calificado como **RECHAZADO**. El alumno debe reintentar.")
+                    else:
+                        st.warning("⚠️ Pendiente de calificación.")
+                    
+                    # Botones de evaluación
+                    col_btn1, col_btn2 = st.columns(2)
+                    with col_btn1:
+                        if st.button("✅ Aprobar Respuesta"):
+                            from modulos.nube import calificar_respuesta_alumno
+                            if calificar_respuesta_alumno("Aprobado"):
+                                st.toast("¡Respuesta aprobada con éxito!")
+                                st.rerun()
+                    with col_btn2:
+                        if st.button("❌ Rechazar Respuesta"):
+                            from modulos.nube import calificar_respuesta_alumno
+                            if calificar_respuesta_alumno("Rechazado"):
+                                st.toast("Respuesta rechazada.")
+                                st.rerun()
+                else:
+                    st.info("⏳ Esperando que el alumno envíe el procedimiento...")
+            
+            st.markdown("---")
+
     col1, col2 = st.columns(2)
     with col1:
         falla = st.selectbox("Inyectar Falla:", ["Fuga de H2S", "Cavitación", "BSW Alto", "ESD Activada"])
@@ -125,6 +180,8 @@ def modulo_instructor_pizzolato():
                 elif hasattr(st.session_state.motor, 'simular_golpe_de_gas'):
                     st.session_state.motor.simular_golpe_de_gas()
             st.toast("Falla enviada e inyectada en el motor")
+            st.rerun()
+            
     with col2:
         if st.button("🟢 NORMALIZAR PLANTA"):
             if callable(resetear_planta):
@@ -132,6 +189,7 @@ def modulo_instructor_pizzolato():
             if 'motor' in st.session_state and hasattr(st.session_state.motor, 'reset_planta'):
                 st.session_state.motor.reset_planta()
             st.success("Planta reseteada en entorno local y nube")
+            st.rerun()
 
 # --- APP PRINCIPAL ---
 def main_app():
