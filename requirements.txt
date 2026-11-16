@@ -7,3 +7,4 @@ plotly
 fpdf2
 google-cloud-firestore
 google-auth
+streamlit-autorefresh
